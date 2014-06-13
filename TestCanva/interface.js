@@ -11,7 +11,7 @@ interface = function(){
 	function interface(){
 		
 	}
-	
+	var posleft, postop;
 	
 	
 	/* Recupere les info pour le log */
@@ -233,11 +233,28 @@ interface = function(){
 		/* Fait apparaitre la video */
 		var divVid = document.getElementById('divVid');
 		var temp = ""; 
-		temp = "<video id=\"vid\" width = 1019 height=566>" // De base : 400/720
-			 + "<source src=\"" + url + ".webm\" type=\"video/webm\" /><!-- Chrome10+, Ffx4+, Opera10.6+ -->"  
-			 + "<source src=\"" + url + ".mp4\" type=\"video/mp4\"  /> <!-- Safari / iOS, IE9 -->"
-			 + "Impossible de lire la video avec votre browser"
-			 + "</video>";
+		/* Ajout de la video*/
+		// Si le menu est pas deja ouvert
+		var w, h, t, l;
+		if(document.getElementById('sidebar').style.display != ""){ // Si le menu n'est pas déjà ouvert
+			w = 1019;
+			h = 566;
+			interface.postop = 95;
+			interface.posleft = 15;
+		}else{// S'il est ouvert
+			w = 740;
+			h = 411;
+			interface.postop = 95;
+			interface.posleft = 85;
+		}
+			
+		temp = "<video id=\"vid\" width = " + w + " height=" + h + ">" // De base : 400/720
+		 + "<source src=\"" + url + ".webm\" type=\"video/webm\" /><!-- Chrome10+, Ffx4+, Opera10.6+ -->"  
+		 + "<source src=\"" + url + ".mp4\" type=\"video/mp4\"  /> <!-- Safari / iOS, IE9 -->"
+		 + "Impossible de lire la video avec votre browser"
+		 + "</video>";
+		/* Ajout du canvas */
+		temp += "<canvas id=\"can\" height=" + h + " width=" + w + " style=\"z-index:2; top:" + interface.postop + "px; left:" + interface.posleft + "px; position:absolute; background-color:rgba(255, 255, 255, 0.3)\" align=\"center\"></canvas>";
 		divVid.innerHTML = "";
 		divVid.innerHTML = temp;
 		/* Mise a lechelle de lecran automatiquement -> Fonctionne pas sous iPad.
@@ -254,14 +271,27 @@ interface = function(){
 	interface.slideMenu = function(){
 		var slidemenu = document.getElementById('sidebar');
 		var vid = document.getElementById('vid');		
-		if (slidemenu.style.display == ""){
+		var canvas = document.getElementById('can');
+		if (slidemenu.style.display == ""){//Pour le fermer
 			slidemenu.style.display = "None";
+			// resize de la video et du canvas
 			vid.height = 566;
-			vid.width = 1019;	
-		}else{
+			vid.width = 1019;
+			canvas.height = 566;
+			canvas.width = 1019;
+			canvas.style.left = "15px";
+			interface.posleft = 15;	
+		}else{ // Pour l'ouvrir
 			slidemenu.style.display = "";
+			// resize de la video
 			vid.height = 411;
 			vid.width = 740;
+			canvas.height = 411;
+			canvas.width = 740;
+			canvas.style.left = "85px";	
+			interface.posleft = 85;
+			// Met la video en pause
+			vid.pause();
 			if(comportement.vid.paused == false){
 				comportement.playVideo();
 			 }

@@ -1,0 +1,19 @@
+
+/* AJOUTS POUR L'APPLICATION */
+
+
+/* Pour le menu glissant, les liens sont en blanc */
+#lg-menu>li>a {
+  color:white;
+}
+
+/* empeche la selection dans le body -> Plutot mettre que sur la video ?*/
+video, #c {
+  -webkit-user-select: none; 
+}
+
+/* Servira probablement plus tard quand Safari mobile l'aura implemente au detriment des meta */
+@viewport {
+   width: device-width; /* largeur du viewport */
+   zoom: 1; /* zoom initial à 1.0 (et clin d'oeil aux fans d'IE6/7) */
+}

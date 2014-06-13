@@ -1,0 +1,15 @@
+annotations = function(){
+
+	function annotation (){
+		
+	}
+	
+	annotations.enregistre = function(){
+
+
+	}
+
+
+	return annotations;	
+}();
+

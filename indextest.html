@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="viewport" content="user-scalable=no, width=device-width, initial-scale=1, maximum-scale=1">
+	<meta name="description" content="">
+	<meta name="author" content="">
+
+	<title>Interface d'annotation de vidéos</title>
+
+	<!-- Bootstrap core CSS -->
+	<link href="bs/css/bootstrap.min.css" rel="stylesheet">
+	
+	<!-- Permet l'utilisation les icones-->
+	<link href="bs/css/bootstrap.css" rel="stylesheet">
+
+	<!-- Pour les modifications propres à l'appli -->
+	<link href="style.css" rel="stylesheet">
+
+</head>
+
+	<body>
+		
+		<canvas id="c" height=566 width=1019 bac>
+		<!-- Video -->
+		<video id="v" width = 1019 height=566>
+		
+    			
+
+			<source src="http://perso.limsi.fr/laveau/videos/TBBT1.webm" type="video/webm" />
+			<source src="http://perso.limsi.fr/laveau/videos/TBBT1.mp4" type="video/mp4" />
+			Impossible de lire la video avec votre browser
+			
+		</video>
+		</canvas>
+		<!-- JQuery -->
+		<script type="text/javascript" src="bs/js/jquery-1.11.0.min.js"></script>
+		<!-- Bootstrap JS -->
+		<script type="text/javascript" src="bs/js/bootstrap.min.js"></script>
+		
+		<!-- Comportement de la video -->
+		<script type="text/javascript"  src="comportement.js"></script>
+
+		<!-- Le client pour se connecter au serveur-->
+		<script type="text/javascript" src="camomile.js"></script>
+
+		<!-- Comportement de la page -->
+		<script type="text/javascript" src="interface.js"></script>
+
+		<!-- Librairies Hammer -->
+		<script type="text/javascript" src="ga.js"></script>
+		<script type="text/javascript" src="hammer.js"></script>
+
+		<!-- Pour gerer les conflits Jquery/Hammer, Jquery/Bootstrap -->
+		<script type="text/javascript">
+
+			// Disable scroll
+			document.ontouchmove = function(event){
+				event.preventDefault();
+			}
+			// Jquery Conflicts
+			var $j = jQuery.noConflict();
+
+			// Init the videos variables
+			comportement.init();
+			comportement.elVid();
+
+			
+			can = document.getElementById("c");
+			ctx = can.getContext("2d");
+			ctx.font = "24pt Helvetica";
+			var canX = 25, canY = 25;
+			ctx.textAlign = "center";
+
+			ctx.textBaseline = "middle";
+
+			ctx.fillStyle = "rgb(255,255,255)";
+
+			var str = canX + ", " + canY;
+
+			ctx.clearRect(0, 0, can.width, can.height);
+
+			// draw text at center, max length to fit on canvas
+
+			ctx.fillText(str, can.width / 2, can.height / 2, can.width - 10);
+
+			// plot cursor
+
+			ctx.fillStyle = "white";
+
+			ctx.fillRect(canX -5, canY -5, 10, 10);
+
+		</script>
+	</body>
+</html>
+

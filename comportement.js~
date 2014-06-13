@@ -44,7 +44,7 @@ comportement = function(){
 
 	comportement.elVid = function(){
 		// Objects : button et video 
-		comportement.vid = document.getElementById("vid");
+		comportement.vid = document.getElementById("v");
 		comportement.vid.addEventListener('ended', comportement.vidEnd, false);
 
 		comportement.vidTimer = "";

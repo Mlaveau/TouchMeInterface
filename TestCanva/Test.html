@@ -22,9 +22,9 @@
 
 	<body>
 
-		<!-- Fixed navbar -->
+		<!-- Navbar inverse -->
 		<div class="navbar navbar-inverse navbar-fixed-top" role="navigation" >
-			<div class="container">
+			<div class="container" id="navbarTop">
 				<div class="navbar-header">
 					<a class="navbar-brand" href="#">Brand</a>
 				</div> <!--Fin Navbar header-->
@@ -77,7 +77,7 @@
 		</div> <!--Fin Navbar inverse-->
 	
 		<!-- Contenu -->
-		<div class="row row-offcanvas row-offcanvas-left" style = "color:white ">
+		<div class="row row-offcanvas row-offcanvas-left" style = "color:white; z-index: 10 ">
 			<!-- sidebar -->
 			<div class="column col-sm-1 col-xs-1 sidebar-offcanvas" id="sidebar" style="margin-top:30px; margin-left:10px; display:None">
 				<ul class="nav">
@@ -101,7 +101,7 @@
 			</div>
 
 			<!-- Videos -->
-			<div class="container theme-showcase" role="main" style= "padding-top : 50px; margin-top:45px; padding-left:30px; margin-left:0px; margin-bottom:0px; padding-bottom: 0px; color:white" id="divVid"> <!-- Remplacer en mettant "margin: auto" ? -->
+			<div class="container theme-showcase" role="main" style= "padding-top : 50px; margin-top:45px; padding-left:30px; margin-left:0px; margin-bottom:0px; padding-bottom: 0px" id="divVid"> <!-- Remplacer en mettant "margin: auto" ? -->
 				Veuillez vous connecter pour visualiser les videos
 				<!--<canvas id="can" height= 806 width= 1008 style="background-color: green">
 				</canvas>-->
@@ -147,6 +147,9 @@
 
 		<!-- Comportement de la page -->
 		<script type="text/javascript" src="interface.js"></script>
+
+		<!-- Gere les annotations -->
+		<script type="text/javascript" src="annotations.js"></script>
 
 		<!-- Librairies Hammer -->
 		<script type="text/javascript" src="ga.js"></script>

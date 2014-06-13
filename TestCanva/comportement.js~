@@ -20,13 +20,38 @@ comportement = function(){
 	// Affichage de la position
 	//var can, ctx;
 	// Recupere tous les elements
-	
+	var all_events = ["touch",
+	"release",
+	"gesture",
+	"hold",
+	"tap",
+	"doubletap",
+	"dragstart",
+	"drag",
+	"dragend",
+	"dragleft",
+	"dragright",
+	"dragup",
+	"dragdown",
+	"swipe",
+	"swipeleft",
+        "swiperight",
+        "swipeup",
+        "swipedown",
+        "transformstart",
+        "transform",
+        "transformend",
+        "rotate",
+        "pinch",
+        "pinchin",
+        "pinchout"];
 	function comportement (){
 
 	}
 
 	comportement.init = function() {
-		
+		document.getElementById("LoginUsername").value = "root"; 
+		document.getElementById("LoginPassword").value = "camomile";
 		// Initialise decalage
 		comportement.decalage = 0.1;
 		comportement.segm = "";
@@ -45,13 +70,14 @@ comportement = function(){
 	comportement.elVid = function(){
 		// Objects : button et video 
 		comportement.vid = document.getElementById("vid");
+		var can = document.getElementById("can");
 		comportement.vid.addEventListener('ended', comportement.vidEnd, false);
 
 		comportement.vidTimer = "";
 		comportement.planActuel = 0;
 
 		/* Gestion du multitouch */
-		comportement.hammertime = Hammer(comportement.vid);
+		comportement.hammertime = Hammer(can);
 
 		// Gestion des differents mouvements
 		comportement.hammertime.on("doubletap", function(e){comportement.playVideo(); comportement.touchXY(e);}); // Play/pause
@@ -59,6 +85,7 @@ comportement = function(){
 		comportement.hammertime.on("swiperight", function(e){comportement.bwd(); comportement.touchXY(e);}); // Avance de 10 secs -> Faire plutot passer au plan suivant ?
 		comportement.hammertime.on("swipeleft", function(e){comportement.fwd(); comportement.touchXY(e);}); // Recule de 10 secs -> Faire plutot revenir au plan precedent ?
 		comportement.hammertime.on("touch", function(e){comportement.touchXY(e);}); 
+		comportement.hammertime.on(all_events.join(" "), function(e){var posX = e.gesture.center.pageX - interface.posleft; var posY = e.gesture.center.pageY - interface.postop; comportement.showPos(posX, posY); console.log(comportement.vid.currentTime, posX, posY); annotations.enregistre(posX, posY)}); 
 	}
 	
 	comportement.update_segm= function(data){
@@ -70,16 +97,21 @@ comportement = function(){
 	comportement.touchXY = function(e) {
 
 		comportement.pos.innerHTML = comportement.planActuel + " : ";
-		for (i = 0; i < e.gesture.touches.length; i++) {
-	 		x = e.gesture.touches[i].pageX;
-			y = e.gesture.touches[i].pageY;
-			comportement.showPos(x, y); 
-		}
+		/*// Lance l'enregistrement de la position jusqu'au lever du doigt si la video tourne
+		if(comportement.vid.paused != true){
+			console.log("yeah");//annotations.enregistre();
+	
+		}*/
+	}
+
+	comportement.release = function(e){
+		//annotation.stopenregistre();
+		console.log("stop");
 	}
 
 	// Affiche la position et le cercle sous le doigt
 	comportement.showPos = function(canX, canY){
-	  	comportement.pos.innerHTML = comportement.pos.innerHTML + " (" + canX + "," + canY + ") ";
+	  	comportement.pos.innerHTML = " (" + canX + "," + canY + ") ";
 		/*//A remettre quand j'aurai enfin le canvas. 
 		ctx.clearRect(0, 0, document.width, document.height);
 
@@ -117,11 +149,13 @@ comportement = function(){
 
 	// Play 
 	comportement.playVideo = function() {
-		if (comportement.vid.paused == true) {
-			comportement.vid.play();
-		}
-		else {
-			comportement.vid.pause();
+		if(document.getElementById('sidebar').style.display != ""){ // Peut être lancee que si le menu est cache (Pour les annotations
+			if (comportement.vid.paused == true) {
+				comportement.vid.play();
+			}
+			else {
+				comportement.vid.pause();
+			}
 		}
 	}
 

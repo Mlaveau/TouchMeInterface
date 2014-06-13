@@ -122,7 +122,7 @@ interface = function(){
 
 	}
 
-	/* Met a jour le menu des videos -> Appele quand on a clique sur un corpus  */
+	/* Met a jour le menu des vidéos -> Appele quand on a clique sur un corpus  */
 	interface.update_menuVid = function(corpusId, corpusName){
 		camomile.getMedias(function(data){
 				/* Fait disparaître la video s'il y en avait une */
