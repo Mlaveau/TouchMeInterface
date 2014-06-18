@@ -7,6 +7,7 @@ comportement = function(){
 
 	// Timer 
 	var vidTimer;
+    var annotTimer;
 	var decalage;
 
 	// Segmentation
@@ -17,8 +18,6 @@ comportement = function(){
 	// Pour le multitouch
 	var hammertime;
 
-	// Affichage de la position
-	//var can, ctx;
 	// Recupere tous les elements
 	var all_events = ["touch",
 	"release",
@@ -35,16 +34,20 @@ comportement = function(){
 	"dragdown",
 	"swipe",
 	"swipeleft",
-        "swiperight",
-        "swipeup",
-        "swipedown",
-        "transformstart",
-        "transform",
-        "transformend",
-        "rotate",
-        "pinch",
-        "pinchin",
-        "pinchout"];
+    "swiperight",
+    "swipeup",
+    "swipedown",
+    "transformstart",
+    "transform",
+    "transformend",
+    "rotate",
+    "pinch",
+    "pinchin",
+    "pinchout"];
+    
+    var events_annot = ["dragstart",
+                        "drag",
+                        "dragend", "hold", "release", "touch"];
 	function comportement (){
 
 	}
@@ -55,37 +58,49 @@ comportement = function(){
 		// Initialise decalage
 		comportement.decalage = 0.1;
 		comportement.segm = "";
-		// Canvas, context et document  A REMETTRE SI UN JOUR CA VEUT BIEN FONCTIONNER
-		//can = document.getElementById("can");
-		//ctx = can.getContext("2d");
-
+        
 		// Affichages 
 		comportement.time = document.getElementById("curtime");
 		comportement.pos = document.getElementById("position");
 		comportement.tmp = document.getElementById("temps");	
 		comportement.vit = document.getElementById("vitesse");
+        comportement.annotTimer = "";
+        
+        
+       
 	}
 
 
 	comportement.elVid = function(){
 		// Objects : button et video 
 		comportement.vid = document.getElementById("vid");
-		var can = document.getElementById("can");
-		comportement.vid.addEventListener('ended', comportement.vidEnd, false);
+        comportement.vid.addEventListener('ended', comportement.vidEnd, false);
+        var can = document.getElementById("can");
+
 
 		comportement.vidTimer = "";
 		comportement.planActuel = 0;
-
+        annotations.currentFrame = 0;
+        annotations.temp_annot = [];
+        annotations.currentIdTab = 0;
+        annotations.tempEvMulti = [];
+        console.log(annotations.tempEvMulti);
 		/* Gestion du multitouch */
 		comportement.hammertime = Hammer(can);
 
 		// Gestion des differents mouvements
 		comportement.hammertime.on("doubletap", function(e){comportement.playVideo(); comportement.touchXY(e);}); // Play/pause
 		comportement.hammertime.on("pinchin", function(e){comportement.stop(); comportement.touchXY(e);}); // Stop
-		comportement.hammertime.on("swiperight", function(e){comportement.bwd(); comportement.touchXY(e);}); // Avance de 10 secs -> Faire plutot passer au plan suivant ?
-		comportement.hammertime.on("swipeleft", function(e){comportement.fwd(); comportement.touchXY(e);}); // Recule de 10 secs -> Faire plutot revenir au plan precedent ?
-		comportement.hammertime.on("touch", function(e){comportement.touchXY(e);}); 
-		comportement.hammertime.on(all_events.join(" "), function(e){var posX = e.gesture.center.pageX - interface.posleft; var posY = e.gesture.center.pageY - interface.postop; comportement.showPos(posX, posY); console.log(comportement.vid.currentTime, posX, posY); annotations.enregistre(posX, posY)}); 
+		comportement.hammertime.on("swiperight", function(e){comportement.bwd(); comportement.touchXY(e);}); // Avance au plan suivant
+		comportement.hammertime.on("swipeleft", function(e){comportement.fwd(); comportement.touchXY(e);}); // Recule au plan precedent
+		comportement.hammertime.on(events_annot.join(" "), function(e){
+                                   var posX = e.gesture.center.pageX - interface.posleft;
+                                   var posY = e.gesture.center.pageY - interface.postop;
+                                   comportement.showPos(posX, posY);
+                                   console.log(comportement.vid.currentTime * 25, posX, posY, e.type);
+                                   annotations.enregistre_pos(Math.round(comportement.vid.currentTime * 25), e.type, posX, posY)
+                                   }); //Trouver un moyen d'automatiser les fps
+        annotations.temp_pos = [];
 	}
 	
 	comportement.update_segm= function(data){
@@ -104,21 +119,9 @@ comportement = function(){
 		}*/
 	}
 
-	comportement.release = function(e){
-		//annotation.stopenregistre();
-		console.log("stop");
-	}
-
 	// Affiche la position et le cercle sous le doigt
 	comportement.showPos = function(canX, canY){
 	  	comportement.pos.innerHTML = " (" + canX + "," + canY + ") ";
-		/*//A remettre quand j'aurai enfin le canvas. 
-		ctx.clearRect(0, 0, document.width, document.height);
-
-		ctx.beginPath();
-		ctx.arc(canX, canY, 10, 0, 2 * Math.PI, false);
-		ctx.fillStyle = 'white';
-		ctx.fill(); */
 	}
 
 
@@ -141,7 +144,7 @@ comportement = function(){
 	comportement.plans = function(){ 
 		comportement.curtime();
 		var tmp = comportement.segm[comportement.planActuel]/25 - comportement.decalage;
-		if((comportement.vid.currentTime > tmp)){ /* OU changer le if ici ? */
+		if(comportement.vid.currentTime > tmp){ /* OU changer le if ici ? */
 			comportement.planActuel +=1;
 			comportement.vid.pause();
 		}	
@@ -152,10 +155,12 @@ comportement = function(){
 		if(document.getElementById('sidebar').style.display != ""){ // Peut être lancee que si le menu est cache (Pour les annotations
 			if (comportement.vid.paused == true) {
 				comportement.vid.play();
-			}
+                comportement.vid.muted = true;
+                //comportement.annotTimer = window.setInterval("annotations.enregistre_annot()", 1/25); //Faire en fonction du nb de frames
+            }
 			else {
 				comportement.vid.pause();
-			}
+            }
 		}
 	}
 
@@ -194,7 +199,6 @@ comportement = function(){
 
 	// Evenement de fin de video 
 	comportement.vidEnd = function() {
-		comportement.playButton.value = "Play";
 		comportement.vid.playbackRate = 1;
 		clearTimeout(comportement.vidTimer)
 	}

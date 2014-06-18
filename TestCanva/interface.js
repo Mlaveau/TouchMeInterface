@@ -249,7 +249,7 @@ interface = function(){
 		}
 			
 		temp = "<video id=\"vid\" width = " + w + " height=" + h + ">" // De base : 400/720
-		 + "<source src=\"" + url + ".webm\" type=\"video/webm\" /><!-- Chrome10+, Ffx4+, Opera10.6+ -->"  
+		 + "<source src=\"" + url + ".webm\" type=\"video/webm\" /><!-- Chrome10+, Ffx4+, Opera10.6+ -->"
 		 + "<source src=\"" + url + ".mp4\" type=\"video/mp4\"  /> <!-- Safari / iOS, IE9 -->"
 		 + "Impossible de lire la video avec votre browser"
 		 + "</video>";
@@ -282,6 +282,7 @@ interface = function(){
 			canvas.style.left = "15px";
 			interface.posleft = 15;	
 		}else{ // Pour l'ouvrir
+            console.log("PlayVid");
 			slidemenu.style.display = "";
 			// resize de la video
 			vid.height = 411;
@@ -297,6 +298,12 @@ interface = function(){
 			 }
 		}	
 	}
+    
+    //Place un menu a cote de la souris pour envoyer les annotations
+    interface.popup = function(){
+        $j("#myModal").modal('show');
+        console.log("tudfblablablablablablablabla");
+    }
 	return interface;
 }();
 
