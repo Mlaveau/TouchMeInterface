@@ -84,7 +84,9 @@ comportement = function(){
         annotations.temp_annot = [];
         annotations.currentIdTab = 0;
         annotations.tempEvMulti = [];
+        annotations.temp_name = [];
         console.log(annotations.tempEvMulti);
+        annotations.tabColor = ['red', 'purple', 'green', 'orange', 'blue', 'black', 'aqua', 'white', 'lime', 'yellow', 'maroon', 'fuschia', 'navy', 'silver', 'gray', 'olive', 'teal']
 		/* Gestion du multitouch */
 		comportement.hammertime = Hammer(can);
 
@@ -110,13 +112,7 @@ comportement = function(){
 
 	// Affiche la position
 	comportement.touchXY = function(e) {
-
 		comportement.pos.innerHTML = comportement.planActuel + " : ";
-		/*// Lance l'enregistrement de la position jusqu'au lever du doigt si la video tourne
-		if(comportement.vid.paused != true){
-			console.log("yeah");//annotations.enregistre();
-	
-		}*/
 	}
 
 	// Affiche la position et le cercle sous le doigt

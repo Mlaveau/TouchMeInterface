@@ -1,12 +1,14 @@
 annotations = function(){
     
-    var temp_pos;
-    var tempEvMulti;
-    var currentFrame;
-    var currentIdTab;
+    var temp_pos; // Tableau des positions [(X,Y), ...]
+    var tempEvMulti; // Cache pour les frames ayant plusieurs positions
+    var temp_name; // Enregistre les noms deja vus[[nom, couleur], ..]
+    var tabColor; // Tableau des couleurs pour l'affichage des noms
     
+    // Id des corpus/media/layer
+    var idCorp, idMed, idLay;
 	function annotations (){
-    
+        
     }
 	
 	annotations.enregistre_pos = function(frame, type, posX, posY){
@@ -44,7 +46,7 @@ annotations = function(){
                         }else if(annotations.temp_pos[indexprec][0] == frame){
                             annotations.save(indexprec, frame, posX, posY, type);
                         }else { //Si c'est pas le cas, c'est que c'est un vrai debut donc on push
-                             annotations.save (indexprec, frame, posX, posY, type);
+                            annotations.save (indexprec, frame, posX, posY, type);
                         }
                         break;
                     case "hold" : // un touch juste avant
@@ -84,7 +86,7 @@ annotations = function(){
         var decalageX = (valeur[2] - posX) / espace;
         var decalageY = (valeur[3] - posY) / espace;
         for (var i = 1; i < espace; i++){
-             annotations.temp_pos.push([valeur[0]+i, "remplissage_auto", valeur[2] + i * decalageX, valeur[3] + i * decalageY]);
+            annotations.temp_pos.push([valeur[0]+i, "remplissage_auto", valeur[2] + i * decalageX, valeur[3] + i * decalageY]);
         }
         annotations.temp_pos.push([frame, type, posX, posY]);
         annotations.tempEvMulti = [];
@@ -117,37 +119,40 @@ annotations = function(){
         }
     }
     
-    
-    /*  annotations.enregistre_annot= function(){
-       
-        for (var i = 0; i< annotations.temp_pos.length; i++){
-            var valeur = annotations.temp_pos[i];
-            //console.log("valeur : " + valeur[0] + ", i : " + i + " framecount : " + annotations.currentFrame);
-            if(valeur[0] == annotations.currentFrame){//Si c'est tout simplement la même frame, on recopie la pos
-                // Si c'est un release, il faut arreter l'enregistrement et proposer d'entrer un nom
-                annotations.temp_annot.push([valeur[0], valeur[2], valeur[3]]);
-                if(valeur[1] == "release"){
-                    console.log("fin de l'enregistrement");
+    /* Envoyer les annotations au serveur puis efface le temp_pos */
+    annotations.envoyer = function(persoName) {
+        if(persoName == undefined){
+            persoName = document.getElementById("namePerso").value;
+        }
+        if(persoName != ""){
+            var vu = false;
+            for(var i = 0; i<annotations.temp_name.length; i++){
+                if(annotations.temp_name[i][0] == persoName){
+                    vu = true;
                 }
-                annotations.currentFrame++;
-                //break; Pour empecher quand ya deux valeurs pour la meme frame
-            }else if(valeur[0] > annotations.currentFrame){
-                                }
-                //Sinon, si c'est superieur a la frame qu'on cherche actuellement, il faut analyser celle d'avant et les types des deux enregistrements pour determiner la position ("dragstart", "drag","dragend", "hold", "touch", "release")
-                annotations.currentFrame++;
-                console.log("autre 1");
-            }else{
-                console.log("autre 2");
+            }
+            
+            if(!vu) {
+                annotations.temp_name.push([persoName, annotations.tabColor[annotations.temp_name.length%annotations.tabColor.length]]);
             }
         }
         
-    }*/
-
-    
-    annotations.envoyer = function() {
+        // l'annotation
+        // Enregistrer l'annotation dans le bon layer
         
+        var fragment = [ annotations.temp_pos[0][0],annotations.temp_pos[annotations.temp_pos.length-1][0]]; // Interval de temps
+        var pos = [];
+        for (var i = 0; i < annotations.temp_pos.length; i++){
+            pos.push([annotations.temp_pos[i][2], annotations.temp_pos[i][3]]);
+        }
+        var dat = [persoName, pos ]; // [name, [(posX,posY), ...]]
+        camomile.create_annotation(function(data){console.log(data + " Ok ");}, annotations.idCorp, annotations.idMed, annotations.idLay, fragment, dat);
+        
+        // Reinitialisation du champ du nom et du tableau de positions
+        annotations.temp_pos = [];
+        document.getElementById("namePerso").value = "";
     }
-        
-	return annotations;	
+    
+	return annotations;
 }();
 

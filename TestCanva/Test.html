@@ -103,26 +103,34 @@
 			<!-- Videos -->
 			<div class="container theme-showcase" role="main" style= "padding-top : 50px; margin-top:45px; padding-left:30px; margin-left:0px; margin-bottom:0px; padding-bottom: 0px" id="divVid"> <!-- Remplacer en mettant "margin: auto" ? -->
 				Veuillez vous connecter pour visualiser les videos
-				<!--<canvas id="can" height= 806 width= 1008 style="background-color: green">
-                 </canvas>-->
 			</div> <!--Fin de la video -->
             
             <!-- Fenetre Modal -->
-            <div id="myModal" class="modal fade" style="bottom:auto">
-                <div class="modal-dialog" style="margin: 0px 0px 0px 0px; padding: 0px 0px 0px 0px; width: auto">
+            <div id="myModal" class="modal fade" style="bottom:auto" >
+                <div class="modal-dialog" style="margin: 0px 0px 0px 0px; padding: 0px 0px 0px 0px; width:auto; color:#000">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                            <h4 class="modal-title">Confirmation</h4>
+                            <!--<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>-->
+                            <h4 class="modal-title">Enregistrement des annotations </h4>
                         </div>
                         <div class="modal-body">
-                            <div class="divDialogElements">
-                                <input id="xlInput" class="xlarge" type="text" name="xlInput"></input>
+                            <div class="divDialogElements" style = "height:35px">
+                                Personnage :
+                                <input id="namePerso" class="xlarge" type="text" name="xlInput" autofocus="autofocus">
                             </div>
+                            <div id ="badges">
+                                <!--<a href="#"><span class="badge" data-dismiss="modal" onClick = "annotations.envoyer('Leonard');">Leonard</span></a>
+                                <a href="#"><span class="badge" data-dismiss="modal" onClick = "annotations.envoyer('Sheldon');">Sheldon</span></a>
+                                <a href="#"><span class="badge" data-dismiss="modal" onClick = "annotations.envoyer('Penny');">Penny</span></a>-->
+                            </div>
+
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-default" data-dismiss="modal"> Annuler </button>
-                            <button type="button" onClick= "annotations.envoyer();"class="btn btn-primary"> Envoyer </button>
+                            <button type="button" class="btn btn-default" onClick="annotations.temp_pos = [];document.getElementById(\"namePerso\").value = \"\";" data-dismiss="modal">
+                                Annuler
+                            </button>
+                            <button type="button" data-dismiss="modal" onClick= "annotations.envoyer();" class="btn btn-primary"> Envoyer
+                            </button>
                         </div>
                     </div>
                 </div>
