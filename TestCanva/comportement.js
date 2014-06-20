@@ -145,6 +145,11 @@ comportement = function(){
 		if(comportement.vid.currentTime > tmp){ /* OU changer le if ici ? */
 			comportement.planActuel +=1;
 			comportement.vid.pause();
+            
+            // Pour enregistrer les pos si on en a pointe
+            if(annotations.temp_pos != ""){
+                interface.popup();
+            }
 		}	
 	}
 

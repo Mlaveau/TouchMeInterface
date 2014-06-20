@@ -91,7 +91,8 @@ annotations = function(){
         }
         annotations.temp_pos.push([frame, type, posX, posY]);
         annotations.tempEvMulti = [];
-        annotations.tempEvMulti.push([frame, type, posX, posY]);    }
+        annotations.tempEvMulti.push([frame, type, posX, posY]);
+    }
     
     // Enregistre en verifiant qu'il n'y a pas plusieurs evenements pour la meme frame, si c'est le cas, fais la moyenne de tout
     annotations.save = function(indexprec, frame, posX, posY, type){
@@ -150,6 +151,12 @@ annotations = function(){
         camomile.create_annotation(function(data){console.log(data + " Ok ");}, annotations.idCorp, annotations.idMed, annotations.idLay, fragment, dat);
         
         // Reinitialisation du champ du nom et du tableau de positions
+        annotations.temp_pos = [];
+        document.getElementById("namePerso").value = "";
+    }
+    
+    
+    annotations.reset = function(){
         annotations.temp_pos = [];
         document.getElementById("namePerso").value = "";
     }
