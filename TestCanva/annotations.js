@@ -73,6 +73,7 @@ annotations = function(){
                             annotations.save(indexprec, frame, posX, posY, type);
                         }
                         interface.popup();
+                        comportement.playVideo();
                         break;
                 }
             }
@@ -140,7 +141,7 @@ annotations = function(){
         // l'annotation
         // Enregistrer l'annotation dans le bon layer
         
-        var fragment = [ annotations.temp_pos[0][0],annotations.temp_pos[annotations.temp_pos.length-1][0]]; // Interval de temps
+        var fragment = [annotations.temp_pos[0][0],annotations.temp_pos[annotations.temp_pos.length-1][0]]; // Interval de temps
         var pos = [];
         for (var i = 0; i < annotations.temp_pos.length; i++){
             pos.push([annotations.temp_pos[i][2], annotations.temp_pos[i][3]]);

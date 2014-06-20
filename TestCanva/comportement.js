@@ -96,11 +96,13 @@ comportement = function(){
 		comportement.hammertime.on("swiperight", function(e){comportement.bwd(); comportement.touchXY(e);}); // Avance au plan suivant
 		comportement.hammertime.on("swipeleft", function(e){comportement.fwd(); comportement.touchXY(e);}); // Recule au plan precedent
 		comportement.hammertime.on(events_annot.join(" "), function(e){
+                                   if (interface.visuaAnnot == false||interface.visuaAnnot == undefined){
                                    var posX = e.gesture.center.pageX - interface.posleft;
                                    var posY = e.gesture.center.pageY - interface.postop;
                                    comportement.showPos(posX, posY);
                                    console.log(comportement.vid.currentTime * 25, posX, posY, e.type);
                                    annotations.enregistre_pos(Math.round(comportement.vid.currentTime * 25), e.type, posX, posY)
+                                   }
                                    }); //Trouver un moyen d'automatiser les fps
         annotations.temp_pos = [];
 	}

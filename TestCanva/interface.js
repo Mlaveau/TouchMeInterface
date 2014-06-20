@@ -12,20 +12,23 @@ interface = function(){
 		
 	}
 	var posleft, postop;
-	
-	
+	var visuaAnnot;
+    var tempsPosVisualisation;
+	var myInterval;
+    
 	/* Recupere les info pour le log */
 	interface.tologin = function() {
+        interface.username= "";
+        interface.username.innerHTML = "";
 		//Pour rester connectee
 		camomile.login(interface.callback_login, document.getElementById("LoginUsername").value, document.getElementById("LoginPassword").value, "http://lit-shore-5364.herokuapp.com" );
         
 		/* Affiche l'utilisateur courant */
 		var logoutDiv = document.getElementById("logoutDiv");
 		var menuSlideButton = document.getElementById("slideMenuButton");
-		if (logoutDiv.childNodes.length > 5)
-			logoutDiv.removeChild(logoutDiv.childNodes[1]);
-		var user = document.createTextNode('    User : ' + document.getElementById("LoginUsername").value + "        ");
-        logoutDiv.insertBefore(user, menuSlideButton);
+        var username = document.getElementById("userName");
+        username.innerHTML = "";
+        username.innerHTML ='    User : ' + document.getElementById("LoginUsername").value + "        ";
         
 	}
     
@@ -49,10 +52,6 @@ interface = function(){
         
 		/* Met a jour le menu des Corpus disponibles et l'affiche */
 		interface.update_menuCorpus();
-		
-		/* Enleve l'affichage du current user */
-		var logoutDiv = document.getElementById("logoutDiv");
-		logoutDiv.removeChild(logoutDiv.childNodes[1]);
 	}
     
 	/* Traitement si deconnecte */
@@ -118,9 +117,34 @@ interface = function(){
                            menuCorp.innerHTML  = temp;
                            }
                            )
-        
-        
+        /* Ajoute l'evenement sur le button -> Le faire sur TOUS !! */
+        var el = document.getElementById("visualisation");
+        if (el.addEventListener){
+            el.addEventListener("click", interface.visualiser, false);
+        }else if (el.attachEvent){
+            el.attachEvent('onclick', interface.visualiser);
+        }
 	}
+    
+    interface.visualiser = function(){
+        if (interface.visuaAnnot == false || interface.visuaAnnot == undefined){
+            interface.visuaAnnot = true;
+            camomile.getAnnotations(function(data){
+                                    interface.tempPosVisualisation = data[0];
+                                    console.log(data);
+                                    },
+                                    annotations.idCorp,
+                                    annotations.idMed,
+                                    annotations.idLay);
+            
+
+        }else {
+            interface.visuaAnnot = false;
+            interface.tempsPosVisualisation = [];
+        }
+        window.open('Visualisation.html','Visualisation','menubar=no, scrollbars=no, top=100, left=100, width=300, height=200');
+        
+    }
     
 	/* Met a jour le menu des videos -> Appele quand on a clique sur un corpus  */
 	interface.update_menuVid = function(corpusId, corpusName){

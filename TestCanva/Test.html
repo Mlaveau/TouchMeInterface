@@ -2,23 +2,30 @@
 <html>
     <head>
         <meta charset="UTF-8">
-            <meta name="apple-mobile-web-app-capable" content="yes">
-                <meta name="viewport" content="user-scalable=no, width=device-width, initial-scale=1, maximum-scale=1">
-                    <meta name="description" content="">
-                        <meta name="author" content="">
-                            
-                            <title>Interface d'annotation de vidéos</title>
-                            
-                            <!-- Bootstrap core CSS -->
-                            <link href="bs/css/bootstrap.min.css" rel="stylesheet">
-                                
-                                <!-- Permet l'utilisation les icones-->
-                                <link href="bs/css/bootstrap.css" rel="stylesheet">
-                                    
-                                    <!-- Pour les modifications propres à l'appli -->
-                                    <link href="style.css" rel="stylesheet">
-                                        
-                                        </head>
+        </meta>
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        </meta>
+        <meta name="viewport" content="user-scalable=no, width=device-width, initial-scale=1, maximum-scale=1">
+        </meta>
+        <meta name="description" content="">
+        </meta>
+        <meta name="author" content="">
+        </meta>
+        
+        <title>
+            Interface d'annotation de vidéos
+        </title>
+        
+        <!-- Bootstrap core CSS -->
+        <link href="bs/css/bootstrap.min.css" rel="stylesheet"></link>
+        
+        <!-- Permet l'utilisation les icones-->
+        <link href="bs/css/bootstrap.css" rel="stylesheet"></link>
+        
+        <!-- Pour les modifications propres à l'appli -->
+        <link href="style.css" rel="stylesheet"></link>
+        
+    </head>
     
 	<body>
         
@@ -26,49 +33,80 @@
 		<div class="navbar navbar-inverse navbar-fixed-top" role="navigation" >
 			<div class="container" id="navbarTop">
 				<div class="navbar-header">
-					<a class="navbar-brand" href="#">Brand</a>
+					<a class="navbar-brand" href="#">
+                        Brand
+                    </a>
 				</div> <!--Fin Navbar header-->
 				<div class="navbar-collapse collapse" role="navigation" style="padding-top:7px; padding-bottom : 0px; margin-bottom : 0px">
 					<ul class="nav navbar-nav">
-						<li><a href="#"><i class="icon-white icon-home"></i></a></li>
+						<li>
+                            <a href="#">
+                                <i class="icon-white icon-home">
+                                </i>
+                            </a>
+                        </li>
                         
 						<li class="dropdown" style="display:none">
-							<a href="#" class="dropdown-toggle" data-toggle="dropdown" id ="corpName"> <i class="icon-white icon-folder-open"></i>   Corpus   <b class="caret"></b></a>
+							<a href="#" class="dropdown-toggle" data-toggle="dropdown" id ="corpName">
+                                <i class="icon-white icon-folder-open"></i>
+                                    Corpus
+                                <b class="caret"></b>
+                            </a>
 							<ul class="dropdown-menu" id ="menuCorpus">
-								<li class="dropdown-header"> Veuillez vous connecter pour avoir accès à la liste des corpus </li>
+								<li class="dropdown-header">
+                                    Veuillez vous connecter pour avoir accès à la liste des corpus
+                                </li>
 							</ul>
 							
 						</li>
 						<li class="dropdown"  style="display:none">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" id = "vidName" ><i class="icon-white icon-film"></i>   Vidéos   <b class="caret"></b></a>
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" id = "vidName" >
+                                <i class="icon-white icon-film"></i>
+                                Vidéos
+                                <b class="caret"></b>
+                            </a>
 							<ul class="dropdown-menu" id ="menuVid">
-								<li class="dropdown-header" > Veuillez vous connecter et choisir un copus pour avoir accès à la liste des videos correspondantes </li>
+								<li class="dropdown-header" >
+                                    Veuillez vous connecter et choisir un corpus pour avoir accès à la liste des videos correspondantes
+                                </li>
 							</ul>
 						</li>
 						<li class="dropdown"  style="display:none">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" id = "segmName" ><i class="icon-white icon-file"></i>   Segmentation   <b class="caret"></b></a>
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" id = "segmName" >
+                                <i class="icon-white icon-file"></i>
+                                Segmentation
+                                <b class="caret"></b>
+                            </a>
 							<ul class="dropdown-menu" id ="menuSegm">
-								<li class="dropdown-header" > Veuillez choisir une video </li>
+								<li class="dropdown-header" >
+                                    Veuillez choisir une segmentation
+                                </li>
 							</ul>
 						</li>
 					</ul>
 					<form id="loginForm" class="navbar-form navbar-right" style ="padding-top:0px; margin-top : 0px" role="form" action="javascript:interface.tologin();">
 						<div class="form-group">
-                            
 							<input id="LoginUsername" class="form-control"  type="text" placeholder="Login" style ="padding-top:0px; margin-top : 0px">
-                                <input id="LoginPassword" class="form-control" type="Password" placeholder="Password" style ="padding-top:0px; margin-top : 0px">
-                                    <button id="loginButton" class="btn btn-success" type="submit" >
-                                        Connexion
-                                    </button>
-                                    </div>
+                            </input>
+                            <input id="LoginPassword" class="form-control" type="Password" placeholder="Password" style ="padding-top:0px; margin-top : 0px">
+                            </input>
+                            <button id="loginButton" class="btn btn-success" type="submit" >
+                                Connexion
+                            </button>
+                        </div>
 					</form>
 					<div id="logoutDiv" class="navbar-button navbar-right" role="form" style="display:none; color:white">
-						<button id="slideMenuButton" class="btn btn-info" onClick="interface.slideMenu()" type="submit"><i class="icon-white icon-list"></i></button>
+                        <span class="badge" id="userName" style="background-color:#333">
+                        </span>
+                        <button type="submit" class="btn btn-info"  id = "visualisation"> Visualisation
+                        </button>
+						<button id="slideMenuButton" class="btn btn-info" onClick="interface.slideMenu();" type="submit">
+                            <i class="icon-white icon-list">
+                            </i>
+                        </button>
 						<button id="logoutButton" class="btn btn-success" onClick="interface.tologout();" type="submit">
                             Deconnexion
 						</button>
-                        
-                        
 					</div>
                     
 				</div><!--/.nav-collapse -->
@@ -81,7 +119,12 @@
 			<!-- sidebar -->
 			<div class="column col-sm-1 col-xs-1 sidebar-offcanvas" id="sidebar" style="margin-top:30px; margin-left:10px; display:None">
 				<ul class="nav">
-					<li><a href="#" data-toggle="offcanvas" class="visible-xs text-center"><i class="glyphicon glyphicon-chevron-right"></i></a></li>
+					<li>
+                        <a href="#" data-toggle="offcanvas" class="visible-xs text-center">
+                            <i class="glyphicon glyphicon-chevron-right">
+                            </i>
+                        </a>
+                    </li>
 				</ul>
                 
 				<ul class="nav hidden-xs navbar-left" id="lg-menu" style = "color:white ">
@@ -93,10 +136,26 @@
                 
 				<!-- tiny only nav-->
 				<ul class="nav visible-xs" id="xs-menu"> <!-- Changer la couleur des lien dans le cas des sidebar en blanc -->
-					<li><a href="#" class="text-center"><i class="glyphicon glyphicon-list-alt"></i></a></li>
-					<li><a href="#" class="text-center"><i class="glyphicon glyphicon-list"></i></a></li>
-					<li><a href="#" class="text-center"><i class="glyphicon glyphicon-paperclip"></i></a></li>
-					<li><a href="#" class="text-center"><i class="glyphicon glyphicon-refresh"></i></a></li>
+					<li>
+                        <a href="#" class="text-center">
+                            <i class="glyphicon glyphicon-list-alt"></i>
+                        </a>
+                    </li>
+					<li>
+                        <a href="#" class="text-center">
+                            <i class="glyphicon glyphicon-list"></i>
+                        </a>
+                    </li>
+					<li>
+                        <a href="#" class="text-center">
+                            <i class="glyphicon glyphicon-paperclip"></i>
+                        </a>
+                    </li>
+					<li>
+                        <a href="#" class="text-center">
+                            <i class="glyphicon glyphicon-refresh"></i>
+                        </a>
+                    </li>
 				</ul>
 			</div>
             
@@ -117,16 +176,13 @@
                             <div class="divDialogElements" style = "height:35px">
                                 Personnage :
                                 <input id="namePerso" class="xlarge" type="text" name="xlInput" autofocus="autofocus">
-                            </div>
+                                    </div>
                             <div id ="badges">
-                                <!--<a href="#"><span class="badge" data-dismiss="modal" onClick = "annotations.envoyer('Leonard');">Leonard</span></a>
-                                <a href="#"><span class="badge" data-dismiss="modal" onClick = "annotations.envoyer('Sheldon');">Sheldon</span></a>
-                                <a href="#"><span class="badge" data-dismiss="modal" onClick = "annotations.envoyer('Penny');">Penny</span></a>-->
                             </div>
-
+                            
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-default" onClick="annotations.temp_pos = [];document.getElementById(\"namePerso\").value = \"\";" data-dismiss="modal">
+                            <button type="button" class="btn btn-default" onClick="annotations.temp_pos = [];document.getElementById(\'namePerso\').value = \'\';" data-dismiss="modal">
                                 Annuler
                             </button>
                             <button type="button" data-dismiss="modal" onClick= "annotations.envoyer();" class="btn btn-primary"> Envoyer
@@ -145,19 +201,45 @@
 					<ul class="nav navbar-nav" >
 						<!-- Buttons -->
 						<!-- Pause -->
-						<li style = "margin-left:10px"><button class="btn" onclick="javascript:comportement.stop()"> <i class="icon-large icon-stop"></i> </button> </li>
+						<li style = "margin-left:10px">
+                            <button class="btn" onclick="javascript:comportement.stop()">
+                                <i class="icon-large icon-stop"></i>
+                            </button>
+                        </li>
 						<!-- Backward -->
-						<li style = "margin-left:10px"><button class="btn" onclick="javascript:comportement.bwd()"> <i class="icon-large icon-step-backward"></i> </button></li>
+						<li style = "margin-left:10px">
+                            <button class="btn" onclick="javascript:comportement.bwd()">
+                                <i class="icon-large icon-step-backward"></i>
+                            </button>
+                        </li>
 						<!-- Slower -->
-						<li style = "margin-left:10px"><button class="btn" onclick="javascript:comportement.slower()"> <i class="icon-large icon-backward"></i> </button></li>
+						<li style = "margin-left:10px">
+                            <button class="btn" onclick="javascript:comportement.slower()"> <i class="icon-large icon-backward"></i>
+                            </button>
+                        </li>
 						<!-- Faster -->
-						<li style = "margin-left:10px"><button class="btn" onclick="javascript:comportement.faster()"> <i class="icon-large icon-forward"></i> </button></li>
+						<li style = "margin-left:10px">
+                            <button class="btn" onclick="javascript:comportement.faster()"> <i class="icon-large icon-forward"></i>
+                            </button>
+                        </li>
 						<!-- Forward -->
-						<li style = "margin-left:10px"><button class="btn" onclick="javascript:comportement.fwd()"> <i class="icon-large icon-step-forward"></i> </button> </li>
+						<li style = "margin-left:10px">
+                            <button class="btn" onclick="javascript:comportement.fwd()">
+                                <i class="icon-large icon-step-forward"></i>
+                            </button>
+                        </li>
 						<!-- Affichages -->
-						<li style = "margin-left:15px; margin-top:10px"><span id ="curtime"> 0 </span>/<span id ="temps"> 0 </span></li>
-						<li style = "margin-left:5px; margin-top:10px"><span id ="position"></span></li>
-						<li style= "margin-top:10px"><span id ="vitesse"></span></li>
+						<li style = "margin-left:15px; margin-top:10px">
+                            <span id ="curtime"> 0 </span>
+                            /
+                            <span id ="temps"> 0 </span>
+                        </li>
+						<li style = "margin-left:5px; margin-top:10px">
+                            <span id ="position"></span>
+                        </li>
+						<li style= "margin-top:10px">
+                            <span id ="vitesse"></span>
+                        </li>
 					</ul>
 				</div><!--/.nav-collapse -->
 			</div> <!--Fin container-->
@@ -190,12 +272,12 @@
 			document.ontouchmove = function(event){
 				event.preventDefault();
 			}
-            // Jquery Conflicts
-            var $j = jQuery.noConflict();
+        // Jquery Conflicts
+        var $j = jQuery.noConflict();
         
-            // Init the videos variables
-            comportement.init();
-        </script>
+        // Init the videos variables
+        comportement.init();
+            </script>
 	</body>
 </html>
 

@@ -306,8 +306,8 @@ camomile = function(){
 	/* Annotation builder */
 	camomile.annotation = function(fragmenttyp, datatyp){
 		var data = {};
-		data.fragment_typ = fragmenttyp;
-		data.datatyp = datatyp;
+		data.fragment = fragmenttyp;
+		data.data = datatyp;
 		return data;
 	}
     
