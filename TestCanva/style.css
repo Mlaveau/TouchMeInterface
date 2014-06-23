@@ -4,11 +4,11 @@
 
 /* Pour le menu glissant, les liens sont en blanc */
 #lg-menu>li>a {
-  color:white;
+  color: white;
 }
 
 /* empeche la selection dans le body -> Plutot mettre que sur la video ?*/
-body{
+body {
   -webkit-user-select: none; 
 }
 
@@ -17,3 +17,71 @@ body{
    width: device-width; /* largeur du viewport */
    zoom: 1; /* zoom initial à 1.0 (et clin d'oeil aux fans d'IE6/7) */
 }
+
+/* Concerne les barres de navigation */
+/* Du haut */
+.navbar-collapse {
+    padding-top: 7px;
+    padding-bottom: 0px;
+    margin-bottom: 0px;
+}
+
+/* du bas */
+.nav>li {
+    margin-left: 10px;
+}
+
+.nav>#affichage {
+    margin-left: 5px;
+    margin-top: 10px
+}
+
+nav>#affichage{
+    margin-top: 10px;
+}
+
+
+/* Fenetre modale d'enregistrement des annotations */
+.modal-dialog {
+    margin: 0px 0px 0px 0px;
+    padding: 0px 0px 0px 0px;
+    width: auto;
+    color: #000;
+}
+
+#myModal {
+    bottom:auto;
+}
+
+/* Div de la video */
+#divVid{
+    padding-top: 50px;
+    margin-top: 45px;
+    padding-left: 15px;
+    margin-left: 0px;
+    margin-bottom: 0px;
+    padding-bottom: 0px;
+}
+
+/* Menu coulissant */
+#sidebar{
+    margin-top: 30px;
+    margin-left: 10px;
+}
+
+/* Container du menu coulissant et de la div de la video */
+.row{
+    color: white;
+    z-index: 10;
+}
+
+/* Affichage du user courant */
+#userName{
+    background-color:#333;
+}
+
+/* Div du logout */
+#logoutDiv{
+    color:white;
+}
+

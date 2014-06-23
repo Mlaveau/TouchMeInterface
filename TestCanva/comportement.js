@@ -91,7 +91,7 @@ comportement = function(){
 		comportement.hammertime = Hammer(can);
 
 		// Gestion des differents mouvements
-		comportement.hammertime.on("doubletap", function(e){comportement.playVideo(); comportement.touchXY(e);}); // Play/pause
+		comportement.hammertime.on("doubletap", function(e){comportement.playVideo(); comportement.touchXY(e); annotations.temp_pos = []; console.log(e.type);}); // Play/pause
 		comportement.hammertime.on("pinchin", function(e){comportement.stop(); comportement.touchXY(e);}); // Stop
 		comportement.hammertime.on("swiperight", function(e){comportement.bwd(); comportement.touchXY(e);}); // Avance au plan suivant
 		comportement.hammertime.on("swipeleft", function(e){comportement.fwd(); comportement.touchXY(e);}); // Recule au plan precedent
@@ -139,8 +139,7 @@ comportement = function(){
 
 	/* Gestion de la video */
 
-	comportement.plans = function(){ 
-		comportement.curtime();
+	comportement.plans = function(){
 		var tmp = comportement.segm[comportement.planActuel]/25 - comportement.decalage;
 		if(comportement.vid.currentTime > tmp){ /* OU changer le if ici ? */
 			comportement.planActuel +=1;
@@ -155,6 +154,8 @@ comportement = function(){
 
 	// Play 
 	comportement.playVideo = function() {
+        
+		comportement.vidTimer = window.setInterval("comportement.curtime()", 1);
 		if(document.getElementById('sidebar').style.display != ""){ // Peut être lancee que si le menu est cache (Pour les annotations
 			if (comportement.vid.paused == true) {
 				comportement.vid.play();

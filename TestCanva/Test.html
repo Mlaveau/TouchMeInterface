@@ -37,7 +37,7 @@
                         
                     </a>
 				</div> <!--Fin Navbar header-->
-				<div class="navbar-collapse collapse" role="navigation" style="padding-top:7px; padding-bottom : 0px; margin-bottom : 0px">
+				<div class="navbar-collapse collapse" role="navigation" >
 					<ul class="nav navbar-nav">
 						<li class="dropdown" style="display:none">
 							<a href="#" class="dropdown-toggle" data-toggle="dropdown" id ="corpName">
@@ -88,8 +88,8 @@
                             </button>
                         </div>
 					</form>
-					<div id="logoutDiv" class="navbar-button navbar-right" role="form" style="display:none; color:white">
-                        <span class="badge" id="userName" style="background-color:#333">
+					<div id="logoutDiv" class="navbar-button navbar-right" role="form" style="display:none;">
+                        <span class="badge" id="userName">
                         </span>
                         <button type="submit" class="btn btn-info"  id = "visualisation"> Visualisation
                         </button>
@@ -108,9 +108,9 @@
 		</div> <!--Fin Navbar inverse-->
         
 		<!-- Contenu -->
-		<div class="row row-offcanvas row-offcanvas-left" style = "color:white; z-index: 10 ">
+		<div class="row row-offcanvas row-offcanvas-left">
 			<!-- sidebar -->
-			<div class="column col-sm-1 col-xs-1 sidebar-offcanvas" id="sidebar" style="margin-top:30px; margin-left:10px; display:None">
+			<div class="column col-sm-1 col-xs-1 sidebar-offcanvas" id="sidebar" style="display:none">
 				<ul class="nav">
 					<li>
                         <a href="#" data-toggle="offcanvas" class="visible-xs text-center">
@@ -120,14 +120,14 @@
                     </li>
 				</ul>
                 
-				<ul class="nav hidden-xs navbar-left" id="lg-menu" style = "color:white ">
+				<ul class="nav hidden-xs navbar-left" id="lg-menu">
 					<li><a href="#">Truc</a></li>
 					<li><a href="#">Bidule</a></li>
 					<li><a href="#">Machin</a></li>
 					<li><a href="#">Chose</a></li>
 				</ul>
-                
-				<!-- tiny only nav-->
+				
+                <!-- tiny only nav-->
 				<ul class="nav visible-xs" id="xs-menu"> <!-- Changer la couleur des lien dans le cas des sidebar en blanc -->
 					<li>
                         <a href="#" class="text-center">
@@ -153,13 +153,13 @@
 			</div>
             
 			<!-- Videos -->
-			<div class="container theme-showcase" role="main" style= "padding-top : 50px; margin-top:45px; padding-left:15px; margin-left:0px; margin-bottom:0px; padding-bottom: 0px" id="divVid"> <!-- Remplacer en mettant "margin: auto" ? -->
+			<div class="container theme-showcase" role="main" id="divVid"> <!-- Remplacer en mettant "margin: auto" ? -->
 				Veuillez vous connecter pour visualiser les videos
 			</div> <!--Fin de la video -->
             
             <!-- Fenetre Modal -->
-            <div id="myModal" class="modal fade" style="bottom:auto" >
-                <div class="modal-dialog" style="margin: 0px 0px 0px 0px; padding: 0px 0px 0px 0px; width:auto; color:#000">
+            <div id="myModal" class="modal fade" >
+                <div class="modal-dialog">
                     <div class="modal-content">
                         <div class="modal-header">
                             <!--<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>-->
@@ -194,44 +194,40 @@
 					<ul class="nav navbar-nav" >
 						<!-- Buttons -->
 						<!-- Pause -->
-						<li style = "margin-left:10px">
+						<li>
                             <button class="btn" onclick="javascript:comportement.stop()">
                                 <i class="icon-large icon-stop"></i>
                             </button>
                         </li>
 						<!-- Backward -->
-						<li style = "margin-left:10px">
+						<li>
                             <button class="btn" onclick="javascript:comportement.bwd()">
                                 <i class="icon-large icon-step-backward"></i>
                             </button>
                         </li>
 						<!-- Slower -->
-						<li style = "margin-left:10px">
+						<li>
                             <button class="btn" onclick="javascript:comportement.slower()"> <i class="icon-large icon-backward"></i>
                             </button>
                         </li>
 						<!-- Faster -->
-						<li style = "margin-left:10px">
+						<li>
                             <button class="btn" onclick="javascript:comportement.faster()"> <i class="icon-large icon-forward"></i>
                             </button>
                         </li>
 						<!-- Forward -->
-						<li style = "margin-left:10px">
+						<li>
                             <button class="btn" onclick="javascript:comportement.fwd()">
                                 <i class="icon-large icon-step-forward"></i>
                             </button>
                         </li>
 						<!-- Affichages -->
-						<li style = "margin-left:15px; margin-top:10px">
+						<li id = "affichage">
                             <span id ="curtime"> 0 </span>
                             /
                             <span id ="temps"> 0 </span>
-                        </li>
-						<li style = "margin-left:5px; margin-top:10px">
+                       
                             <span id ="position"></span>
-                        </li>
-						<li style= "margin-top:10px">
-                            <span id ="vitesse"></span>
                         </li>
 					</ul>
 				</div><!--/.nav-collapse -->

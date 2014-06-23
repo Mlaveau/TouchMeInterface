@@ -66,14 +66,16 @@ annotations = function(){
                         // Le release peut ne pas etre exactement au meme endroit que le touch ou le hold
                         // release -> Popu pour enregistrer les pos (Noms, layer nom, etc)
                         // Vider le tableau temp_pos
-                        
-                        if((annotations.temp_pos[indexprec][1] == "touch" || annotations.temp_pos[indexprec][1] == "hold") && annotations.temp_pos[indexprec][0] !=frame){
-                            annotations.extrapol(indexprec, frame, posX, posY, type);
-                        }else if(annotations.temp_pos[indexprec][0] == frame){
-                            annotations.save(indexprec, frame, posX, posY, type);
+                        if(annotations.temp_pos.length  > 4){ // Pour gerer les pauses quand la video tourne
+                            if((annotations.temp_pos[indexprec][1] == "touch" || annotations.temp_pos[indexprec][1] == "hold") && annotations.temp_pos[indexprec][0] !=frame){
+                                annotations.extrapol(indexprec, frame, posX, posY, type);
+                            }else if(annotations.temp_pos[indexprec][0] == frame){
+                                annotations.save(indexprec, frame, posX, posY, type);
+                            }
+                            interface.popup();
+                            comportement.vid.pause();
+                            
                         }
-                        interface.popup();
-                        comportement.playVideo();
                         break;
                 }
             }
