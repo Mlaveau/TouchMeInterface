@@ -307,7 +307,7 @@ interface = function(){
         + "Impossible de lire la video avec votre browser"
         + "</video>";
 		/* Ajout du canvas */
-		temp += "<canvas id=\"can\" height=" + h + " width=" + w + " style=\"z-index:2; top:" + interface.postop + "px; left:" + interface.posleft + "px; position:absolute; background-color:rgba(255, 255, 255, 0.3);\"></canvas>";
+		temp += "<canvas id=\"can\" height=" + h + " width=" + w + " style=\"z-index:2; top:" + interface.postop + "px; left:" + (interface.posleft + 5) + "px; position:absolute; background-color:rgba(255, 255, 255, 0.3);\"></canvas>";
 		divVid.innerHTML = "";
 		divVid.innerHTML = temp;
 		/* Mise a lechelle de lecran automatiquement -> Fonctionne pas sous iPad.
