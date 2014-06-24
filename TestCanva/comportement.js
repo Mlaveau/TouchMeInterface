@@ -66,8 +66,73 @@ comportement = function(){
 		comportement.vit = document.getElementById("vitesse");
         comportement.annotTimer = "";
         
+        /* Ajout des evenelents sur les boutons */
+        // Boutons du logout/login
+        var el = document.getElementById("slideMenuButton");
+        if (el.addEventListener){
+            el.addEventListener("click", interface.slideMenu, false);
+        }else if (el.attachEvent){
+            el.attachEvent('onclick', interface.slideMenu);
+        }
         
-       
+        var el = document.getElementById("logoutButton");
+        if (el.addEventListener){
+            el.addEventListener("click", interface.tologout, false);
+        }else if (el.attachEvent){
+            el.attachEvent('onclick', interface.tologout);
+        }
+
+        // Boutons de la fenetre modale
+        var el = document.getElementById("envoyerAnnot");
+        if (el.addEventListener){
+            el.addEventListener("click", annotations.envoyer, false);
+        }else if (el.attachEvent){
+            el.attachEvent('onclick', annotations.envoyer);
+        }
+        
+        var el = document.getElementById("annulerAnnot");
+        if (el.addEventListener){
+            el.addEventListener("click", annotations.reset, false);
+        }else if (el.attachEvent){
+            el.attachEvent('onclick', annotations.reset);
+        }
+        
+        // Boutons de la barre du bas
+        var el = document.getElementById("fwd");
+        if (el.addEventListener){
+            el.addEventListener("click", comportement.fwd, false);
+        }else if (el.attachEvent){
+            el.attachEvent('onclick', comportement.fwd);
+        }
+        
+        var el = document.getElementById("faster");
+        if (el.addEventListener){
+            el.addEventListener("click", comportement.faster, false);
+        }else if (el.attachEvent){
+            el.attachEvent('onclick', comportement.faster);
+        }
+        
+        var el = document.getElementById("slower");
+        if (el.addEventListener){
+            el.addEventListener("click", comportement.slower, false);
+        }else if (el.attachEvent){
+            el.attachEvent('onclick', comportement.slower);
+        }
+        
+        var el = document.getElementById("bwd");
+        if (el.addEventListener){
+            el.addEventListener("click", comportement.bwd, false);
+        }else if (el.attachEvent){
+            el.attachEvent('onclick', comportement.bwd);
+        }
+        
+        var el = document.getElementById("stop");
+        if (el.addEventListener){
+            el.addEventListener("click", comportement.stop, false);
+        }else if (el.attachEvent){
+            el.attachEvent('onclick', comportement.stop);
+        }
+        
 	}
 
 
@@ -98,8 +163,8 @@ comportement = function(){
 		comportement.hammertime.on(events_annot.join(" "), function(e){
                                    if (interface.visuaAnnot == false||interface.visuaAnnot == undefined){
                                    // Position en % de la hauteur et de la largeur
-                                   var posX = ((e.gesture.center.pageX - interface.posleft)*100)/comportement.vid.width;
-                                   var posY = ((e.gesture.center.pageY - interface.postop)*100)/comportement.vid.height;
+                                   var posX = Math.round((((e.gesture.center.pageX - interface.posleft) * 100) / comportement.vid.width) * 100) / 100;
+                                   var posY = Math.round((((e.gesture.center.pageY - interface.postop) * 100) / comportement.vid.height) * 100) / 100;
                                    comportement.showPos(posX, posY);
                                    //console.log(comportement.vid.currentTime * 25, posX, posY, e.type);
                                    annotations.enregistre_pos(Math.round(comportement.vid.currentTime * 25), e.type, posX, posY)

@@ -34,7 +34,6 @@ interface = function(){
     
 	interface.tologout = function(){
 		camomile.logout(interface.callback_logout);
-		
 	}
     
 	
@@ -136,14 +135,11 @@ interface = function(){
                                     annotations.idCorp,
                                     annotations.idMed,
                                     annotations.idLay);
-            
-
         }else {
             interface.visuaAnnot = false;
             interface.tempsPosVisualisation = [];
         }
         window.open('Visualisation.html','Visualisation','menubar=no, scrollbars=no, top=100, left=100, width=300, height=200');
-        
     }
     
 	/* Met a jour le menu des videos -> Appele quand on a clique sur un corpus  */
@@ -305,13 +301,13 @@ interface = function(){
 			interface.posleft = 85;
 		}
         
-		temp = "<video id=\"vid\" width = " + w + " height=" + h + "style=\"top:" + interface.postop + "px; left:" + interface.posleft + "px; position:absolute\" >" // De base : 400/720
+		temp = "<video id=\"vid\" width = " + w + " height=" + h + " style=\"top:" + interface.postop + "px; left:" + interface.posleft + "px; position:absolute\" >" // De base : 400/720
         + "<source src=\"" + url + ".webm\" type=\"video/webm\" /><!-- Chrome10+, Ffx4+, Opera10.6+ -->"
         + "<source src=\"" + url + ".mp4\" type=\"video/mp4\"  /> <!-- Safari / iOS, IE9 -->"
         + "Impossible de lire la video avec votre browser"
         + "</video>";
 		/* Ajout du canvas */
-		temp += "<canvas id=\"can\" height=" + h + " width=" + w + " style=\"z-index:2; top:" + interface.postop + "px; left:" + interface.posleft + "px; position:absolute; background-color:rgba(255, 255, 255, 0.3);\" align=\"center\"></canvas>";
+		temp += "<canvas id=\"can\" height=" + h + " width=" + w + " style=\"z-index:2; top:" + interface.postop + "px; left:" + interface.posleft + "px; position:absolute; background-color:rgba(255, 255, 255, 0.3);\"></canvas>";
 		divVid.innerHTML = "";
 		divVid.innerHTML = temp;
 		/* Mise a lechelle de lecran automatiquement -> Fonctionne pas sous iPad.
@@ -321,8 +317,6 @@ interface = function(){
          divVid.style.width = '100%';
          divVid.style.height = 'auto'; */
 		comportement.elVid();
-        
-		
 	}
     
 	interface.slideMenu = function(){
@@ -337,16 +331,17 @@ interface = function(){
 			canvas.height = 566;
 			canvas.width = 1019;
 			canvas.style.left = "15px";
-			interface.posleft = 15;	
+            vid.style.left = "15px";
+			interface.posleft = 15;
 		}else{ // Pour l'ouvrir
-            console.log("PlayVid");
 			slidemenu.style.display = "";
 			// resize de la video
 			vid.height = 411;
 			vid.width = 740;
 			canvas.height = 411;
 			canvas.width = 740;
-			canvas.style.left = "85px";	
+            canvas.style.left = "85px";
+            vid.style.left = "85px";
 			interface.posleft = 85;
 			// Met la video en pause
 			vid.pause();

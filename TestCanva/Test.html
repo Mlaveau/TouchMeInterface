@@ -2,28 +2,22 @@
 <html>
     <head>
         <meta charset="UTF-8">
-        </meta>
-        <meta name="apple-mobile-web-app-capable" content="yes">
-        </meta>
-        <meta name="viewport" content="user-scalable=no, width=device-width, initial-scale=1, maximum-scale=1">
-        </meta>
-        <meta name="description" content="">
-        </meta>
-        <meta name="author" content="">
-        </meta>
-        
+            <meta name="apple-mobile-web-app-capable" content="yes">
+                <meta name="viewport" content="user-scalable=no, width=device-width, initial-scale=1, maximum-scale=1">
+                    <meta name="description" content="">
+                        <meta name="author" content="">
         <title>
             Interface d'annotation de vidéos
         </title>
         
         <!-- Bootstrap core CSS -->
-        <link href="bs/css/bootstrap.min.css" rel="stylesheet"></link>
+        <link href="bs/css/bootstrap.min.css" rel="stylesheet">
         
         <!-- Permet l'utilisation les icones-->
-        <link href="bs/css/bootstrap.css" rel="stylesheet"></link>
+        <link href="bs/css/bootstrap.css" rel="stylesheet">
         
         <!-- Pour les modifications propres à l'appli -->
-        <link href="style.css" rel="stylesheet"></link>
+        <link href="style.css" rel="stylesheet">
         
     </head>
     
@@ -77,12 +71,12 @@
 							</ul>
 						</li>
 					</ul>
-					<form id="loginForm" class="navbar-form navbar-right" style ="padding-top:0px; margin-top : 0px" role="form" action="javascript:interface.tologin();">
+					<form id="loginForm" class="navbar-form navbar-right" role="form" action="javascript:interface.tologin();">
 						<div class="form-group">
-							<input id="LoginUsername" class="form-control"  type="text" placeholder="Login" style ="padding-top:0px; margin-top : 0px">
-                            </input>
-                            <input id="LoginPassword" class="form-control" type="Password" placeholder="Password" style ="padding-top:0px; margin-top : 0px">
-                            </input>
+							<input id="LoginUsername" class="form-control"  type="text" placeholder="Login">
+                            
+                            <input id="LoginPassword" class="form-control" type="Password" placeholder="Password">
+                            
                             <button id="loginButton" class="btn btn-success" type="submit" >
                                 Connexion
                             </button>
@@ -93,11 +87,11 @@
                         </span>
                         <button type="submit" class="btn btn-info"  id = "visualisation"> Visualisation
                         </button>
-						<button id="slideMenuButton" class="btn btn-info" onClick="interface.slideMenu();" type="submit">
+						<button id="slideMenuButton" class="btn btn-info" type="submit">
                             <i class="icon-white icon-list">
                             </i>
                         </button>
-						<button id="logoutButton" class="btn btn-success" onClick="interface.tologout();" type="submit">
+						<button id="logoutButton" class="btn btn-success" type="submit">
                             Deconnexion
 						</button>
 					</div>
@@ -175,10 +169,10 @@
                             
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-default" onClick="annotations.reset();" data-dismiss="modal">
+                            <button id="annulerAnnot" type="button" class="btn btn-default" data-dismiss="modal">
                                 Annuler
                             </button>
-                            <button type="button" data-dismiss="modal" onClick= "annotations.envoyer();" class="btn btn-primary"> Envoyer
+                            <button id="envoyerAnnot" type="button" data-dismiss="modal" class="btn btn-primary"> Envoyer
                             </button>
                         </div>
                     </div>
@@ -189,35 +183,35 @@
         
 		<!-- Navbar Bottom -->
 		<div class="navbar navbar-inverse navbar-fixed-bottom" role="navigation">
-			<div class="container" style = "color:white ; padding-left: 330px">
+			<div id="container" class="container">
 				<div class="navbar-collapse collapse">
 					<ul class="nav navbar-nav" >
 						<!-- Buttons -->
 						<!-- Pause -->
 						<li>
-                            <button class="btn" onclick="javascript:comportement.stop()">
+                            <button id="stop" class="btn">
                                 <i class="icon-large icon-stop"></i>
                             </button>
                         </li>
 						<!-- Backward -->
 						<li>
-                            <button class="btn" onclick="javascript:comportement.bwd()">
+                            <button id="bwd" class="btn" >
                                 <i class="icon-large icon-step-backward"></i>
                             </button>
                         </li>
 						<!-- Slower -->
 						<li>
-                            <button class="btn" onclick="javascript:comportement.slower()"> <i class="icon-large icon-backward"></i>
+                            <button class="btn" id="slower"> <i class="icon-large icon-backward"></i>
                             </button>
                         </li>
 						<!-- Faster -->
 						<li>
-                            <button class="btn" onclick="javascript:comportement.faster()"> <i class="icon-large icon-forward"></i>
+                            <button class="btn" id="faster" > <i class="icon-large icon-forward"></i>
                             </button>
                         </li>
 						<!-- Forward -->
 						<li>
-                            <button class="btn" onclick="javascript:comportement.fwd()">
+                            <button class="btn" id="fwd">
                                 <i class="icon-large icon-step-forward"></i>
                             </button>
                         </li>

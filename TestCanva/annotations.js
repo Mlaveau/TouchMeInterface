@@ -7,6 +7,7 @@ annotations = function(){
     
     // Id des corpus/media/layer
     var idCorp, idMed, idLay;
+    
 	function annotations (){
         
     }
@@ -14,12 +15,13 @@ annotations = function(){
     // Enregistre les annotations dans le temp /!\ elles doivent être en pourcentages !
 	// Enregistre les annotations dans le temp_pos en estrapolant -> Mais on ne veut plus extrapoler
     annotations.enregistre_pos = function(frame, type, posX, posY){
+        var indexprec = annotations.temp_pos.length-1;
+        console.log(indexprec);
         if(!comportement.vid.paused){
             if(type == "release" && annotations.temp_pos.length == 0){
                 // Si c'est le release d'après doubletap, dont on ne veut pas garder la trace, on ne fais rien
             } else { // Dans tous les autres cas, on enregistre, en extrapolant les positions pour les frames manquantes
                 // l'index de la derniere position enregistree
-                var indexprec = annotations.temp_pos.length-1;
                 switch(type){// NB : Possibilite d'un drag apres un hold/touch mais pas l'inverse. -> Peut poser des probs.
                     case "drag" : // Si c'est un drag, il y a forcement avant un drag ou un dragstart -> extrapoler les positions des frames intermediaires
                         /*
@@ -93,18 +95,17 @@ annotations = function(){
                                 modal.style.left = "";
                                 modal.style.right = "10px";
                             } else {
-                                modal.style.left = "10px";
+                                modal.style.left = "300px";
                                 modal.style.right = "";
                             }
                         }else{
                             modal.style.top = "10px";
                             modal.style.bottom = "auto";
-                            console.log(posY + "Triii" + comportement.vid.height/2);
                             if(posX < 50){
                                 modal.style.left = "";
                                 modal.style.right = "10px";
                             } else {
-                                modal.style.left = "10px";
+                                modal.style.left = "300px";
                                 modal.style.right = "";
                             }
                         }
@@ -113,13 +114,14 @@ annotations = function(){
                         break;
                 }
             }
-        }else if (type == "hold"){ // Si la video est en pause
+        } else if (type == "hold"){ // Si la video est en pause
             // Demarage de la video
             comportement.vid.play();
+            annotations.save(indexprec, frame, posX, posY, type);
         }
     }
     
-    // Estrapole les positions -> On veut juste garder les positions recuperees
+    // Extrapole les positions -> On veut juste garder les positions recuperees
     annotations.extrapol = function(i, frame, posX, posY, type) {
         var valeur = annotations.temp_pos[i];
         var espace = frame - valeur[0];
@@ -194,6 +196,8 @@ annotations = function(){
      }
      }
      */
+    
+    
     /* Envoyer les annotations au serveur puis efface le temp_pos */
     annotations.envoyer = function(persoName) {
         

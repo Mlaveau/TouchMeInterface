@@ -26,6 +26,25 @@ body {
     margin-bottom: 0px;
 }
 
+/* Barre de loggin */
+#loginForm{
+    padding-top: 0px;
+    margin-top : 0px;
+}
+
+#LoginUsername {
+    padding-top: 0px;
+    margin-top: 0px;
+}
+
+#logoutDiv {
+    color: white;
+}
+#LoginPassword {
+    padding-top: 0px;
+    margin-top: 0px
+}
+
 /* du bas */
 .nav>li {
     margin-left: 10px;
@@ -40,6 +59,10 @@ nav>#affichage{
     margin-top: 10px;
 }
 
+#container {
+    color: white;
+    padding-left: 330px;
+}
 
 /* Fenetre modale d'enregistrement des annotations */
 .modal-dialog {
@@ -86,11 +109,5 @@ nav>#affichage{
 
 /* Affichage du user courant */
 #userName{
-    background-color:#333;
+    background-color: #333;
 }
-
-/* Div du logout */
-#logoutDiv{
-    color:white;
-}
-
