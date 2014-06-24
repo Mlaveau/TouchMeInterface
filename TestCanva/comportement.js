@@ -85,7 +85,7 @@ comportement = function(){
         annotations.currentIdTab = 0;
         annotations.tempEvMulti = [];
         annotations.temp_name = [];
-        console.log(annotations.tempEvMulti);
+        //Tableau de couleur de pour l'affichages des noms des annotations
         annotations.tabColor = ['red', 'purple', 'green', 'orange', 'blue', 'black', 'aqua', 'white', 'lime', 'yellow', 'maroon', 'fuschia', 'navy', 'silver', 'gray', 'olive', 'teal']
 		/* Gestion du multitouch */
 		comportement.hammertime = Hammer(can);
@@ -97,10 +97,11 @@ comportement = function(){
 		comportement.hammertime.on("swipeleft", function(e){comportement.fwd(); comportement.touchXY(e);}); // Recule au plan precedent
 		comportement.hammertime.on(events_annot.join(" "), function(e){
                                    if (interface.visuaAnnot == false||interface.visuaAnnot == undefined){
-                                   var posX = e.gesture.center.pageX - interface.posleft;
-                                   var posY = e.gesture.center.pageY - interface.postop;
+                                   // Position en % de la hauteur et de la largeur
+                                   var posX = ((e.gesture.center.pageX - interface.posleft)*100)/comportement.vid.width;
+                                   var posY = ((e.gesture.center.pageY - interface.postop)*100)/comportement.vid.height;
                                    comportement.showPos(posX, posY);
-                                   console.log(comportement.vid.currentTime * 25, posX, posY, e.type);
+                                   //console.log(comportement.vid.currentTime * 25, posX, posY, e.type);
                                    annotations.enregistre_pos(Math.round(comportement.vid.currentTime * 25), e.type, posX, posY)
                                    }
                                    }); //Trouver un moyen d'automatiser les fps
@@ -208,4 +209,3 @@ comportement = function(){
 	}
 	return comportement;	
 }();
-

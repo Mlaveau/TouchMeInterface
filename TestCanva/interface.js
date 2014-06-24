@@ -305,13 +305,13 @@ interface = function(){
 			interface.posleft = 85;
 		}
         
-		temp = "<video id=\"vid\" width = " + w + " height=" + h + ">" // De base : 400/720
+		temp = "<video id=\"vid\" width = " + w + " height=" + h + "style=\"top:" + interface.postop + "px; left:" + interface.posleft + "px; position:absolute\" >" // De base : 400/720
         + "<source src=\"" + url + ".webm\" type=\"video/webm\" /><!-- Chrome10+, Ffx4+, Opera10.6+ -->"
         + "<source src=\"" + url + ".mp4\" type=\"video/mp4\"  /> <!-- Safari / iOS, IE9 -->"
         + "Impossible de lire la video avec votre browser"
         + "</video>";
 		/* Ajout du canvas */
-		temp += "<canvas id=\"can\" height=" + h + " width=" + w + " style=\"z-index:2; top:" + interface.postop + "px; left:" + interface.posleft + "px; position:absolute; background-color:rgba(255, 255, 255, 0.3)\" align=\"center\"></canvas>";
+		temp += "<canvas id=\"can\" height=" + h + " width=" + w + " style=\"z-index:2; top:" + interface.postop + "px; left:" + interface.posleft + "px; position:absolute; background-color:rgba(255, 255, 255, 0.3);\" align=\"center\"></canvas>";
 		divVid.innerHTML = "";
 		divVid.innerHTML = temp;
 		/* Mise a lechelle de lecran automatiquement -> Fonctionne pas sous iPad.
@@ -361,7 +361,7 @@ interface = function(){
         var divBadgesNames = document.getElementById("badges");
         divBadgesNames.innerHTML = " ";
         for(var i = 0; i < annotations.temp_name.length; i++){
-            divBadgesNames.innerHTML += "<a href=\'#\'><span class=\"badge\" data-dismiss=\'modal\' style= \'color:" + annotations.temp_name[i][1] + "; background-color:#DDD\' onClick = \"annotations.envoyer(\'" +  annotations.temp_name[i][0] + "\');\">" + annotations.temp_name[i][0] + "</span></a>";
+            divBadgesNames.innerHTML += "<a href=\'#\'><span class=\"badge\" data-dismiss=\'modal\' style= \'color:" + annotations.temp_name[i].color + "; background-color:#DDD\' onClick = \"annotations.envoyer(\'" +  annotations.temp_name[i].name + "\');\">" + annotations.temp_name[i].name + "</span></a>";
         }
         $j("#myModal").modal('show');
     }

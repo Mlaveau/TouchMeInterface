@@ -50,7 +50,15 @@ nav>#affichage{
 }
 
 #myModal {
-    bottom:auto;
+    bottom: auto;
+}
+
+#modal-body>#divDialogElements{
+    height: 35px;
+}
+
+.modal-backdrop.fade.in {
+    opacity: 0.01; /* Ne fonctionne pas avec seulement un '0'*/
 }
 
 /* Div de la video */
@@ -62,6 +70,7 @@ nav>#affichage{
     margin-bottom: 0px;
     padding-bottom: 0px;
 }
+
 
 /* Menu coulissant */
 #sidebar{
