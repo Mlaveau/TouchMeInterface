@@ -58,7 +58,6 @@ comportement = function(){
 		// Objects : button et video
 		comportement.vid = document.getElementById("vid");
         comportement.vid.addEventListener('ended', comportement.vidEnd, false);
-        var can = document.getElementById("can");
         
         
 		comportement.vidTimer = "";
@@ -71,7 +70,7 @@ comportement = function(){
         //Tableau de couleur de pour l'affichages des noms des annotations
         annotations.tabColor = ['red', 'purple', 'green', 'orange', 'blue', 'black', 'aqua', 'white', 'lime', 'yellow', 'maroon', 'fuschia', 'navy', 'silver', 'gray', 'olive', 'teal']
 		/* Gestion du multitouch */
-		comportement.hammertime = Hammer(can);
+		comportement.hammertime = Hammer(comportement.vid);
         
 		// Gestion des differents mouvements
 		comportement.hammertime.on("doubletap", function(e){comportement.playVideo(); comportement.touchXY(e); annotations.temp_pos = []; console.log(e.type);}); // Play/pause
@@ -102,8 +101,8 @@ comportement = function(){
 	}
     
 	// Affiche la position et le cercle sous le doigt
-	comportement.showPos = function(canX, canY){
-	  	comportement.pos.innerHTML = " (" + canX + "," + canY + ") ";
+	comportement.showPos = function(posX, posY){
+	  	comportement.pos.innerHTML = " (" + posX + "," + posY + ") ";
 	}
     
     

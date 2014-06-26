@@ -392,8 +392,6 @@ interface = function(){
         + "<source src=\"" + url + ".mp4\" type=\"video/mp4\"  /> <!-- Safari / iOS, IE9 -->"
         + "Impossible de lire la video avec votre browser"
         + "</video>";
-		/* Ajout du canvas */
-		temp += "<canvas id=\"can\" height=" + h + " width=" + w + " style=\"z-index:2; top:" + interface.postop + "px; left:" + (interface.posleft + 7) + "px; position:absolute; background-color:rgba(255, 255, 255, 0.3);\"></canvas>";
 		divVid.innerHTML = "";
 		divVid.innerHTML = temp;
 		/* Mise a lechelle de lecran automatiquement -> Fonctionne pas sous iPad.
@@ -409,15 +407,11 @@ interface = function(){
 	interface.slideMenu = function(){
 		var slidemenu = document.getElementById('sidebar');
 		var vid = document.getElementById('vid');
-		var canvas = document.getElementById('can');
 		if (slidemenu.style.display == ""){//Pour le fermer
 			slidemenu.style.display = "None";
-			// resize de la video et du canvas
+			// resize de la video
 			vid.height = 566;
 			vid.width = 1019;
-			canvas.height = 566;
-			canvas.width = 1019;
-			canvas.style.left = "15px";
             vid.style.left = "15px";
 			interface.posleft = 15;
 		}else{ // Pour l'ouvrir
@@ -425,9 +419,6 @@ interface = function(){
 			// resize de la video
 			vid.height = 411;
 			vid.width = 740;
-			canvas.height = 411;
-			canvas.width = 740;
-            canvas.style.left = "85px";
             vid.style.left = "85px";
 			interface.posleft = 85;
 			// Met la video en pause
