@@ -333,7 +333,7 @@ camomile = function(){
 		this.put(camomile.route(idCorpus, idMedia, idLayer, idAnnotation), camomile.annotation(frag, dat), callbackFunction);
 	}
     
-	/* Remove Annotation*/ 
+	/* Remove Annotation*/
 	camomile.remove_annotation = function(callbackFunction, idCorpus, idMedia, idLayer, idAnnotation){
 		this.del(camomile.route(idCorpus, idMedia, idLayer, idAnnotation), callbackFunction);
 	}

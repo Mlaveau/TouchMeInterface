@@ -17,7 +17,8 @@ annotations = function(){
     annotations.enregistre_pos = function(frame, type, posX, posY){
         var indexprec = annotations.temp_pos.length-1;
         console.log(indexprec);
-        if(!comportement.vid.paused){
+        if(!comportement.vid.paused && annotations.idLay != undefined){
+            console.log(frame, type, posX, posY);
             if(type == "release" && annotations.temp_pos.length == 0){
                 // Si c'est le release d'après doubletap, dont on ne veut pas garder la trace, on ne fais rien
             } else { // Dans tous les autres cas, on enregistre, en extrapolant les positions pour les frames manquantes
@@ -196,13 +197,11 @@ annotations = function(){
      }
      }
      */
-    
-    
+
     /* Envoyer les annotations au serveur puis efface le temp_pos */
     annotations.envoyer = function(persoName) {
-        
         /* Recupere le nom entre et l'enregistre en verifiant qu'il n'y soit pas deja */
-        if(persoName == undefined){
+        if(typeof persoName != "string"){
             persoName = document.getElementById("namePerso").value;
         }
         if(persoName != ""){
@@ -251,7 +250,16 @@ annotations = function(){
         document.getElementById("namePerso").value = "";
     }
     
-	return annotations;
+    annotations.creerLayer = function(){
+        // Cree le layer en question avec comme source le username de connexion
+        camomile.create_layer(function(dat){
+                              // Enregistre l'id du layer en question
+                              annotations.idLay = dat._id;
+                              }, annotations.idCorp, annotations.idMed, "Annotations", "temps", "name pos", interface.username);
+        
+    }
+
+return annotations;
 }();
 
 
@@ -261,22 +269,16 @@ annotations = function(){
  var id = [];
  
  camomile.getAnnotations(function(data){
- for (var i = 0; i < data.length; i ++){
- id.push(data[i]._id);
+    for (var i = 0; i < data.length; i ++){
+        id.push(data[i]._id);
+    }
  }
- }
- , "53884ee3682be502003adae7"
- , "53884f84682be502003adaed"
- , "53a2d76cf698ae02004c4418"
+ , annotations.idCorp
+ , annotations.idMed
+ , annotations.idLay);
  
- );
  for(var i = 0; i < id.length ; i++){
- camomile.remove_annotation(function(data){
- 
- }, "53884ee3682be502003adae7"
- , "53884f84682be502003adaed"
- , "53a2d76cf698ae02004c4418"
- , id[i]);
+    camomile.remove_annotation(function(data){}, annotations.idCorp, annotations.idMed, annotations.idLay, id[i]);
  }
  
  */

@@ -6,20 +6,20 @@
                 <meta name="viewport" content="user-scalable=no, width=device-width, initial-scale=1, maximum-scale=1">
                     <meta name="description" content="">
                         <meta name="author" content="">
-        <title>
-            Interface d'annotation de vidéos
-        </title>
-        
-        <!-- Bootstrap core CSS -->
-        <link href="bs/css/bootstrap.min.css" rel="stylesheet">
-        
-        <!-- Permet l'utilisation les icones-->
-        <link href="bs/css/bootstrap.css" rel="stylesheet">
-        
-        <!-- Pour les modifications propres à l'appli -->
-        <link href="style.css" rel="stylesheet">
-        
-    </head>
+                            <title>
+                                Interface d'annotation de vidéos
+                            </title>
+                            
+                            <!-- Bootstrap core CSS -->
+                            <link href="bs/css/bootstrap.min.css" rel="stylesheet">
+                                
+                                <!-- Permet l'utilisation les icones-->
+                                <link href="bs/css/bootstrap.css" rel="stylesheet">
+                                    
+                                    <!-- Pour les modifications propres à l'appli -->
+                                    <link href="style.css" rel="stylesheet">
+                                        
+                                        </head>
     
 	<body>
         
@@ -36,7 +36,7 @@
 						<li class="dropdown" style="display:none">
 							<a href="#" class="dropdown-toggle" data-toggle="dropdown" id ="corpName">
                                 <i class="icon-white icon-folder-open"></i>
-                                    Corpus
+                                Corpus
                                 <b class="caret"></b>
                             </a>
 							<ul class="dropdown-menu" id ="menuCorpus">
@@ -74,19 +74,17 @@
 					<form id="loginForm" class="navbar-form navbar-right" role="form" action="javascript:interface.tologin();">
 						<div class="form-group">
 							<input id="LoginUsername" class="form-control"  type="text" placeholder="Login">
-                            
-                            <input id="LoginPassword" class="form-control" type="Password" placeholder="Password">
-                            
-                            <button id="loginButton" class="btn btn-success" type="submit" >
-                                Connexion
-                            </button>
-                        </div>
+                                
+                                <input id="LoginPassword" class="form-control" type="Password" placeholder="Password">
+                                    
+                                    <button id="loginButton" class="btn btn-success" type="submit" >
+                                        Connexion
+                                    </button>
+                                    </div>
 					</form>
 					<div id="logoutDiv" class="navbar-button navbar-right" role="form" style="display:none;">
                         <span class="badge" id="userName">
                         </span>
-                        <button type="submit" class="btn btn-info"  id = "visualisation"> Visualisation
-                        </button>
 						<button id="slideMenuButton" class="btn btn-info" type="submit">
                             <i class="icon-white icon-list">
                             </i>
@@ -151,7 +149,7 @@
 				Veuillez vous connecter pour visualiser les videos
 			</div> <!--Fin de la video -->
             
-            <!-- Fenetre Modal -->
+            <!-- Fenetre Modal Nom Annot -->
             <div id="myModal" class="modal fade" >
                 <div class="modal-dialog">
                     <div class="modal-content">
@@ -162,8 +160,8 @@
                         <div class="modal-body">
                             <div class="divDialogElements" >
                                 Personnage :
-                                <input id="namePerso" class="xlarge" type="text" name="xlInput" autofocus="autofocus">
-                                    </div>
+                                <input id="namePerso" class="xlarge" type="text" name="xlInput">
+                            </div>
                             <div id ="badges">
                             </div>
                             
@@ -178,6 +176,28 @@
                     </div>
                 </div>
             </div>
+            
+            <!-- Fenetre Modal Choix Layer -->
+            <div id="modalLayers" class="modal fade" >
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <!--<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>-->
+                            <h4 class="modal-title"> Choix du layer </h4>
+                        </div>
+                        <div class="modal-body">
+                            <div id ="badgesLayers">
+                            </div>
+                            <br>OU<br><br>
+                            <button id="creerLayer" type="button" data-dismiss="modal" class="btn btn-primary"> Creer un layer
+                            </button>
+                            
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+
         </div><!-- Fin du milieu-->
         
         
@@ -220,7 +240,7 @@
                             <span id ="curtime"> 0 </span>
                             /
                             <span id ="temps"> 0 </span>
-                       
+                            
                             <span id ="position"></span>
                         </li>
 					</ul>
@@ -259,7 +279,7 @@
         var $j = jQuery.noConflict();
         
         // Init the videos variables
-        comportement.init();
+        interface.init();
             </script>
 	</body>
 </html>

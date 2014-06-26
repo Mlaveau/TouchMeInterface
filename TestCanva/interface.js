@@ -1,5 +1,6 @@
 
 /* Factoriser les parties factorisables */
+/* Mettre en variable de la classe les parties qu'on recup (genre corpName, etc) */
 
 // http://lit-shore-5364.herokuapp.com
 
@@ -12,9 +13,100 @@ interface = function(){
 		
 	}
 	var posleft, postop;
-	var visuaAnnot;
     var tempsPosVisualisation;
 	var myInterval;
+    var username;
+    
+    /* Initialisation de l'interface */
+    interface.init = function() {
+		document.getElementById("LoginUsername").value = "root";
+		document.getElementById("LoginPassword").value = "camomile";
+		// Initialise decalage
+		comportement.decalage = 0;
+		comportement.segm = "";
+        
+		// Affichages C'EST DE L'INTERFACE : METTRE LES VARIABLES DANS L'INTERFACE ?
+		comportement.time = document.getElementById("curtime");
+		comportement.pos = document.getElementById("position");
+		comportement.tmp = document.getElementById("temps");
+		comportement.vit = document.getElementById("vitesse");
+        comportement.annotTimer = "";
+        
+        /* Ajout des evenements sur les boutons */
+        // Boutons du logout/login
+        var el = document.getElementById("slideMenuButton");
+        if (el.addEventListener){
+            el.addEventListener("click", interface.slideMenu, false);
+        }else if (el.attachEvent){
+            el.attachEvent('onclick', interface.slideMenu);
+        }
+        
+        var el = document.getElementById("logoutButton");
+        if (el.addEventListener){
+            el.addEventListener("click", interface.tologout, false);
+        }else if (el.attachEvent){
+            el.attachEvent('onclick', interface.tologout);
+        }
+        
+        // Boutons de la fenetre modale
+        var el = document.getElementById("envoyerAnnot");
+        if (el.addEventListener){
+            el.addEventListener("click", annotations.envoyer, false);
+        }else if (el.attachEvent){
+            el.attachEvent('onclick', annotations.envoyer);
+        }
+        
+        var el = document.getElementById("annulerAnnot");
+        if (el.addEventListener){
+            el.addEventListener("click", annotations.reset, false);
+        }else if (el.attachEvent){
+            el.attachEvent('onclick', annotations.reset);
+        }
+        
+        // Boutons de la barre du bas
+        var el = document.getElementById("fwd");
+        if (el.addEventListener){
+            el.addEventListener("click", comportement.fwd, false);
+        }else if (el.attachEvent){
+            el.attachEvent('onclick', comportement.fwd);
+        }
+        
+        var el = document.getElementById("faster");
+        if (el.addEventListener){
+            el.addEventListener("click", comportement.faster, false);
+        }else if (el.attachEvent){
+            el.attachEvent('onclick', comportement.faster);
+        }
+        
+        var el = document.getElementById("slower");
+        if (el.addEventListener){
+            el.addEventListener("click", comportement.slower, false);
+        }else if (el.attachEvent){
+            el.attachEvent('onclick', comportement.slower);
+        }
+        
+        var el = document.getElementById("bwd");
+        if (el.addEventListener){
+            el.addEventListener("click", comportement.bwd, false);
+        }else if (el.attachEvent){
+            el.attachEvent('onclick', comportement.bwd);
+        }
+        
+        var el = document.getElementById("stop");
+        if (el.addEventListener){
+            el.addEventListener("click", comportement.stop, false);
+        }else if (el.attachEvent){
+            el.attachEvent('onclick', comportement.stop);
+        }
+        
+        var el = document.getElementById("creerLayer");
+        if (el.addEventListener){
+            el.addEventListener("click", annotations.creerLayer, false);
+        }else if (el.attachEvent){
+            el.attachEvent('onclick', annotations.creerLayer);
+        }
+	}
+    
     
 	/* Recupere les info pour le log */
 	interface.tologin = function() {
@@ -23,13 +115,7 @@ interface = function(){
 		//Pour rester connectee
 		camomile.login(interface.callback_login, document.getElementById("LoginUsername").value, document.getElementById("LoginPassword").value, "http://lit-shore-5364.herokuapp.com" );
         
-		/* Affiche l'utilisateur courant */
-		var logoutDiv = document.getElementById("logoutDiv");
-		var menuSlideButton = document.getElementById("slideMenuButton");
-        var username = document.getElementById("userName");
-        username.innerHTML = "";
-        username.innerHTML ='    User : ' + document.getElementById("LoginUsername").value + "        ";
-        
+        interface.username = document.getElementById("LoginUsername").value;
 	}
     
 	interface.tologout = function(){
@@ -41,9 +127,14 @@ interface = function(){
 	interface.callback_login = function(data){
         
 		console.log('Co');
+        /* Affiche l'utilisateur courant */
+		var logoutDiv = document.getElementById("logoutDiv");
+		var menuSlideButton = document.getElementById("slideMenuButton");
+        var username = document.getElementById("userName");
+        username.innerHTML = "";
+        username.innerHTML ='    User : ' + interface.username + "        ";
         
 		/* Permet le jeu d'affichage/disparition des boutons de logout/login */
-        
 		document.getElementById("loginForm").style.display = "None";
 		document.getElementById("logoutDiv").style.display = "";
 		/* Message a la place de la video */
@@ -114,33 +205,10 @@ interface = function(){
                            temp += "<li> <a href=\"#\" onclick=\"javascript:interface.update_menuVid('" + data[val]._id + "','" + data[val].name + "')\">" + data[val].name + "</a></li>";
                            }
                            menuCorp.innerHTML  = temp;
-                           }
-                           )
-        /* Ajoute l'evenement sur le button -> Le faire sur TOUS !! */
-        var el = document.getElementById("visualisation");
-        if (el.addEventListener){
-            el.addEventListener("click", interface.visualiser, false);
-        }else if (el.attachEvent){
-            el.attachEvent('onclick', interface.visualiser);
-        }
+                           });
 	}
     
-    interface.visualiser = function(){
-        if (interface.visuaAnnot == false || interface.visuaAnnot == undefined){
-            interface.visuaAnnot = true;
-            camomile.getAnnotations(function(data){
-                                    interface.tempPosVisualisation = data[0];
-                                    console.log(data);
-                                    },
-                                    annotations.idCorp,
-                                    annotations.idMed,
-                                    annotations.idLay);
-        }else {
-            interface.visuaAnnot = false;
-            interface.tempsPosVisualisation = [];
-        }
-        window.open('Visualisation.html','Visualisation','menubar=no, scrollbars=no, top=100, left=100, width=300, height=200');
-    }
+    
     
 	/* Met a jour le menu des videos -> Appele quand on a clique sur un corpus  */
 	interface.update_menuVid = function(corpusId, corpusName){
@@ -240,8 +308,25 @@ interface = function(){
         // Initialise les id pour les annotations :
         annotations.idMed = vidId;
         
+        
+        // Choix du layer pour enregistrer
         camomile.getLayers(function(data){
-                           console.log(data);
+                           var badges = document.getElementById("badgesLayers");
+                           badges.innerHTML = "Aucun layer d'annotation existant pour cette video";
+                           for(var i = 0; i < data.length; i++){
+                           if(data[i].layer_type == "Annotations"){
+                           badges.innerHTML = "<a href=\'#\'><span class=\"badge\" data-dismiss=\'modal\' onClick = \"annotations.idLay = \'" + data[i]._id + "\';\">" + data[i].layer_type +" : " + data[i].source +  "</span></a>"
+                           }
+                           }
+                           }
+                           , annotations.idCorp
+                           , annotations.idMed
+                           );
+         $j("#modalLayers").modal('show');
+
+        
+        /*
+        camomile.getLayers(function(data){
                            var vu = false;
                            var index = -1;
                            for (var i = 0; i < data.length; i ++){
@@ -267,6 +352,7 @@ interface = function(){
                            annotations.idCorp,
                            annotations.idMed
                            );
+         */
         
 	}
     
@@ -307,7 +393,7 @@ interface = function(){
         + "Impossible de lire la video avec votre browser"
         + "</video>";
 		/* Ajout du canvas */
-		temp += "<canvas id=\"can\" height=" + h + " width=" + w + " style=\"z-index:2; top:" + interface.postop + "px; left:" + (interface.posleft + 5) + "px; position:absolute; background-color:rgba(255, 255, 255, 0.3);\"></canvas>";
+		temp += "<canvas id=\"can\" height=" + h + " width=" + w + " style=\"z-index:2; top:" + interface.postop + "px; left:" + (interface.posleft + 7) + "px; position:absolute; background-color:rgba(255, 255, 255, 0.3);\"></canvas>";
 		divVid.innerHTML = "";
 		divVid.innerHTML = temp;
 		/* Mise a lechelle de lecran automatiquement -> Fonctionne pas sous iPad.
@@ -316,12 +402,13 @@ interface = function(){
          vid.style.height = 'auto';
          divVid.style.width = '100%';
          divVid.style.height = 'auto'; */
-		comportement.elVid();
+		
+        comportement.elVid();
 	}
     
 	interface.slideMenu = function(){
 		var slidemenu = document.getElementById('sidebar');
-		var vid = document.getElementById('vid');		
+		var vid = document.getElementById('vid');
 		var canvas = document.getElementById('can');
 		if (slidemenu.style.display == ""){//Pour le fermer
 			slidemenu.style.display = "None";
@@ -348,7 +435,7 @@ interface = function(){
 			if(comportement.vid.paused == false){
 				comportement.playVideo();
             }
-		}	
+		}
 	}
     
     //Place un menu a cote de la souris pour envoyer les annotations
