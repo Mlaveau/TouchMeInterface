@@ -48,7 +48,7 @@ comportement = function(){
     // Evenements qu'on veut analyser
     var events_annot = ["dragstart",
                         "drag",
-                        "dragend", "hold", "release", "touch"];
+                        "dragend", "hold", "release"];
     
 	function comportement (){
 	}
@@ -70,7 +70,9 @@ comportement = function(){
         //Tableau de couleur de pour l'affichages des noms des annotations
         annotations.tabColor = ['red', 'purple', 'green', 'orange', 'blue', 'black', 'aqua', 'white', 'lime', 'yellow', 'maroon', 'fuschia', 'navy', 'silver', 'gray', 'olive', 'teal']
 		/* Gestion du multitouch */
-		comportement.hammertime = Hammer(comportement.vid);
+		// Sur le svg
+		var svgDiv = document.getElementById("affichAnnot");
+		comportement.hammertime = Hammer(svgDiv);
         
 		// Gestion des differents mouvements
 		comportement.hammertime.on("doubletap", function(e){comportement.playVideo(); comportement.touchXY(e); annotations.temp_pos = []; console.log(e.type);}); // Play/pause
@@ -78,13 +80,12 @@ comportement = function(){
 		comportement.hammertime.on("swiperight", function(e){comportement.bwd(); comportement.touchXY(e);}); // Avance au plan suivant
 		comportement.hammertime.on("swipeleft", function(e){comportement.fwd(); comportement.touchXY(e);}); // Recule au plan precedent
 		comportement.hammertime.on(events_annot.join(" "), function(e){
-                                 
-                                   // Position en % de la hauteur et de la largeur
-                                   var posX = Math.round((((e.gesture.center.pageX - interface.posleft) * 100) / comportement.vid.width) * 100) / 100;
-                                   var posY = Math.round((((e.gesture.center.pageY - interface.postop) * 100) / comportement.vid.height) * 100) / 100;
-                                   comportement.showPos(posX, posY);
-                                   //console.log(comportement.vid.currentTime * 25, posX, posY, e.type);
-                                   annotations.enregistre_pos(Math.round(comportement.vid.currentTime * 25), e.type, posX, posY)
+            // Position en % de la hauteur et de la largeur
+            var posX = Math.round((((e.gesture.center.pageX - interface.posleft) * 100) / comportement.vid.width) * 100) / 100;
+            var posY = Math.round((((e.gesture.center.pageY - interface.postop) * 100) / comportement.vid.height) * 100) / 100;
+            comportement.showPos(posX, posY);
+            //console.log(comportement.vid.currentTime * 25, posX, posY, e.type);
+            annotations.enregistre_pos(Math.round(comportement.vid.currentTime * 25), e.type, posX, posY)
                                    
                                    }); //Trouver un moyen d'automatiser les fps
         annotations.temp_pos = [];
@@ -138,29 +139,38 @@ comportement = function(){
 	// Play
 	comportement.playVideo = function() {
         
-		comportement.vidTimer = window.setInterval("comportement.curtime()", 1);
+		
+		
 		if(document.getElementById('sidebar').style.display != ""){ // Peut être lancee que si le menu est cache (Pour les annotations
 			if (comportement.vid.paused == true) {
+			comportement.vidTimer = window.setInterval("comportement.gestionTimer()", 100);
 				comportement.vid.play();
                 comportement.vid.muted = true;
                 //comportement.annotTimer = window.setInterval("annotations.enregistre_annot()", 1/25); //Faire en fonction du nb de frames
+                annotations.reset();// Reset les temp des annotations
             }
 			else {
+				clearInterval(comportement.vidTimer);
 				comportement.vid.pause();
             }
 		}
+	}
+	
+	comportement.gestionTimer = function(){
+		visualisation.afficheAnnot();
+		comportement.curtime();
 	}
     
 	// Forward
 	comportement.fwd = function(){
 		comportement.planActuel = comportement.planActuel + 1;
-		comportement.vid.currentTime = comportement.segm[comportement.planActuel]/25 - comportement.decalage;
+		comportement.vid.currentTime = Math.round(comportement.segm[comportement.planActuel]/25 *100)/100 - comportement.decalage;
 	}
     
 	// Backward
 	comportement.bwd = function(){
 		comportement.planActuel = comportement.planActuel - 1;
-		comportement.vid.currentTime = comportement.segm[comportement.planActuel]/25 - comportement.decalage;
+		comportement.vid.currentTime = Math.round(comportement.segm[comportement.planActuel]/25 *100)/100 - comportement.decalage;
 	}
     
 	// Stop

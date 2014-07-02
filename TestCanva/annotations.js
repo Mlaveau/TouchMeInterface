@@ -8,6 +8,9 @@ annotations = function(){
     // Id des corpus/media/layer
     var idCorp, idMed, idLay;
     
+    // Contient les annotation du layer courant
+    var annots;
+
 	function annotations (){
         
     }
@@ -117,7 +120,7 @@ annotations = function(){
             }
         } else if (type == "hold"){ // Si la video est en pause
             // Demarage de la video
-            comportement.vid.play();
+            comportement.playVideo();
             annotations.save(indexprec, frame, posX, posY, type);
         }
     }
@@ -238,8 +241,7 @@ annotations = function(){
         var dat = {}; // // data = {label : _, position : [{x : _ , y : _ , t : _ }, ... ]}
         dat.label = persoName;
         dat.position = pos;
-        camomile.create_annotation(function(data){}, annotations.idCorp, annotations.idMed, annotations.idLay, fragment, dat);
-        
+        camomile.create_annotation(function(data){annotations.annots.push(data);}, annotations.idCorp, annotations.idMed, annotations.idLay, fragment, dat);
         // Reinitialisation du champ du nom et du tableau de positions
         annotations.reset();
     }
@@ -256,8 +258,36 @@ annotations = function(){
                               // Enregistre l'id du layer en question
                               annotations.idLay = dat._id;
                               }, annotations.idCorp, annotations.idMed, "Annotations", "temps", "name pos", interface.username);
+        annotations.annots = [];
         
     }
+    
+    annotations.recupAnnot = function(idLayer){
+    	annotations.annots = Array();
+        annotations.idLay = idLayer;
+        camomile.getAnnotations(function(dat){
+                             		for(var i = 0; i < dat.length; i++){
+                                        	annotations.annots.push(dat[i]);
+                                	}
+                                	annotations.sortAnnots();
+                                	visualisation.afficheAnnot();
+                                }
+                                , annotations.idCorp
+                                , annotations.idMed
+                                , annotations.idLay
+                                );
+    }
+    
+    annotations.sortAnnots = function(){
+    	annotations.annots.sort(function(a, b){ 
+            var tmp = a.fragment.start-b.fragment.start; 
+            if(tmp == 0){
+            	tmp = a.fragment.end - b.fragment.end;
+            }
+			return tmp; 
+        });
+    }
+           					
 
 return annotations;
 }();
@@ -273,12 +303,16 @@ return annotations;
         id.push(data[i]._id);
     }
  }
- , annotations.idCorp
+ , "53884ee3682be502003adae7", "53884f84682be502003adaed", "53a99a1519e7aa02005eeac4"
+ /*annotations.idCorp
  , annotations.idMed
- , annotations.idLay);
+ , annotations.idLay*//*);
  
  for(var i = 0; i < id.length ; i++){
-    camomile.remove_annotation(function(data){}, annotations.idCorp, annotations.idMed, annotations.idLay, id[i]);
+    camomile.remove_annotation(function(data){}, "53884ee3682be502003adae7", "53884f84682be502003adaed", "53a99a1519e7aa02005eeac4", id[i]);
  }
  
  */
+
+
+/* "<svg width=\"500\" height=\"500\" style=\"position:relative; z-index=10\; background-color:rgba(255, 255, 255, 0.3)\"><circle id=\"truc\" cx=\"200\" cy=\"200\" r=\"40\" stroke=\"green\" stroke-width=\"6\" fill-opacity= \"0\"/></svg>"*/
