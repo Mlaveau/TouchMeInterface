@@ -5,6 +5,7 @@ annotations = function(){
     var temp_name; // Enregistre les noms deja vus[[nom, couleur], ..]
     var tabColor; // Tableau des couleurs pour l'affichage des noms
     
+    var svg;
     // Id des corpus/media/layer
     var idCorp, idMed, idLay;
     
@@ -334,12 +335,12 @@ interface = function(){
         
         /* Ajout des evenements sur les boutons */
         // Boutons du logout/login
-        var el = document.getElementById("slideMenuButton");
+        /*var el = document.getElementById("slideMenuButton");
         if (el.addEventListener){
             el.addEventListener("click", interface.slideMenu, false);
         }else if (el.attachEvent){
             el.attachEvent('onclick', interface.slideMenu);
-        }
+        }*/
         
         var el = document.getElementById("logoutButton");
         if (el.addEventListener){
@@ -611,17 +612,22 @@ interface = function(){
         
         // Choix du layer pour enregistrer
         camomile.getLayers(function(data){
-                           var badges = document.getElementById("badgesLayers");
-                           badges.innerHTML = "Aucun layer d'annotation existant pour cette video";
-                           for(var i = 0; i < data.length; i++){
-                           if(data[i].layer_type == "Annotations"){
-                           badges.innerHTML = "<a href=\'#\'><span class=\"badge\" data-dismiss=\'modal\' onClick = \"annotations.recupAnnot(\'" + data[i]._id + "\');\">" + data[i].layer_type +" : " + data[i].source +  "</span></a>"
-                           }
-                           }
-                           }
-                           , annotations.idCorp
-                           , annotations.idMed
-                           );
+        						//console.log(data);
+                            	var badges = document.getElementById("badgesLayers");
+                            	badges.innerHTML = "";
+                            	if(data.length ==0){
+                            		badges.innerHTML = "Aucun layer d'annotation existant pour cette video";
+                            	} else {
+    	                        	for(var i = 0; i < data.length; i++){
+                           				if(data[i].layer_type == "Annotations"){
+                            				badges.innerHTML += "<a href=\'#\'><span class=\"badge\" data-dismiss=\'modal\' onClick = \"annotations.recupAnnot(\'" + data[i]._id + "', '" + data[i].source+ "\');\">" + data[i]._id +" : " + data[i].source +  "</span></a>"
+                           				}
+                           			}
+                           		}
+                            }
+                            , annotations.idCorp
+                           	, annotations.idMed
+                            );
          $j("#modalLayers").modal('show');
 
         
@@ -678,12 +684,12 @@ interface = function(){
 		if(document.getElementById('sidebar').style.display != ""){ // Si le menu n'est pas déjà ouvert
 			w = 1019;
 			h = 566;
-			interface.postop = 95;
-			interface.posleft = 15;
+			interface.postop = 85;
+			interface.posleft = 0;
 		}else{// S'il est ouvert
 			w = 740;
 			h = 411;
-			interface.postop = 95;
+			interface.postop = 50;
 			interface.posleft = 85;
 		}
         
@@ -693,10 +699,18 @@ interface = function(){
         + "Impossible de lire la video avec votre browser"
         + "</video>";
         
-        temp += "<svg id = \"affichAnnot\" width=\"1019\" height=\"566\" style=\"position:fixed; z-index:10; background-color:rgba(255, 255, 255, 0); top:" + interface.postop + "px; left:" + interface.posleft + "px; position:absolute\"></svg>";
-            
+        //temp += "<svg id = \"affichAnnot\" width=\"1019\" height=\"566\" style=\"top:" + interface.postop + "px; left:" + interface.posleft + "px; position:absolute\"></svg>";
+           
+		interface.svg = Snap(1019, 566).attr({
+					'id' : "affichAnnot", 
+					'top' : interface.postop,
+					'left' : interface.posleft
+				});	
+		
 		divVid.innerHTML = "";
 		divVid.innerHTML = temp;
+		var svg = document.getElementById("affichAnnot");
+		divVid.appendChild(svg);
 		/* Mise a lechelle de lecran automatiquement -> Fonctionne pas sous iPad.
          var vid = document.getElementById('vid');
          vid.style.width = '100%';
@@ -715,8 +729,8 @@ interface = function(){
 			// resize de la video
 			vid.height = 566;
 			vid.width = 1019;
-            vid.style.left = "15px";
-			interface.posleft = 15;
+            vid.style.left = "0px";
+			interface.posleft = 0;
 		}else{ // Pour l'ouvrir
 			slidemenu.style.display = "";
 			// resize de la video
@@ -732,7 +746,7 @@ interface = function(){
 		}
 	}
     
-    //Place un menu a cote de la souris pour envoyer les annotations
+    // Affiche un menu pour envoyer les annotations
     interface.popup = function(){
         var divBadgesNames = document.getElementById("badges");
         divBadgesNames.innerHTML = " ";

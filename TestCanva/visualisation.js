@@ -13,14 +13,14 @@ visualisation = function(){
   				if(document.getElementById(annotations.annots[j]._id) == null){
   					visualisation.insertCircles(annot._id, annot.data.label);
   				}
-  				var gCircle = document.getElementById(annotations.annots[j]._id).firstChild;
-  				var gText = document.getElementById(annotations.annots[j]._id).childNodes[1];
+  				var gCircle = document.getElementById(annotations.annots[j]._id).childNodes[1];
+  				var gText = document.getElementById(annotations.annots[j]._id).firstChild;
   				var positions = annot.data.position;
   				
   				//Recherche pas dichotomie de l'interval
   				var debut = 0 ; 
   				var fin = positions.length - 1;
-  				var mid = Math.round((positions.length - 1 ) / 2);
+  				var mid = Math.round(fin / 2);
   				var dx = 0;
   				var dy = 0;
   				while(fin-debut > 1){
@@ -44,8 +44,8 @@ visualisation = function(){
   				}
   				gCircle.setAttributeNS(null, "cx", dx);
 				gCircle.setAttributeNS(null, "cy", dy);
-				gText.setAttributeNS(null, "x", dx - 25);
-				gText.setAttributeNS(null, "y", dy - 10);
+				gText.setAttributeNS(null, "x", dx - 30);
+				gText.setAttributeNS(null, "y", dy - 0);
 				
   				/*for(var k = 0; k < positions.length-1; k++){
   					// VOIR EXTRAPOLER PLUS TARD AUSSI
@@ -70,10 +70,28 @@ visualisation = function(){
     }
     
     visualisation.insertCircles = function(id, label){
-  		// Namespace de svg
-  	    var svgNS="http://www.w3.org/2000/svg";
 
-  		// Creation des cercles et des textes dans des g avec l'id de l'annot, pour chaque annotation  :
+		var c1 = interface.svg.circle(50, 50, 50).attr({
+			stroke: "red", 
+			strokeWidth: 5,
+			fill : "rgba(0, 0, 0, 0)",
+			'display' : 'None'
+		});
+		var t = interface.svg.text(30, 30, label).attr({
+			stroke: 'white', 
+			'display' : 'None', 
+			'font-size': 18, 
+			fill : 'white'
+		});
+	
+		var g = interface.svg.g(t, c1).attr({ 
+			'id': id,
+			'font-size': 14
+		});
+	
+  		/*// Namespace de svg
+  	    var svgNS="http://www.w3.org/2000/svg";
+  	    // Creation des cercles et des textes dans des g avec l'id de l'annot, pour chaque annotation  :
         var circle = document.createElementNS(svgNS,"circle");
 		circle.setAttributeNS(null,"cx",50);
 		circle.setAttributeNS(null,"cy",50);
@@ -92,7 +110,7 @@ visualisation = function(){
 		g.setAttributeNS(null, "id", id);
 		g.appendChild(circle);
 		g.appendChild(texte);
-		document.getElementById("affichAnnot").appendChild(g);               
+		document.getElementById("affichAnnot").appendChild(g);   */            
     }
     
     return visualisation;

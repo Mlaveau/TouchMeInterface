@@ -1,9 +1,25 @@
 annotations = function(){
     
     var temp_pos; // Tableau des positions [(X,Y), ...]
-    var tempEvMulti; // Cache pour les frames ayant plusieurs positions
+    var temp_evMulti; // Cache pour les frames ayant plusieurs positions
     var temp_name; // Enregistre les noms deja vus[[nom, couleur], ..]
-    var tabColor; // Tableau des couleurs pour l'affichage des noms
+    var colorName= ['red', 
+                    'purple', 
+                    'green', 
+                    'orange', 
+                    'blue', 
+                    'black', 
+                    'aqua', 
+                    'white', 
+                    'lime', 
+                    'yellow', 
+                    'maroon', 
+                    'fuschia', 
+                    'navy', 
+                    'silver', 
+                    'gray', 
+                    'olive', 
+                    'teal']; // Tableau des couleurs pour l'affichage des labels
     
     // Id des corpus/media/layer
     var idCorp, idMed, idLay;
@@ -19,9 +35,9 @@ annotations = function(){
 	// Enregistre les annotations dans le temp_pos en estrapolant -> Mais on ne veut plus extrapoler
     annotations.enregistre_pos = function(frame, type, posX, posY){
         var indexprec = annotations.temp_pos.length-1;
-        console.log(indexprec);
+        //console.log(indexprec);
         if(!comportement.vid.paused && annotations.idLay != undefined){
-            console.log(frame, type, posX, posY);
+            //console.log(frame, type, posX, posY);
             if(type == "release" && annotations.temp_pos.length == 0){
                 // Si c'est le release d'après doubletap, dont on ne veut pas garder la trace, on ne fais rien
             } else { // Dans tous les autres cas, on enregistre, en extrapolant les positions pour les frames manquantes
@@ -88,7 +104,8 @@ annotations = function(){
                          interface.popup();
                          comportement.vid.pause();
                          }*/
-                        if(annotations.temp_pos.length > 4){
+                         
+                        if(annotations.temp_pos.length > 4 && annotations.verifBornes(posX, posY)){
                             annotations.save(indexprec, frame, posX, posY, type);
                         }
                         var modal = document.getElementById("myModal");
@@ -125,6 +142,14 @@ annotations = function(){
         }
     }
     
+    annotations.verifBornes = function(posX, posY){
+    	if (posX >= 0 && posY >= 0 && posX <= 100 && posY <= 100){
+    		return true;
+    	}else{
+    		return false; 
+    	}	    
+    
+    }
     // Extrapole les positions -> On veut juste garder les positions recuperees
     annotations.extrapol = function(i, frame, posX, posY, type) {
         var valeur = annotations.temp_pos[i];
@@ -135,67 +160,68 @@ annotations = function(){
             annotations.temp_pos.push([valeur[0]+i, "remplissage_auto", valeur[2] + i * decalageX, valeur[3] + i * decalageY]);
         }
         annotations.temp_pos.push([frame, type, posX, posY]);
-        annotations.tempEvMulti = [];
-        annotations.tempEvMulti.push([frame, type, posX, posY]);
+        annotations.temp_evMulti = [];
+        annotations.temp_evMulti.push([frame, type, posX, posY]);
     }
     
     
     // Enregistre en verifiant qu'il n'y a pas plusieurs evenements pour la meme frame, si c'est le cas, fais la moyenne de tout
     annotations.save = function(indexprec, frame, posX, posY, type){
-        var temp = {};
-        temp.x = posX;
-        temp.y = posY;
-        temp.t = frame;
-        temp.type = type;
+        if(annotations.verifBornes(posX, posY)){
+        	var temp = {};
+     	    temp.x = posX;
+     	    temp.y = posY;
+     	    temp.t = frame;
+     	    temp.type = type;
         
-        if(annotations.temp_pos.length > 0){
-            if(annotations.temp_pos[indexprec].t == frame){
-                annotations.tempEvMulti.push(temp);
-                var x = 0;
-                var y = 0;
-                for (var i = 0; i < annotations.tempEvMulti.length; i++){
-                    x += annotations.tempEvMulti[i].x;
-                    y += annotations.tempEvMulti[i].y;
-                }
-                var tmp = {};
-                tmp.x = x/annotations.tempEvMulti.length;
-                tmp.y = y/annotations.tempEvMulti.length;
-                tmp.t = frame;
-                tmp.type = type;
-                annotations.temp_pos[indexprec] = tmp;
-            } else{
-                annotations.temp_pos.push(temp);
-                annotations.tempEvMulti = [];
-                annotations.tempEvMulti.push(temp);
-            }
-        } else {
-            annotations.temp_pos.push(temp);
-            annotations.tempEvMulti = [];
-            annotations.tempEvMulti.push(temp);
-        }
-        //console.log(annotations.temp_pos);
+			if(annotations.temp_pos.length > 0){
+       	 		if(annotations.temp_pos[indexprec].t == frame){
+                	annotations.temp_evMulti.push(temp);
+                	var x = 0;
+                	var y = 0;
+                	for (var i = 0; i < annotations.temp_evMulti.length; i++){
+                    	x += annotations.temp_evMulti[i].x;
+                    	y += annotations.temp_evMulti[i].y;
+                	}
+                	var tmp = {};
+                	tmp.x = x/annotations.temp_evMulti.length;
+                	tmp.y = y/annotations.temp_evMulti.length;
+                	tmp.t = frame;
+                	tmp.type = type;
+                	annotations.temp_pos[indexprec] = tmp;
+            	} else{
+                	annotations.temp_pos.push(temp);
+                	annotations.temp_evMulti = [];
+                	annotations.temp_evMulti.push(temp);
+            	}
+        	} else {
+            	annotations.temp_pos.push(temp);
+            	annotations.temp_evMulti = [];
+            	annotations.temp_evMulti.push(temp);
+        	}
+        }//console.log(annotations.temp_pos);
     }
     /*
      if(annotations.temp_pos.length > 0){
      if(annotations.temp_pos[indexprec][0] == frame){
      
-     annotations.tempEvMulti.push([frame, type, posX, posY]);
+     annotations.temp_evMulti.push([frame, type, posX, posY]);
      var x = 0;
      var y = 0;
-     for (var i = 0; i < annotations.tempEvMulti.length; i++){
-     x += annotations.tempEvMulti[i][2];
-     y += annotations.tempEvMulti[i][3];
+     for (var i = 0; i < annotations.temp_evMulti.length; i++){
+     x += annotations.temp_evMulti[i][2];
+     y += annotations.temp_evMulti[i][3];
      }
-     annotations.temp_pos[indexprec] = [frame, type, x/annotations.tempEvMulti.length, y/annotations.tempEvMulti.length];
+     annotations.temp_pos[indexprec] = [frame, type, x/annotations.temp_evMulti.length, y/annotations.temp_evMulti.length];
      }else{
      annotations.temp_pos.push([frame, type, x, y]);
-     annotations.tempEvMulti = [];
-     annotations.tempEvMulti.push([frame, type, posX, posY]);
+     annotations.temp_evMulti = [];
+     annotations.temp_evMulti.push([frame, type, posX, posY]);
      }
      }else {
      annotations.temp_pos.push([frame, type, posX, posY]);
-     annotations.tempEvMulti = [];
-     annotations.tempEvMulti.push([frame, type, posX, posY]);
+     annotations.temp_evMulti = [];
+     annotations.temp_evMulti.push([frame, type, posX, posY]);
      
      }
      }
@@ -219,7 +245,7 @@ annotations = function(){
             if(!vu) {
                 var tmp = {};
                 tmp.name = persoName;
-                tmp.color = annotations.tabColor[annotations.temp_name.length % annotations.tabColor.length];
+                tmp.color = annotations.colorName[annotations.temp_name.length % annotations.colorName.length];
                 annotations.temp_name.push(tmp);
             }
         }
@@ -262,9 +288,10 @@ annotations = function(){
         
     }
     
-    annotations.recupAnnot = function(idLayer){
+    annotations.recupAnnot = function(idLayer, source){
     	annotations.annots = Array();
         annotations.idLay = idLayer;
+        document.getElementById("currentLayer").innerHTML = source + " : " + idLayer;
         camomile.getAnnotations(function(dat){
                              		for(var i = 0; i < dat.length; i++){
                                         	annotations.annots.push(dat[i]);
