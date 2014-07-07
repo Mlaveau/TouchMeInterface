@@ -77,20 +77,22 @@
                                 
                                 <input id="LoginPassword" class="form-control" type="Password" placeholder="Password">
                                     
-                                    <button id="loginButton" class="btn btn-success" type="submit" >
-                                        Connexion
+                                    <button id="loginButton" class="btn btn-success" type="submit" style="height : 35px; margin-bottom:7px">
+                                        <i class="icon-white icon-off"></i>
                                     </button>
                                     </div>
 					</form>
 					<div id="logoutDiv" class="navbar-button navbar-right" role="form" style="display:none;">
+					 	<span id="currentLayer">
+                        </span>
                         <span class="badge" id="userName">
                         </span>
-						<button id="slideMenuButton" class="btn btn-info" type="submit">
+						<!--<button id="slideMenuButton" class="btn btn-info" type="submit">
                             <i class="icon-white icon-list">
                             </i>
-                        </button>
+                        </button> -->
 						<button id="logoutButton" class="btn btn-success" type="submit">
-                            Deconnexion
+                           	<i class="icon-white icon-off"></i>
 						</button>
 					</div>
                     
@@ -106,7 +108,7 @@
 				<ul class="nav">
 					<li>
                         <a href="#" data-toggle="offcanvas" class="visible-xs text-center">
-                            <i class="glyphicon glyphicon-chevron-right">
+                            <i class="icon-white chevron-right">
                             </i>
                         </a>
                     </li>
@@ -117,30 +119,6 @@
 					<li><a href="#">Bidule</a></li>
 					<li><a href="#">Machin</a></li>
 					<li><a href="#">Chose</a></li>
-				</ul>
-				
-                <!-- tiny only nav-->
-				<ul class="nav visible-xs" id="xs-menu"> <!-- Changer la couleur des lien dans le cas des sidebar en blanc -->
-					<li>
-                        <a href="#" class="text-center">
-                            <i class="glyphicon glyphicon-list-alt"></i>
-                        </a>
-                    </li>
-					<li>
-                        <a href="#" class="text-center">
-                            <i class="glyphicon glyphicon-list"></i>
-                        </a>
-                    </li>
-					<li>
-                        <a href="#" class="text-center">
-                            <i class="glyphicon glyphicon-paperclip"></i>
-                        </a>
-                    </li>
-					<li>
-                        <a href="#" class="text-center">
-                            <i class="glyphicon glyphicon-refresh"></i>
-                        </a>
-                    </li>
 				</ul>
 			</div>
             
@@ -267,6 +245,8 @@
         
         <!-- Gere l'affichage des annotations -->
 		<script type="text/javascript" src="visualisation.js"></script>
+		<script type="text/javascript" src="bs/snap.svg-min.js"></script>
+
 		
 		<!-- Librairies Hammer -->
 		<script type="text/javascript" src="ga.js"></script>
