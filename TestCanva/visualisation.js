@@ -78,7 +78,7 @@ visualisation = function(){
       }
     );
   	
-  	var g = interface.svg.g(t, c1).attr(
+  	interface.svg.g(t, c1).attr(
       { 
         'id': id,
         'font-size': 14

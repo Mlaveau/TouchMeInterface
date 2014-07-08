@@ -34,7 +34,7 @@ interface = function(){
 		interface.tmp = document.getElementById("temps");
         
     /* Ajout des evenements sur les boutons */
-    // Bouton du logout
+    /// Bouton du logout
     var el = document.getElementById("logoutButton");
     if (el.addEventListener){
         el.addEventListener("click", interface.tologout, false);
@@ -42,7 +42,7 @@ interface = function(){
         el.attachEvent('onclick', interface.tologout);
     }
     
-    // Boutons de la barre du bas
+    /// Boutons de la barre du bas
     // Video : Saut au plan suivant
     var el = document.getElementById("fwd");
     if (el.addEventListener){
@@ -83,7 +83,7 @@ interface = function(){
         el.attachEvent('onclick', comportement.stop);
     }
     
-    // Fenetre modale des layers 
+    /// Fenetre modale des layers 
     // Cree un layer
     var el = document.getElementById("creerLayer");
     if (el.addEventListener){
@@ -92,7 +92,7 @@ interface = function(){
         el.attachEvent('onclick', annotations.creerLayer);
     }
 
-    // Boutons de la fenetre modale des annotations
+    /// Boutons de la fenetre modale des annotations
     // Envoie et continue la lecture normale de la video
     var el = document.getElementById("envoyerAnnotNext");
     if (el.addEventListener){
@@ -101,6 +101,14 @@ interface = function(){
         el.attachEvent('onclick', annotations.envoyer);
     }
     
+    // Envoie les annotations et revient au plan precedent
+    var el = document.getElementById("envoyerAnnotPrevious");
+    if (el.addEventListener){
+        el.addEventListener("click", annotations.envoyerprevious, false);
+    }else if (el.attachEvent){
+        el.attachEvent('onclick', annotations.envoyerprevious);
+    }
+
     // Annule l'enregistrement de l'annotation en court
     var el = document.getElementById("annulerAnnot");
     if (el.addEventListener){
@@ -108,7 +116,6 @@ interface = function(){
     }else if (el.attachEvent){
         el.attachEvent('onclick', annotations.reset);
     }
-    
 	}
     
 	/* Recupere les info pour le log */
@@ -138,7 +145,7 @@ interface = function(){
 		document.getElementById("loginForm").style.display = "None";
 		document.getElementById("logoutDiv").style.display = "";
 		/* Message a la place de la video */
-		document.getElementById("divVid").innerHTML = "Veuillez choisir une video";
+		document.getElementById("divVid").innerHTML = "Veuillez choisir un corpus";
         
 		/* Met a jour le menu des Corpus disponibles et l'affiche */
 		interface.update_menuCorpus();
@@ -154,18 +161,16 @@ interface = function(){
 		document.getElementById("logoutDiv").style.display = "None";
 		
         
-		/* Mise a jour du menu des videos disponibles */
+		/* Mise a jour du contenu de la div de la video */
 		document.getElementById('menuVid').innerHTML = "<li class=\"dropdown-header\"> Veuillez vous connecter pour avoir accès à la liste des vidéos disponibles</li>";
         
         
 		/* Fait disparaitre la video */
-		var divMedia =  document.getElementById('divVid');
-		divMedia.innerHTML = "";
+		document.getElementById('divVid').innerHTML = "";
         
 		/* Remet a l'etat initial le menu Corpus et le fait disparaitre */
 		// Le nom
-		var corpName =  document.getElementById('corpName');
-		corpName.innerHTML = "<i class=\"icon-white icon-folder-open\"></i>   Corpus   <b class=\"caret\"></b>";
+		document.getElementById('corpName').innerHTML = "<i class=\"icon-white icon-folder-open\"></i>   Corpus   <b class=\"caret\"></b>";
 		// Le menu
 		var menuCorp =  document.getElementById('menuCorpus');
 		menuCorp.innerHTML = "<li class=\"dropdown-header\"> Veuillez vous connecter pour avoir accès à la liste des corpus </li>";
@@ -175,36 +180,32 @@ interface = function(){
 		// Le menu
 		var menuVid = document.getElementById('menuVid');
 		menuVid.parentNode.style.display = "None";
-		menuVid.innerHTML = "";
+		menuVid.innerHTML = "<li class=\"dropdown-header\"> Veuillez choisir un corpus pour avoir accès à la liste des videos </li>";
 		// le nom
-		var divSegmName = document.getElementById('segmName');
-		divSegmName.innerHTML = "<i class=\"icon-white icon-film\"></i>  Segmentation  <b class=\"caret \"></b>";
+		document.getElementById('segmName').innerHTML = "<i class=\"icon-white icon-film\"></i>  Segmentation  <b class=\"caret \"></b>";
         
 		/* Remet a l'etat initial le menu Segmentation et le fait disparaitre  */
 		// Le menu
 		var menuSegm = document.getElementById('menuSegm');
 		menuSegm.parentNode.style.display = "None";
-		menuSegm.innerHTML = "";
+		menuSegm.innerHTML = "<li class=\"dropdown-header\"> Veuillez choisir une video pour avoir accès à la liste des segmentation </li>";
 		// le nom
-		var divVidName = document.getElementById('vidName');
-		divVidName.innerHTML = "<i class=\"icon-white icon-film\"></i>  Videos  <b class=\"caret \"></b>";
+		document.getElementById('vidName').innerHTML = "<i class=\"icon-white icon-film\"></i>  Videos  <b class=\"caret \"></b>";
 	}
     
 	/* Met a jour le menu des corpus -> Appele quand on s'est connecte */
 	interface.update_menuCorpus = function(){
-    var divCorpName = document.getElementById('corpName');
-    divCorpName.style.display = "";
+    document.getElementById('corpName').style.display = "";
     camomile.getCorpus(
       function(data){
-        /* Boucle qui recupere tous les nom de corpus */
+        /* Boucle qui recupere tous les nom de corpus et les affiche */
         var menuCorp = document.getElementById('menuCorpus');
-        menuCorp.innerHTML  = " ";
         menuCorp.parentNode.style.display = "";
-        var temp = " ";
+        var temp = "";
         for(var val in data){
-          temp += "<li> <a href=\"#\" onclick=\"javascript:interface.update_menuVid('" + data[val]._id + "','" + data[val].name + "')\">" + data[val].name + "</a></li>";
+          temp += "<li><a href=\"#\" onclick=\"javascript:interface.update_menuVid('" + data[val]._id + "','" + data[val].name + "')\">" + data[val].name + "</a></li>";
         }
-        menuCorp.innerHTML  = temp;
+        menuCorp.innerHTML = temp;
       }
     );
 	}
@@ -215,32 +216,27 @@ interface = function(){
     camomile.getMedias(
       function(data){
       /* Fait disparaître la video s'il y en avait une */
-      var divVid = document.getElementById('divVid');
-      divVid.innerHTML = "";
+      document.getElementById('divVid').innerHTML = "";
       /* Boucle qui recupere tous les nom de medias */
       var menuVid = document.getElementById('menuVid');
-      var temp = " ";
+      var temp = "";
       if (data.length != 0){
         for(var val in data){
-        temp += "<li><a href=\"#\" onclick=\"javascript:interface.update_Med('http://"+ data[val].url+ "','" + data[val].name + "'); interface.update_menuSegm('" + corpusId + "','" + data[val]._id + "');\"> " + data[val].name + " </a></li>";
+          temp += "<li><a href=\"#\" onclick=\"javascript:interface.update_Med('http://"+ data[val].url+ "','" + data[val].name + "'); interface.update_menuSegm('" + corpusId + "','" + data[val]._id + "');\"> " + data[val].name + " </a></li>";
         }
       }else {
         temp +=  "<li class=\"dropdown-header\" > Pas de videos disponibles pour ce corpus </li>";
       }
       menuVid.innerHTML = temp;
-
       menuVid.parentNode.style.display = "";
 
-      var divCorpName = document.getElementById('corpName');
-      divCorpName.innerHTML = "<i class=\"icon-white icon-folder-open\"></i>  " + corpusName + "  <b class=\"caret \"></b>";
+      document.getElementById('corpName').innerHTML = "<i class=\"icon-white icon-folder-open\"></i>  " + corpusName + "  <b class=\"caret \"></b>";
       /* Reinitialise le nom du menu */
-      var divVidName = document.getElementById('vidName');
-      divVidName.innerHTML = "<i class=\"icon-white icon-film\"></i> Videos  <b class=\"caret \"></b>";
+      document.getElementById('vidName').innerHTML = "<i class=\"icon-white icon-film\"></i> Videos  <b class=\"caret \"></b>";
 
       /* Reinitialisation du menu Segmentation */
       // Le menu
-      var divSegmMenu = document.getElementById('menuSegm');
-      divSegmMenu.innerHTML = "<li class=\"dropdown-header\"> Veuillez choisir une video  </li>";
+      document.getElementById('menuSegm').innerHTML = "<li class=\"dropdown-header\"> Veuillez choisir une video  </li>";
       // Le nom
       var divSegmName = document.getElementById('segmName');
       divSegmName.innerHTML = "<i class=\"icon-white icon-file\"></i>  Segmentation  <b class=\"caret \"></b>";
@@ -257,7 +253,7 @@ interface = function(){
   interface.reinitialiseSegm = function(){
     // Reinitialise la segmentation et enleve le bouton
     comportement.segm = "";
-    document.getElementById('butonPrevious').innerHTML = "";
+    document.getElementById('butonPrevious').style.display = "None";
   }
     
 	/* Met a jour le menu des segmentations -> Appele quand on a choisi une video */
@@ -295,8 +291,7 @@ interface = function(){
           interface.reinitialiseMenuSegm();
         }
        
-        var divSegmName = document.getElementById('segmName');
-        divSegmName.innerHTML = "<i class=\"icon-white icon-file\"></i> Segmentation  <b class=\"caret \"></b>";
+        document.getElementById('segmName').innerHTML = "<i class=\"icon-white icon-file\"></i> Segmentation  <b class=\"caret \"></b>";
       },
       corpusId,
       vidId
@@ -364,13 +359,15 @@ interface = function(){
 			interface.postop = 50;
 			interface.posleft = 85;
 		}
-        
+      
 		temp = "<video id=\"vid\" width = " + w + " height=" + h + " style=\"z-index:4; top:" + interface.postop + "px; left:" + interface.posleft + "px; position:absolute\" >" // De base : 400/720
         + "<source src=\"" + url + ".webm\" type=\"video/webm\" /><!-- Chrome10+, Ffx4+, Opera10.6+ -->"
         + "<source src=\"" + url + ".mp4\" type=\"video/mp4\"  /> <!-- Safari / iOS, IE9 -->"
         + "Impossible de lire la video avec votre browser"
         + "</video>";
-
+    divVid.innerHTML = "";
+    divVid.innerHTML = temp;
+    /* Insertion du svg qui permet d'afficher les annotations et l'emplacement du doigt*/
 		interface.svg = Snap(1019, 566).attr(
       {
   			'id' : "affichAnnot", 
@@ -378,11 +375,19 @@ interface = function(){
   			'left' : interface.posleft
 		  }
     );	
-		
-		divVid.innerHTML = "";
-		divVid.innerHTML = temp;
 		var svg = document.getElementById("affichAnnot");
 		divVid.appendChild(svg);
+    var c1 = interface.svg.circle(50, 50, 20).attr(
+      {
+        stroke: "green", 
+        strokeWidth: 2,
+        fill : "rgba(0, 0, 0, 0)",
+        'display' : 'None', 
+        'id' : 'currentPosUser'
+      }
+    );
+
+    // Ajout
     comportement.elVid();
 	}
     

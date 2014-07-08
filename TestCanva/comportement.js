@@ -131,11 +131,24 @@ comportement = function(){
 	            var posX = Math.round((((e.gesture.center.pageX - interface.posleft) * 100) / comportement.vid.width) * 100) / 100;
 	            var posY = Math.round((((e.gesture.center.pageY - interface.postop) * 100) / comportement.vid.height) * 100) / 100;
 	            comportement.showPos(posX, posY);
+	            if(comportement.vid.paused == false && e.type != "release"){
+	            	comportement.showCurrentPos(e.gesture.center.pageX - interface.posleft, e.gesture.center.pageY - interface.postop);
+	            }else if (e.type == "release"){
+	            	 document.getElementById("currentPosUser").style.display = "None";
+	            }
 	            annotations.enregistre_pos(Math.round(comportement.vid.currentTime * 25), e.type, posX, posY);
 			}
 		);
 	}
 	
+	comportement.showCurrentPos = function(cx, cy){
+		var gCircle = document.getElementById("currentPosUser");
+		gCircle.setAttributeNS(null, "cx", cx);
+    	gCircle.setAttributeNS(null, "cy", cy);
+    	if(gCircle.style.display != ""){
+    		gCircle.style.display = "";
+    	}
+	}
 	/**
 	 * Enregistre la segmentation en plan 
 	 * @method update_segm
@@ -143,14 +156,8 @@ comportement = function(){
 	 * @return 
 	 */
 	 comportement.update_segm= function(data){
+	 	document.getElementById("butonPrevious").style.display = "";
 	 	comportement.segm = data;
-	 	document.getElementById("butonPrevious").innerHTML = "<button id=\"envoyerAnnotPrevious\" type=\"button\" data-dismiss=\"modal\" class=\"btn btn-primary\"> Retour au debut du plan </button>";
-	    var el = document.getElementById("envoyerAnnotPrevious");
-	    if (el.addEventListener){
-	        el.addEventListener("click", annotations.envoyerprevious, false);
-	    }else if (el.attachEvent){
-	        el.attachEvent('onclick', annotations.envoyerprevious);
-	    }
 	 }
 
 	/**
@@ -224,6 +231,7 @@ comportement = function(){
 				comportement.vidTimer = window.setInterval("comportement.gestionTimer()", 100);
 				comportement.vid.play();
                 annotations.reset();// Reset les temp des annotations pour etre sur qu'il n'en reste pas
+                comportement.vid.muted = true;
             }
             else {
             	// Reset le timer 
@@ -243,8 +251,8 @@ comportement = function(){
 	 	visualisation.afficheAnnot();
 	 	comportement.curtime();
 	 	if(comportement.segm.length > 0){
-		 	comportement.plans();
-		 }
+	 		comportement.plans();
+		}
 	}
 
 	/**
@@ -257,11 +265,14 @@ comportement = function(){
 	 	if(plan < comportement.segm.length){
 	 		comportement.planActuel = plan;
 	 		comportement.vid.currentTime = Math.round(comportement.segm[plan] / 25 * 100) / 100;
-	 		console.log(comportement.planActuel, comportement.vid.currentTime);
 	 	}
 
+	 	comportement.affichage("la");
 	 }
 
+	comportement.affichage = function(machin){
+		console.log(comportement.planActuel, comportement.vid.currentTime, machin);
+	}
 	/**
 	 * Gestion Video : Backward 
 	 * @method bwd
@@ -273,13 +284,11 @@ comportement = function(){
 	 	if(temp > -2 && temp < 2){
 	 		comportement.planActuel = plan - 1;
 	 		comportement.vid.currentTime = Math.round(comportement.segm[plan - 2] / 25 * 100) / 100;
-	 		console.log(plan, comportement.vid.currentTime);
 	 	}else {
 	 		comportement.planActuel = plan;
-	 		console.log(plan, comportement.segm[plan-1]);
 	 		comportement.vid.currentTime = Math.round(comportement.segm[plan - 1] / 25 * 100) / 100;
-	 		console.log(comportement.segm);
 	 	}
+	 	comportement.affichage("truc");
 	}
 
 	/**
@@ -290,12 +299,11 @@ comportement = function(){
 	 comportement.currentPlan = function(){
 		//Recherche dichotomique du plan courant 
 		// Plan courant : numero de l'index dans segm du prochain point d'arret 
-		var debut = 0 ; 
+		var debut = 0; 
 		var fin = comportement.segm.length - 1;
 		var mid = Math.round(fin / 2);
 		var curr = comportement.vid.currentTime;
-		while(fin-debut > 1){
-			console.log(debut, mid, fin);
+		while(fin - debut > 1){
 			if(comportement.segm[mid] / 25 > curr){
 				fin = mid; 
 				mid = Math.round((fin-debut) / 2 + debut);

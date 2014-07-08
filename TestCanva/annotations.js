@@ -42,7 +42,6 @@ annotations = function(){
                         break;
                     case "release" : // release -> Popup pour enregistrer les pos
                         // Vider le tableau temp_pos pour la prochaine annotation
-                         
                         if(annotations.temp_pos.length > 4){
                             annotations.save(indexprec, frame, posX, posY, type);
                         }
@@ -225,7 +224,21 @@ annotations = function(){
         camomile.getAnnotations(
             function(dat){
                 for(var i = 0; i < dat.length; i++){
+                    var vu = false;
                     annotations.annots.push(dat[i]);
+                    for(var j = 0; j < annotations.temp_name.length; j++){
+                        if(annotations.temp_name[j].name == dat[i].data.label){
+                            vu = true;
+                        }
+                    }
+                    
+                    // Enregistre le nom pour pouvoir le reafficher
+                    if(!vu) {
+                        var tmp = {};
+                        tmp.name = dat[i].data.label;
+                        tmp.color = annotations.colorName[annotations.temp_name.length % annotations.colorName.length];
+                        annotations.temp_name.push(tmp);
+                    }
                 }
                 annotations.sortAnnots();
             }, 

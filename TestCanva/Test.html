@@ -148,8 +148,14 @@
                             <button id="annulerAnnot" type="button" class="btn btn-default" data-dismiss="modal">
                                 Annuler
                             </button>
-                            <button id="envoyerAnnotNext" type="button" data-dismiss="modal" class="btn btn-primary"> Continuer </button>
-                           <span id="butonPrevious"></span>
+                            <button id="envoyerAnnotNext" type="button" data-dismiss="modal" class="btn btn-primary"> 
+                                Valider  
+                            </button>
+                           <span id="butonPrevious" style="display:none">
+                                <button id="envoyerAnnotPrevious" type="button" data-dismiss="modal" class="btn btn-primary"> 
+                                    Valider & début du plan
+                                </button>
+                           </span>
                         </div>
                     </div>
                 </div>
@@ -161,16 +167,17 @@
                     <div class="modal-content">
                         <div class="modal-header">
                             <!--<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>-->
-                            <h4 class="modal-title"> Choix du layer </h4>
+                            <h4 class="modal-title"> 
+                                Choix du layer 
+                            </h4>
                         </div>
                         <div class="modal-body">
                             <div id ="badgesLayers">
                             </div>
                             <br>OU<br><br>
-                            <button id="creerLayer" type="button" data-dismiss="modal" class="btn btn-primary"> Creer un layer
+                            <button id="creerLayer" type="button" data-dismiss="modal" class="btn btn-primary"> 
+                                Creer un layer
                             </button>
-                            
-                            
                         </div>
                     </div>
                 </div>
@@ -188,38 +195,50 @@
 						<!-- Pause -->
 						<li>
                             <button id="stop" class="btn">
-                                <i class="icon-large icon-stop"></i>
+                                <i class="icon-large icon-stop">
+                                </i>
                             </button>
                         </li>
 						<!-- Backward -->
 						<li>
                             <button id="bwd" class="btn" >
-                                <i class="icon-large icon-step-backward"></i>
+                                <i class="icon-large icon-step-backward">
+                                </i>
                             </button>
                         </li>
 						<!-- Slower -->
 						<li>
-                            <button class="btn" id="slower"> <i class="icon-large icon-backward"></i>
+                            <button class="btn" id="slower">
+                                <i class="icon-large icon-backward">
+                                </i>
                             </button>
                         </li>
 						<!-- Faster -->
 						<li>
-                            <button class="btn" id="faster" > <i class="icon-large icon-forward"></i>
+                            <button class="btn" id="faster" >
+                                <i class="icon-large icon-forward">
+                                </i>
                             </button>
                         </li>
 						<!-- Forward -->
 						<li>
                             <button class="btn" id="fwd">
-                                <i class="icon-large icon-step-forward"></i>
+                                <i class="icon-large icon-step-forward">
+                                </i>
                             </button>
                         </li>
 						<!-- Affichages -->
 						<li id = "affichage">
-                            <span id ="curtime"> 0 </span>
+                            <span id ="curtime"> 
+                                0 
+                            </span>
                             /
-                            <span id ="temps"> 0 </span>
+                            <span id ="temps"> 
+                                0 
+                            </span>
                             
-                            <span id ="position"></span>
+                            <span id ="position">
+                            </span>
                         </li>
 					</ul>
 				</div><!--/.nav-collapse -->
@@ -245,7 +264,7 @@
         
         <!-- Gere l'affichage des annotations -->
 		<script type="text/javascript" src="visualisation.js"></script>
-		<script type="text/javascript" src="bs/snap.svg-min.js"></script>
+		<script type="text/javascript" src="bs/js/snap.svg-min.js"></script>
 
 		
 		<!-- Librairies Hammer -->
@@ -263,7 +282,7 @@
             
             // Init the videos variables
             interface.init();
-        </script>
+            </script>
 	</body>
 </html>
 
