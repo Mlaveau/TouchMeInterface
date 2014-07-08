@@ -1,12 +1,4 @@
 
-
-/* Utiliser le DOM pour modifier plutôt qu'INNERHTML */
-/* Factoriser les messages dans les menus pour dire de se connecter */
-/* Quand ils veulent changer de medias, meme si yen a pas apres, enlever celui actif ? */
-/* Modifier les getCorpus et tout comme dans le vrai client */
-/* Prendre en compte les nouvelles fonctions pour modifier la page HTML (Notamment les menus et tout) */
-/* Separer en deux fichiers le client et la mise à jour de la page HTML*/
-
 // http://lit-shore-5364.herokuapp.com
 
 
@@ -29,7 +21,7 @@ camomile = function(){
     
 	/* Logout */
 	camomile.logout = function(callback) {
-		this.post("/logout", null, callback);
+		camomile.post("/logout", null, callback);
 	}
     
     
@@ -41,102 +33,112 @@ camomile = function(){
     
 	/* Get */
 	camomile.get = function(route, callback){
-		$j.ajax({
+		$j.ajax(
+			{
                 url: adresse + route,
                 type: 'GET',
                 success: function(data) {
-				callback(data);
+					callback(data);
                 },
                 crossDomain: true,
                 //dataType: 'json', // Format of the answer
                 xhrFields: {
-				withCredentials: true
+					withCredentials: true
                 },
                 error: function(jqXHR, textStatus, errorThrown) {
-				camomile.error(jqXHR.status, errorThrown, textStatus);
+					camomile.error(jqXHR.status, errorThrown, textStatus);
                 }
-                });
+            }
+        );
 	}
     
     
 	/* Delete */
 	camomile.del = function(route, callback){
-		$j.ajax({
+		$j.ajax(
+			{
                 url:  adresse + route,
                 type: 'DELETE',
                 success: function(data) {
-				callback(data);
+					callback(data);
                 },
                 crossDomain: true,
                 //dataType: 'json',  // Format of the answer
                 xhrFields: {
-				withCredentials: true
+					withCredentials: true
                 },
                 error: function(jqXHR, textStatus, errorThrown) {
-				camomile.error(jqXHR.status);
+					camomile.error(jqXHR.status);
                 }
-                });
+            }
+        );
 	}
     
 	/* Post */
 	camomile.post = function(route, data, callback){
 		if (data != null){ // For request as login
-			$j.ajax({
+			$j.ajax(
+				{
                     url:  adresse + route,
                     type: 'POST',
                     data: JSON.stringify(data),
                     contentType: 'application/json',
                     success: function(data) {
-					callback(data);
+						callback(data);
                     },
                     crossDomain: true,
                     //dataType: 'json',  // Format of the answer
                     xhrFields: {
-					withCredentials: true
+						withCredentials: true
                     },
                     error: function(jqXHR, textStatus, errorThrown) {
-				    camomile.error(jqXHR.status, errorThrown, textStatus);
+				    	camomile.error(jqXHR.status, errorThrown, textStatus);
                     }
-                    });
+                }
+            );
 		} else { // For request as logout
-			$j.ajax({
+			$j.ajax(
+				{
                     url:  adresse + route,
                     type: 'POST',
                     success: function(data) {
-					callback(data);
+						callback(data);
                     },
                     crossDomain: true,
                     //dataType: 'json',  // Format of the answer
                     xhrFields: {
-					withCredentials: true
+						withCredentials: true
                     },
                     error: function(jqXHR, textStatus, errorThrown) {
-					camomile.error(jqXHR.status, errorThrown, textStatus);
+						camomile.error(jqXHR.status, errorThrown, textStatus);
                     }
-                    });
+                }
+            );
 		}
 	}
     
     
 	/* Put */
 	camomile.put = function(route, data, callback){
-		$j.ajax({
+		$j.ajax(
+			{
                 url:  adresse + route,
                 type: 'PUT',
                 data: JSON.stringify(data),
                 contentType: 'application/json',
                 success: function(data) {
-				callback(data);
+					callback(data);
                 },
                 crossDomain: true,
                 //dataType: 'json',  // Format of the answer
                 xhrFields: {
-				withCredentials: true
+					withCredentials: true
                 },
                 error: function(jqXHR, textStatus, errorThrown) {
-				this.error(jqXHR.status);
+					camomile.error(jqXHR.status);
                 }
-                });
+            }
+        );
 	}
     
 	/* Create User */
@@ -145,18 +147,18 @@ camomile = function(){
 		data.username = name;
 		data.password = password;
 		data.affiliation = affiliation;
-		this.post("/user", data, callback);
+		camomile.post("/user", data, callback);
 	}
     
 	/* See All User */
 	camomile.all_user = function(callback){
-		this.get("/user", callback);
+		camomile.get("/user", callback);
 	}
     
     
 	/* Get ACL for an element */
 	camomile.get_ACL = function(callback, idCorpus, idMedia, idLayer, idAnnotation){
-		this.get((route(idCorpus, idMedia, idLayer, idAnnotation) + "/acl"), callback);
+		camomile.get((route(idCorpus, idMedia, idLayer, idAnnotation) + "/acl"), callback);
 	}
     
 	/* Set ACL for an element */
@@ -164,7 +166,7 @@ camomile = function(){
 		var data = {};
 		data.username = un;
 		data.userright = ur;
-		this.put((route(idCorpus, idMedia, idLayer, idAnnotation) + "/acl"), data, callback);
+		camomile.put((route(idCorpus, idMedia, idLayer, idAnnotation) + "/acl"), data, callback);
 	}
     
     
@@ -198,27 +200,27 @@ camomile = function(){
 	}
 	/* Get all corpus */
 	camomile.getCorpus = function(callbackFunction){
-		this.get("/corpus", callbackFunction);
+		camomile.get("/corpus", callbackFunction);
 	}
     
 	/* Get corpus by name */
 	camomile.corpusById = function(callbackFunction, idCorpus){
-		this.get(camomile.route(idCorpus), callbackFunction);
+		camomile.get(camomile.route(idCorpus), callbackFunction);
 	}
     
 	/* New corpus */
 	camomile.create_corpus = function(callbackFunction, name){
-		this.post("/corpus", camomile.corpus(name), callbackFunction);
+		camomile.post("/corpus", camomile.corpus(name), callbackFunction);
 	}
     
 	/* Set Corpus */
 	camomile.set_corpus = function(callbackfunction, idCorpus, name){
-		this.put(camomile.route(idCorpus), camomile.corpus(name), callbackfunction);
+		camomile.put(camomile.route(idCorpus), camomile.corpus(name), callbackfunction);
 	}
     
 	/* Remove Corpus*/
 	camomile.remove_corpus = function(callbackFunction, idCorpus){
-		this.del(camomile.route(idCorpus), callbackFunction);
+		camomile.del(camomile.route(idCorpus), callbackFunction);
         
 	}
     
@@ -236,27 +238,27 @@ camomile = function(){
     
 	/* Get all media */
 	camomile.getMedias = function(callbackFunction, idCorpus){
-		this.get(camomile.route(idCorpus) + "/media", callbackFunction);
+		camomile.get(camomile.route(idCorpus) + "/media", callbackFunction);
 	}
     
 	/* Get media by name */
 	camomile.mediaById = function(callbackFunction, idCorpus, idMedia ){
-		this.get(camomile.route(idCorpus, idMedia) , callbackFunction);
+		camomile.get(camomile.route(idCorpus, idMedia) , callbackFunction);
 	}
     
 	/* New Media */
 	camomile.create_media = function(callbackFunction, idCorpus, name, url){
-		this.post(camomile.route(idCorpus) + "/media", camomile.media(name, url), callbackFunction);
+		camomile.post(camomile.route(idCorpus) + "/media", camomile.media(name, url), callbackFunction);
 	}
     
 	/* Set Media */
 	camomile.set_media = function(callbackFunction, idCorpus, idMedia, name, url){
-		this.put(camomile.route(idCorpus, idMedia), camomille.media(name, url), callbackFunction);
+		camomile.put(camomile.route(idCorpus, idMedia), camomille.media(name, url), callbackFunction);
 	}
     
 	/* Remove Media*/
 	camomile.remove_media = function(callbackFunction, idCorpus, idMedia){
-		this.del(camomile.route(idCorpus, idMedia), callbackFunction);
+		camomile.del(camomile.route(idCorpus, idMedia), callbackFunction);
         
 	}
     
@@ -275,27 +277,27 @@ camomile = function(){
 	}
 	/* Get all layer */
 	camomile.getLayers = function(callbackFunction, idCorpus, idMedia){
-		this.get(camomile.route(idCorpus, idMedia) + "/layer", callbackFunction);
+		camomile.get(camomile.route(idCorpus, idMedia) + "/layer", callbackFunction);
 	}
     
 	/* Get Layer by name */
 	camomile.layerById = function(callbackFunction, idCorpus, idMedia, idLayer){
-		this.get(camomile.route(idCorpus, idMedia, idLayer), callbackFunction);
+		camomile.get(camomile.route(idCorpus, idMedia, idLayer), callbackFunction);
 	}
     
 	/* New Layer */
 	camomile.create_layer = function(callbackFunction, idCorpus, idMedia, layertyp, fragmenttyp, datatyp, source){
-		this.post(camomile.route(idCorpus, idMedia) + "/layer", camomile.layer(layertyp, fragmenttyp, datatyp, source), callbackFunction);
+		camomile.post(camomile.route(idCorpus, idMedia) + "/layer", camomile.layer(layertyp, fragmenttyp, datatyp, source), callbackFunction);
 	}
     
 	/* Set Layer */
 	camomile.set_layer = function(callbackFunction, idCorpus, idMedia, idLayer, layertyp, fragtyp, datatyp, source){
-		this.put(camomile.route(idCorpus, idMedia, idLayer), camomile.layer(layertyp, fragtyp, datatyp, source), callbackFunction);
+		camomile.put(camomile.route(idCorpus, idMedia, idLayer), camomile.layer(layertyp, fragtyp, datatyp, source), callbackFunction);
 	}
     
 	/* Remove Layer*/
 	camomile.remove_layer = function(callbackFunction, idCorpus, idMedia, idLayer, callbackFunction){
-		this.del(camomile.route(idCorpus, idMedia, idLayer), callbackFunction);
+		camomile.del(camomile.route(idCorpus, idMedia, idLayer), callbackFunction);
         
 	}
     
@@ -313,29 +315,29 @@ camomile = function(){
     
 	/* Get all Annotation */
 	camomile.getAnnotations = function(callbackFunction, idCorpus, idMedia, idLayer){
-		this.get(camomile.route(idCorpus, idMedia, idLayer) + "/annotation", callbackFunction);
+		camomile.get(camomile.route(idCorpus, idMedia, idLayer) + "/annotation", callbackFunction);
 	}
     
 	/* Get Annotation by name */
 	camomile.annotationById = function(callbackFunction, idCorpus, idMedia, idLayer, idAnnotation){
-		this.get(camomile.route(idCorpus, idMedia, idLayer, idAnnotation), callbackFunction);
+		camomile.get(camomile.route(idCorpus, idMedia, idLayer, idAnnotation), callbackFunction);
 	}
     
 	/* New Annotation */
 	camomile.create_annotation = function(callbackFunction, idCorpus, idMedia, idLayer, frag, dat){
         var annot = camomile.annotation(frag, dat);
         console.log(annot);
-		this.post(camomile.route(idCorpus, idMedia, idLayer) + "/annotation",annot, callbackFunction);
+		camomile.post(camomile.route(idCorpus, idMedia, idLayer) + "/annotation",annot, callbackFunction);
 	}
     
 	/* Set Annotation*/
 	camomile.set_annotation = function(callbackFunction, idCorpus, idMedia, idLayer, idAnnotation, frag, dat){
-		this.put(camomile.route(idCorpus, idMedia, idLayer, idAnnotation), camomile.annotation(frag, dat), callbackFunction);
+		camomile.put(camomile.route(idCorpus, idMedia, idLayer, idAnnotation), camomile.annotation(frag, dat), callbackFunction);
 	}
     
 	/* Remove Annotation*/
 	camomile.remove_annotation = function(callbackFunction, idCorpus, idMedia, idLayer, idAnnotation){
-		this.del(camomile.route(idCorpus, idMedia, idLayer, idAnnotation), callbackFunction);
+		camomile.del(camomile.route(idCorpus, idMedia, idLayer, idAnnotation), callbackFunction);
 	}
 	return camomile;
 }();

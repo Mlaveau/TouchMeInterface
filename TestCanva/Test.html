@@ -74,18 +74,18 @@
 					<form id="loginForm" class="navbar-form navbar-right" role="form" action="javascript:interface.tologin();">
 						<div class="form-group">
 							<input id="LoginUsername" class="form-control"  type="text" placeholder="Login">
-                                
-                                <input id="LoginPassword" class="form-control" type="Password" placeholder="Password">
-                                    
-                                    <button id="loginButton" class="btn btn-success" type="submit" style="height : 35px; margin-bottom:7px">
-                                        <i class="icon-white icon-off"></i>
-                                    </button>
-                                    </div>
-					</form>
-					<div id="logoutDiv" class="navbar-button navbar-right" role="form" style="display:none;">
-					 	<span id="currentLayer">
-                        </span>
-                        <span class="badge" id="userName">
+
+                            <input id="LoginPassword" class="form-control" type="Password" placeholder="Password">
+
+                            <button id="loginButton" class="btn btn-success" type="submit" style="height : 35px; margin-bottom:7px">
+                                <i class="icon-white icon-off"></i>
+                            </button>
+                        </div>
+                    </form>
+                    <div id="logoutDiv" class="navbar-button navbar-right" role="form" style="display:none;">
+                     <span id="currentLayer">
+                     </span>
+                     <span class="badge" id="userName">
                         </span>
 						<!--<button id="slideMenuButton" class="btn btn-info" type="submit">
                             <i class="icon-white icon-list">
@@ -148,8 +148,8 @@
                             <button id="annulerAnnot" type="button" class="btn btn-default" data-dismiss="modal">
                                 Annuler
                             </button>
-                            <button id="envoyerAnnot" type="button" data-dismiss="modal" class="btn btn-primary"> Envoyer
-                            </button>
+                            <button id="envoyerAnnotNext" type="button" data-dismiss="modal" class="btn btn-primary"> Continuer </button>
+                           <span id="butonPrevious"></span>
                         </div>
                     </div>
                 </div>
@@ -258,12 +258,12 @@
 			document.ontouchmove = function(event){
 				event.preventDefault();
 			}
-        // Jquery Conflicts
-        var $j = jQuery.noConflict();
-        
-        // Init the videos variables
-        interface.init();
-            </script>
+            // Jquery Conflicts
+            var $j = jQuery.noConflict();
+            
+            // Init the videos variables
+            interface.init();
+        </script>
 	</body>
 </html>
 

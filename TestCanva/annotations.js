@@ -3,112 +3,51 @@ annotations = function(){
     var temp_pos; // Tableau des positions [(X,Y), ...]
     var temp_evMulti; // Cache pour les frames ayant plusieurs positions
     var temp_name; // Enregistre les noms deja vus[[nom, couleur], ..]
-    var colorName= ['red', 
-                    'purple', 
-                    'green', 
-                    'orange', 
-                    'blue', 
-                    'black', 
-                    'aqua', 
-                    'white', 
-                    'lime', 
-                    'yellow', 
-                    'maroon', 
-                    'fuschia', 
-                    'navy', 
-                    'silver', 
-                    'gray', 
-                    'olive', 
-                    'teal']; // Tableau des couleurs pour l'affichage des labels
+    var colorName; // Tableau des couleurs pour l'affichage des labels
     
-    // Id des corpus/media/layer
+    // Id des corpus/media/layer en court
     var idCorp, idMed, idLay;
     
     // Contient les annotation du layer courant
     var annots;
 
+    /* Constructeur */
 	function annotations (){
         
     }
 	
-    // Enregistre les annotations dans le temp /!\ elles doivent être en pourcentages !
-	// Enregistre les annotations dans le temp_pos en estrapolant -> Mais on ne veut plus extrapoler
+    /* Enregistre les positions a chaque evenement dans annots */  
     annotations.enregistre_pos = function(frame, type, posX, posY){
-        var indexprec = annotations.temp_pos.length-1;
-        //console.log(indexprec);
-        if(!comportement.vid.paused && annotations.idLay != undefined){
-            //console.log(frame, type, posX, posY);
+        var indexprec = annotations.temp_pos.length - 1; 
+        if(!comportement.vid.paused && annotations.idLay != undefined){ // Si on a un layer courant et que la video joue
             if(type == "release" && annotations.temp_pos.length == 0){
-                // Si c'est le release d'après doubletap, dont on ne veut pas garder la trace, on ne fais rien
+                // Si c'est le release d'après doubletap, dont on ne veut pas garder la trace, on ne fait rien
             } else { // Dans tous les autres cas, on enregistre, en extrapolant les positions pour les frames manquantes
                 // l'index de la derniere position enregistree
-                switch(type){// NB : Possibilite d'un drag apres un hold/touch mais pas l'inverse. -> Peut poser des probs.
-                    case "drag" : // Si c'est un drag, il y a forcement avant un drag ou un dragstart -> extrapoler les positions des frames intermediaires
-                        /*
-                         if((annotations.temp_pos[indexprec][1] == "drag" || annotations.temp_pos[indexprec][1] == "dragstart") && annotations.temp_pos[indexprec][0] !=frame){
-                         annotations.extrapol(indexprec, frame, posX, posY, type);
-                         
-                         }else if(annotations.temp_pos[indexprec][0] == frame){
-                         annotations.save(indexprec, frame, posX, posY, type);
-                         }else {
-                         console.log("Je me suis gouree quelquepart il n'y a pas forcement un drag ou dragstart avant un drag");
-                         }*/
+                switch(type){
+                    case "drag" : 
                         annotations.save(indexprec, frame, posX, posY, type);
                         break;
-                    case "dragend" : //Drag ou dragstart avant : seulement extrapoler
-                        /*if((annotations.temp_pos[indexprec][1] == "drag" || annotations.temp_pos[indexprec][1] == "dragstart") && annotations.temp_pos[indexprec][0] !=frame){
-                         annotations.extrapol(indexprec, frame, posX, posY, type);
-                         
-                         } else if(annotations.temp_pos[indexprec][0] == frame){
-                         annotations.save(indexprec, frame, posX, posY, type);
-                         } else {
-                         console.log("Je me suis gouree quelquepart il n'y a pas forcement un drag ou dragstart avant un dragend");
-                         }*/
+                    case "dragend" : 
                         annotations.save(indexprec, frame, posX, posY, type);
                         break;
-                    case "dragstart" : // possibilite d'un touch ou hold juste avant -> Extrapoler
-                        /*if((annotations.temp_pos[indexprec][1] == "touch" || annotations.temp_pos[indexprec][1] == "hold") && annotations.temp_pos[indexprec][0] !=frame){
-                         annotations.extrapol(indexprec, frame, posX, posY, type);
-                         
-                         }else if(annotations.temp_pos[indexprec][0] == frame){
-                         annotations.save(indexprec, frame, posX, posY, type);
-                         }else { //Si c'est pas le cas, c'est que c'est un vrai debut donc on push
-                         annotations.save (indexprec, frame, posX, posY, type);
-                         }*/
+                    case "dragstart" : 
                         annotations.save(indexprec, frame, posX, posY, type);
                         break;
-                    case "hold" : // un touch juste avant
-                        /* if((annotations.temp_pos[indexprec][1] == "touch") && annotations.temp_pos[indexprec][0] !=frame){
-                         annotations.extrapol(indexprec, frame, posX, posY, type);
-                         
-                         }else if(annotations.temp_pos[indexprec][0] == frame){
-                         annotations.save(indexprec, frame, posX, posY, type);
-                         }else  {
-                         console.log("Je me suis gouree quelquepart il n'y a pas forcement un touch avant un hold");
-                         } */
+                    case "hold" : 
                         annotations.save(indexprec, frame, posX, posY, type);
                         break;
-                    case "touch" : // Juste enregistrer la position/frame
+                    case "touch" : 
                         annotations.save(indexprec, frame, posX, posY, type);
                         break;
-                    case "release" : // Concerne le cas du release post touch ou hold pour avoir le temps pour le même endroit (Aussi du drag, mais dans ce cas, vu que'il y a deja le dragend, c'est deja extrapole. Il suffit juste de demander si on veut enregistrer les positions
-                        // Le release peut ne pas etre exactement au meme endroit que le touch ou le hold
-                        // release -> Popu pour enregistrer les pos (Noms, layer nom, etc)
-                        // Vider le tableau temp_pos
-                        /*if(annotations.temp_pos.length  > 4){ // Pour gerer les pauses quand la video tourne
-                         if((annotations.temp_pos[indexprec][1] == "touch" || annotations.temp_pos[indexprec][1] == "hold") && annotations.temp_pos[indexprec][0] !=frame){
-                         annotations.extrapol(indexprec, frame, posX, posY, type);
-                         }else if(annotations.temp_pos[indexprec][0] == frame){
-                         annotations.save(indexprec, frame, posX, posY, type);
-                         }
-                         interface.popup();
-                         comportement.vid.pause();
-                         }*/
+                    case "release" : // release -> Popup pour enregistrer les pos
+                        // Vider le tableau temp_pos pour la prochaine annotation
                          
-                        if(annotations.temp_pos.length > 4 && annotations.verifBornes(posX, posY)){
+                        if(annotations.temp_pos.length > 4){
                             annotations.save(indexprec, frame, posX, posY, type);
                         }
                         var modal = document.getElementById("myModal");
+                        // Gere la position de la fenetre en fonction de la position pour pas surperposer
                         if(posY < 50){ // En pourcentage, donc le milieu c'est 50
                             modal.style.bottom = "10px";
                             modal.style.top = "auto";
@@ -135,13 +74,14 @@ annotations = function(){
                         break;
                 }
             }
-        } else if (type == "hold"){ // Si la video est en pause
+        } else if (type == "hold" && annotations.idLay != undefined){ // Si la video est en pause
             // Demarage de la video
             comportement.playVideo();
             annotations.save(indexprec, frame, posX, posY, type);
         }
     }
-    
+
+    /* Veirifie que les entiers passe en parametres sont bien compris entre 0 et 100 */
     annotations.verifBornes = function(posX, posY){
     	if (posX >= 0 && posY >= 0 && posX <= 100 && posY <= 100){
     		return true;
@@ -150,14 +90,14 @@ annotations = function(){
     	}	    
     
     }
-    // Extrapole les positions -> On veut juste garder les positions recuperees
+    /* Extrapole les positions pour l'affichage des annotations */
     annotations.extrapol = function(i, frame, posX, posY, type) {
         var valeur = annotations.temp_pos[i];
         var espace = frame - valeur[0];
         var decalageX = (valeur[2] - posX) / espace;
         var decalageY = (valeur[3] - posY) / espace;
         for (var i = 1; i < espace; i++){
-            annotations.temp_pos.push([valeur[0]+i, "remplissage_auto", valeur[2] + i * decalageX, valeur[3] + i * decalageY]);
+            annotations.temp_pos.push([valeur[0] + i, "remplissage_auto", valeur[2] + i * decalageX, valeur[3] + i * decalageY]);
         }
         annotations.temp_pos.push([frame, type, posX, posY]);
         annotations.temp_evMulti = [];
@@ -165,17 +105,19 @@ annotations = function(){
     }
     
     
-    // Enregistre en verifiant qu'il n'y a pas plusieurs evenements pour la meme frame, si c'est le cas, fais la moyenne de tout
+    /* Enregistre en verifiant qu'il n'y a pas plusieurs evenements pour la meme frame, si c'est le cas, fais la moyenne de tout */
     annotations.save = function(indexprec, frame, posX, posY, type){
-        if(annotations.verifBornes(posX, posY)){
+        if(annotations.verifBornes(posX, posY)){ // si c'est bien dans les bornes
         	var temp = {};
      	    temp.x = posX;
      	    temp.y = posY;
      	    temp.t = frame;
      	    temp.type = type;
-        
+            // S'il y a deja des evenements il faut comparer les frames
 			if(annotations.temp_pos.length > 0){
+                // Si l'evenement precedent est sur la meme frame
        	 		if(annotations.temp_pos[indexprec].t == frame){
+                    // Enregistre en calculant la moyenne de tous les evenements sur cette frame
                 	annotations.temp_evMulti.push(temp);
                 	var x = 0;
                 	var y = 0;
@@ -189,50 +131,29 @@ annotations = function(){
                 	tmp.t = frame;
                 	tmp.type = type;
                 	annotations.temp_pos[indexprec] = tmp;
-            	} else{
+            	} else{ // Sinon on enregistre directement
                 	annotations.temp_pos.push(temp);
                 	annotations.temp_evMulti = [];
                 	annotations.temp_evMulti.push(temp);
             	}
-        	} else {
+        	} else { // Enregsitre directement
             	annotations.temp_pos.push(temp);
             	annotations.temp_evMulti = [];
             	annotations.temp_evMulti.push(temp);
         	}
-        }//console.log(annotations.temp_pos);
+        }
     }
-    /*
-     if(annotations.temp_pos.length > 0){
-     if(annotations.temp_pos[indexprec][0] == frame){
-     
-     annotations.temp_evMulti.push([frame, type, posX, posY]);
-     var x = 0;
-     var y = 0;
-     for (var i = 0; i < annotations.temp_evMulti.length; i++){
-     x += annotations.temp_evMulti[i][2];
-     y += annotations.temp_evMulti[i][3];
-     }
-     annotations.temp_pos[indexprec] = [frame, type, x/annotations.temp_evMulti.length, y/annotations.temp_evMulti.length];
-     }else{
-     annotations.temp_pos.push([frame, type, x, y]);
-     annotations.temp_evMulti = [];
-     annotations.temp_evMulti.push([frame, type, posX, posY]);
-     }
-     }else {
-     annotations.temp_pos.push([frame, type, posX, posY]);
-     annotations.temp_evMulti = [];
-     annotations.temp_evMulti.push([frame, type, posX, posY]);
-     
-     }
-     }
-     */
 
     /* Envoyer les annotations au serveur puis efface le temp_pos */
-    annotations.envoyer = function(persoName) {
-        /* Recupere le nom entre et l'enregistre en verifiant qu'il n'y soit pas deja */
-        if(typeof persoName != "string"){
-            persoName = document.getElementById("namePerso").value;
-        }
+    annotations.envoyerprevious = function() {
+        annotations.envoyer();
+        comportement.bwd();
+    }
+
+    /* Envoie l'annotation  dans le layer selectionne*/
+    annotations.envoyer = function() {
+        // Recupere le nom entre et l'enregistre en verifiant qu'il n'y soit pas deja 
+        persoName = document.getElementById("namePerso").value;
         if(persoName != ""){
             var vu = false;
             for(var i = 0; i < annotations.temp_name.length; i++){
@@ -248,71 +169,83 @@ annotations = function(){
                 tmp.color = annotations.colorName[annotations.temp_name.length % annotations.colorName.length];
                 annotations.temp_name.push(tmp);
             }
+
+            // l'annotation
+            // Enregistrer l'annotation dans le bon layer
+            var fragment = {}
+            fragment.start = annotations.temp_pos[0].t;
+            fragment.end = annotations.temp_pos[annotations.temp_pos.length-1].t; // Interval de temps
+            var pos = [];
+            for (var i = 0; i < annotations.temp_pos.length; i++){
+                var tmp = {};
+                tmp.t = annotations.temp_pos[i].t;
+                tmp.x = annotations.temp_pos[i].x;
+                tmp.y = annotations.temp_pos[i].y;
+                pos.push(tmp);
+            }
+            var dat = {}; // // data = {label : _, position : [{x : _ , y : _ , t : _ }, ... ]}
+            dat.label = persoName;
+            dat.position = pos;
+            camomile.create_annotation(function(data){annotations.annots.push(data);}, annotations.idCorp, annotations.idMed, annotations.idLay, fragment, dat);
         }
-        
-        // l'annotation
-        // Enregistrer l'annotation dans le bon layer
-        
-        var fragment = {}
-        fragment.start = annotations.temp_pos[0].t;
-        fragment.end = annotations.temp_pos[annotations.temp_pos.length-1].t; // Interval de temps
-        var pos = [];
-        for (var i = 0; i < annotations.temp_pos.length; i++){
-            var tmp = {};
-            tmp.t = annotations.temp_pos[i].t;
-            tmp.x = annotations.temp_pos[i].x;
-            tmp.y = annotations.temp_pos[i].y;
-            pos.push(tmp);
-        }
-        var dat = {}; // // data = {label : _, position : [{x : _ , y : _ , t : _ }, ... ]}
-        dat.label = persoName;
-        dat.position = pos;
-        camomile.create_annotation(function(data){annotations.annots.push(data);}, annotations.idCorp, annotations.idMed, annotations.idLay, fragment, dat);
         // Reinitialisation du champ du nom et du tableau de positions
         annotations.reset();
     }
     
-    
+    /* Reset le tableau d'annotation et le champ du nom */
     annotations.reset = function(){
         annotations.temp_pos = [];
         document.getElementById("namePerso").value = "";
     }
     
+    /* Creer un layer pour enregistrer des annotations */
     annotations.creerLayer = function(){
         // Cree le layer en question avec comme source le username de connexion
-        camomile.create_layer(function(dat){
-                              // Enregistre l'id du layer en question
-                              annotations.idLay = dat._id;
-                              }, annotations.idCorp, annotations.idMed, "Annotations", "temps", "name pos", interface.username);
+        camomile.create_layer(
+            function(dat){
+                // Enregistre l'id du layer en question
+                annotations.idLay = dat._id;
+            }, 
+            annotations.idCorp, 
+            annotations.idMed, 
+            "Annotations", 
+            "temps", 
+            "name pos", 
+            interface.username
+        );
         annotations.annots = [];
         
     }
     
+    /* Recupere les annotations deja presente dans le layer indique*/
     annotations.recupAnnot = function(idLayer, source){
     	annotations.annots = Array();
         annotations.idLay = idLayer;
         document.getElementById("currentLayer").innerHTML = source + " : " + idLayer;
-        camomile.getAnnotations(function(dat){
-                             		for(var i = 0; i < dat.length; i++){
-                                        	annotations.annots.push(dat[i]);
-                                	}
-                                	annotations.sortAnnots();
-                                	visualisation.afficheAnnot();
-                                }
-                                , annotations.idCorp
-                                , annotations.idMed
-                                , annotations.idLay
-                                );
+        camomile.getAnnotations(
+            function(dat){
+                for(var i = 0; i < dat.length; i++){
+                    annotations.annots.push(dat[i]);
+                }
+                annotations.sortAnnots();
+            }, 
+            annotations.idCorp,
+            annotations.idMed,
+            annotations.idLay
+        );
     }
     
+    /* Range les annotations dans l'ordre chronologique */
     annotations.sortAnnots = function(){
-    	annotations.annots.sort(function(a, b){ 
-            var tmp = a.fragment.start-b.fragment.start; 
-            if(tmp == 0){
-            	tmp = a.fragment.end - b.fragment.end;
+    	annotations.annots.sort(
+            function(a, b){ 
+                var tmp = a.fragment.start-b.fragment.start; 
+                if(tmp == 0){
+                	tmp = a.fragment.end - b.fragment.end;
+                }
+    			return tmp; 
             }
-			return tmp; 
-        });
+        );
     }
            					
 
@@ -321,7 +254,7 @@ return annotations;
 
 
 
-/* Remove Annotations
+/* Remove all Annotations d'un layer
  
  var id = [];
  
@@ -340,6 +273,3 @@ return annotations;
  }
  
  */
-
-
-/* "<svg width=\"500\" height=\"500\" style=\"position:relative; z-index=10\; background-color:rgba(255, 255, 255, 0.3)\"><circle id=\"truc\" cx=\"200\" cy=\"200\" r=\"40\" stroke=\"green\" stroke-width=\"6\" fill-opacity= \"0\"/></svg>"*/

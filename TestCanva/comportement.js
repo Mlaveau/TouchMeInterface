@@ -1,4 +1,3 @@
- // TODO : Trouver un moyen d'automatiser les fps de la video
 
 /* Gestion de la video et du multitouch */
 comportement = function(){
@@ -6,10 +5,7 @@ comportement = function(){
 	/* Variables */ 
 
 	// Element HTML 5
-	var vid, // Video
-		time, // Div d'affichage du temps courant
-		tmp, // Div d'affichage de la duree
-		pos; // Div d'affichage de la position
+	var vid; // Video
 
     // Timer 
 	var vidTimer; // pour l'affichage des annotations, du temps courant et la detection de changement de plan (Toutes les 100 ms)
@@ -44,12 +40,14 @@ comportement = function(){
 	"rotate",
 	"pinch",
 	"pinchin",
-                      "pinchout"]; // Ensemble des evenements reconaissables
-                      var events_annot = ["dragstart",
-                      "drag",
-                      "dragend", 
-                      "hold", 
-                        "release"]; // Evenements analyses pour lenregistrement d'annotations
+	"pinchout"]; // Ensemble des evenements reconaissables
+
+	var events_annot = ["dragstart",
+	"drag",
+	"dragend", 
+	"hold", 
+	"release"]; // Evenements analyses pour lenregistrement d'annotations
+    
     /**
 	 * Constructeur 
 	 * @method comportement
@@ -70,7 +68,23 @@ comportement = function(){
         annotations.temp_evMulti = []; // Tableau des evenements qui sont sur la meme frame
         annotations.temp_name = []; // Tableau des noms deja utilises
         annotations.temp_pos = []; // Tableau des positions		
-
+        annotations.colorName = ['red', 
+			                    'purple', 
+			                    'green', 
+			                    'orange', 
+			                    'blue', 
+			                    'black', 
+			                    'aqua', 
+			                    'white', 
+			                    'lime', 
+			                    'yellow', 
+			                    'maroon', 
+			                    'fuschia', 
+			                    'navy', 
+			                    'silver', 
+			                    'gray', 
+			                    'olive', 
+			                    'teal']; 
 		// Pour le comportement 
 		comportement.vid = document.getElementById("vid"); // Element HTML5 video
         comportement.vid.addEventListener('ended', comportement.vidEnd, false); // Listener sur ce qu'il y a a faire en fin de video
@@ -110,7 +124,7 @@ comportement = function(){
 			}
 		); 
 
-		// Pour tous les evenements de events_annot
+		// Pour tous les evenements de events_annot (enregistrement des annotations)
 		comportement.hammertime.on(events_annot.join(" "), 
 			function(e){
 	            // Position en % de la hauteur et de la largeur
@@ -125,32 +139,39 @@ comportement = function(){
 	/**
 	 * Enregistre la segmentation en plan 
 	 * @method update_segm
-	 * @param {} data
+	 * @param [] data
 	 * @return 
 	 */
 	 comportement.update_segm= function(data){
 	 	comportement.segm = data;
+	 	document.getElementById("butonPrevious").innerHTML = "<button id=\"envoyerAnnotPrevious\" type=\"button\" data-dismiss=\"modal\" class=\"btn btn-primary\"> Retour au debut du plan </button>";
+	    var el = document.getElementById("envoyerAnnotPrevious");
+	    if (el.addEventListener){
+	        el.addEventListener("click", annotations.envoyerprevious, false);
+	    }else if (el.attachEvent){
+	        el.attachEvent('onclick', annotations.envoyerprevious);
+	    }
 	 }
 
 	/**
 	 * Affiche le plan actuel -> A supprimer  
 	 * @method touchXY
-	 * @param {} e
+	 * @param Evenement e
 	 * @return 
 	 */
 	 comportement.touchXY = function(e) {
-	 	comportement.pos.innerHTML = comportement.planActuel + " : ";
+	 	interface.pos.innerHTML = comportement.planActuel + " : ";
 	 }
 
 	/**
 	 * Affiche la position dans la barre du bas (En pourcentages) 
 	 * @method showPos
-	 * @param {} posX
-	 * @param {} posY
+	 * @param int posX (en % de la longueur)
+	 * @param int posY (en % de la hauteur)
 	 * @return 
 	 */
 	 comportement.showPos = function(posX, posY){
-	 	comportement.pos.innerHTML = " (" + posX + "," + posY + ") ";
+	 	interface.pos.innerHTML = " (" + posX + "," + posY + ") ";
 	 }
 
 
@@ -160,14 +181,14 @@ comportement = function(){
 	 * @return 
 	 */
 	 comportement.curtime = function(){
-
-	 	comportement.time.innerHTML = Math.floor(comportement.vid.currentTime/60) + ":" + Math.floor(comportement.vid.currentTime%60);
-
-		if(comportement.vid.currentTime > 0 && comportement.vid.currentTime <= 1){ // Oblige car au tout debut on a pas la duree. Ce n'est qu'une fois la vidéo lancée
+	 	// Affichage du temps courant
+	 	interface.time.innerHTML = Math.floor(comportement.vid.currentTime/60) + ":" + Math.floor(comportement.vid.currentTime%60);
+	 	// Affichage de la duree totale
+		if(comportement.vid.currentTime > 0 && comportement.vid.currentTime <= 1){ 
 			if (Math.round(comportement.vid.duration/60) >0) {
-				comportement.tmp.innerHTML = Math.floor(comportement.vid.duration/60) + ":" ; // Returns the duration in seconds of the current media resource. A NaN value is returned if duration is not available, or Infinity if the media resource is streaming
+				interface.tmp.innerHTML = Math.floor(comportement.vid.duration/60) + ":" ; // Returns the duration in seconds of the current media resource. A NaN value is returned if duration is not available, or Infinity if the media resource is streaming
 			}
-			comportement.tmp.innerHTML = comportement.tmp.innerHTML + Math.floor(comportement.vid.duration%60);
+			interface.tmp.innerHTML = interface.tmp.innerHTML + Math.floor(comportement.vid.duration%60);
 		}
 	}
 
@@ -178,11 +199,13 @@ comportement = function(){
 	 * @return 
 	 */
 	 comportement.plans = function(){
+	 	// Recupere le numero de frame du prochain plan
 	 	var tmp = comportement.segm[comportement.planActuel] / 25;
-		if(comportement.vid.currentTime > tmp){  //OU changer le if ici ? 
+	 	// Si on l'a atteint
+		if(comportement.vid.currentTime > tmp){ 
 			comportement.planActuel += 1;
 			comportement.vid.pause();
-            // Pour enregistrer les pos si on en a pointe
+            // Pour enregistrer les pos si on en a pointees
             if(annotations.temp_pos != ""){
             	interface.popup();
             }
@@ -197,13 +220,15 @@ comportement = function(){
 	 comportement.playVideo = function() {
 		if(document.getElementById('sidebar').style.display != ""){ // Peut être lancee que si le menu est cache (Pour les annotations
 			if (comportement.vid.paused == true) {
+				// Lance le timer a chaque play
 				comportement.vidTimer = window.setInterval("comportement.gestionTimer()", 100);
 				comportement.vid.play();
-				comportement.vid.muted = true;
-                annotations.reset();// Reset les temp des annotations
+                annotations.reset();// Reset les temp des annotations pour etre sur qu'il n'en reste pas
             }
             else {
-            	clearInterval(comportement.vidTimer);
+            	// Reset le timer 
+               	clearInterval(comportement.vidTimer);
+               	// Met en pause
             	comportement.vid.pause();
             }
         }
@@ -251,19 +276,10 @@ comportement = function(){
 	 		console.log(plan, comportement.vid.currentTime);
 	 	}else {
 	 		comportement.planActuel = plan;
+	 		console.log(plan, comportement.segm[plan-1]);
 	 		comportement.vid.currentTime = Math.round(comportement.segm[plan - 1] / 25 * 100) / 100;
+	 		console.log(comportement.segm);
 	 	}
-
-		/*if(comportement.planActuel > 0){
-			var t = comportement.segm[comportement.planActuel] / 25 - comportement.vid.currentTime;
-			if( t > 2){
-				comportement.planActuel = comportement.planActuel - 2;
-			}else {
-				comportement.planActuel = comportement.planActuel - 1;
-			}
-			comportement.vid.currentTime = Math.round(comportement.segm[comportement.planActuel] / 25 * 100) / a;
-		}*/
-
 	}
 
 	/**
