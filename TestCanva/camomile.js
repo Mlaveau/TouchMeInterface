@@ -620,4 +620,3 @@ camomile = function(){
 	}
 	return camomile;
 }();
-

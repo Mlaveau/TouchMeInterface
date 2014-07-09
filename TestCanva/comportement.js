@@ -133,7 +133,7 @@ comportement = function(){
 	            var posX = Math.round((((e.gesture.center.pageX - interface.posleft) * 100) / comportement.vid.width) * 100) / 100;
 	            var posY = Math.round((((e.gesture.center.pageY - interface.postop) * 100) / comportement.vid.height) * 100) / 100;
 	            comportement.showPos(posX, posY);
-	            if(comportement.vid.paused == false && e.type != "release"){
+	            if((comportement.vid.paused == false && e.type != "release")){
 	            	comportement.showCurrentPos(e.gesture.center.pageX - interface.posleft, e.gesture.center.pageY - interface.postop);
 	            }else if (e.type == "release"){
 	            	 document.getElementById("currentPosUser").style.display = "None";

@@ -78,11 +78,14 @@ annotations = function(){
             // Demarage de la video
             comportement.playVideo();
             annotations.save(indexprec, frame, posX, posY, type);
+            var tempX = posX * comportement.vid.width / 100;
+            var tempY = posY * comportement.vid.height / 100;
+            comportement.showCurrentPos(tempX, tempY);
         }
     }
 
     /**
-     * Veirifie que les entiers passe en parametres sont bien compris entre 0 et 100 
+     * Verifie que les entiers passe en parametres sont bien compris entre 0 et 100 
      * @method verifBornes
      * @param int posX
      * @param int posY

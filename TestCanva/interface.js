@@ -498,4 +498,3 @@ interface = function(){
 
 	return interface;
 }();
-
