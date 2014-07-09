@@ -1,5 +1,7 @@
+/* 
+ * Gestion de la video et du multitouch
+ */
 
-/* Gestion de la video et du multitouch */
 comportement = function(){
 
 	/* Variables */ 
@@ -49,20 +51,20 @@ comportement = function(){
 	"release"]; // Evenements analyses pour lenregistrement d'annotations
     
     /**
-	 * Constructeur 
-	 * @method comportement
-	 * @return 
-	 */
-	 function comportement (){
+ 	 * Constructeur 
+ 	 * @method comportement
+ 	 * @return 
+ 	 */
+ 	function comportement (){
 	 }
 
 
     /**
-	 * Initialise les elements de la page qui ont besoin de la video pour fonctionner 
-	 * @method elVid
-	 * @return 
-	 */
-	 comportement.elVid = function(){
+ 	 * Initialise les elements de la page qui ont besoin de la video pour fonctionner 
+ 	 * @method elVid
+ 	 * @return 
+ 	 */
+ 	comportement.elVid = function(){
 	 	/* Initialisation des variables */
 		// Pour les annotations : initialisation des tableaux de nom, position, evenements multiples
         annotations.temp_evMulti = []; // Tableau des evenements qui sont sur la meme frame
@@ -141,53 +143,64 @@ comportement = function(){
 		);
 	}
 	
+	/**
+	 * Gere le cercle d'affichage de l'endroit pointe 
+	 * @method showCurrentPos
+	 * @param int cx // (<= 100 && >= 0)
+	 * @param int cy // (<= 100 && >= 0)
+	 * @return 
+	 */
 	comportement.showCurrentPos = function(cx, cy){
+		// change la position du cercle selon les x,y passes
 		var gCircle = document.getElementById("currentPosUser");
 		gCircle.setAttributeNS(null, "cx", cx);
     	gCircle.setAttributeNS(null, "cy", cy);
-    	if(gCircle.style.display != ""){
+    	// Si pas affiche, s'affiche
+    	if(gCircle.style.display != ""){ 
     		gCircle.style.display = "";
     	}
 	}
 	/**
-	 * Enregistre la segmentation en plan 
-	 * @method update_segm
-	 * @param [] data
-	 * @return 
-	 */
-	 comportement.update_segm= function(data){
+ 	 * Enregistre la segmentation en plan 
+ 	 * @method update_segm
+ 	 * @param Array[int, int, …] data
+ 	 * @return 
+ 	 */
+ 	comportement.update_segm = function(data){
 	 	document.getElementById("butonPrevious").style.display = "";
+	 	console.log(data);
+	 	console.log("yeah");
 	 	comportement.segm = data;
 	 }
 
 	/**
-	 * Affiche le plan actuel -> A supprimer  
-	 * @method touchXY
-	 * @param Evenement e
-	 * @return 
-	 */
-	 comportement.touchXY = function(e) {
+ 	 * Affiche le plan actuel -> A supprimer  
+ 	 * @method touchXY
+ 	 * @param String[] e (Type d'un evenement Hammer)
+ 	 * @return 
+ 	 */
+ 	comportement.touchXY = function(e) {
 	 	interface.pos.innerHTML = comportement.planActuel + " : ";
 	 }
 
 	/**
-	 * Affiche la position dans la barre du bas (En pourcentages) 
-	 * @method showPos
-	 * @param int posX (en % de la longueur)
-	 * @param int posY (en % de la hauteur)
-	 * @return 
-	 */
-	 comportement.showPos = function(posX, posY){
+ 	 * Affiche la position dans la barre du bas (En pourcentages) 
+ 	 * @method showPos
+ 	 * @param int posX
+ 	 * @param int posY
+ 	 * @return 
+ 	 */
+ 	comportement.showPos = function(posX, posY){
 	 	interface.pos.innerHTML = " (" + posX + "," + posY + ") ";
 	 }
 
 
     /**
-	 * Met a jour l'affichage du temps de la video 
-	 * @method curtime
-	 * @return 
-	 */
-	 comportement.curtime = function(){
+ 	 * Met a jour l'affichage du temps de la video 
+ 	 * @method curtime
+ 	 * @return 
+ 	 */
+ 	comportement.curtime = function(){
 	 	// Affichage du temps courant
 	 	interface.time.innerHTML = Math.floor(comportement.vid.currentTime/60) + ":" + Math.floor(comportement.vid.currentTime%60);
 	 	// Affichage de la duree totale
@@ -201,11 +214,11 @@ comportement = function(){
 
 
 	/**
-	 * Gestion Video : arret de la video au changement de plans 
-	 * @method plans
-	 * @return 
-	 */
-	 comportement.plans = function(){
+ 	 * Gestion Video : arret de la video au changement de plans 
+ 	 * @method plans
+ 	 * @return 
+ 	 */
+ 	comportement.plans = function(){
 	 	// Recupere le numero de frame du prochain plan
 	 	var tmp = comportement.segm[comportement.planActuel] / 25;
 	 	// Si on l'a atteint
@@ -220,11 +233,11 @@ comportement = function(){
     }
     
 	/**
-	 * Gestion Video : Play si Pause, Pause si Play 
-	 * @method playVideo
-	 * @return 
-	 */
-	 comportement.playVideo = function() {
+ 	 * Gestion Video : Play si Pause, Pause si Play 
+ 	 * @method playVideo
+ 	 * @return 
+ 	 */
+ 	comportement.playVideo = function() {
 		if(document.getElementById('sidebar').style.display != ""){ // Peut être lancee que si le menu est cache (Pour les annotations
 			if (comportement.vid.paused == true) {
 				// Lance le timer a chaque play
@@ -243,11 +256,11 @@ comportement = function(){
     }
 
 	/**
-	 * Appelle la mise a jour des affichages d'annotations et de temps courant de la video 
-	 * @method gestionTimer
-	 * @return 
-	 */
-	 comportement.gestionTimer = function(){
+ 	 * Appelle la mise a jour des affichages d'annotations et de temps courant de la video 
+ 	 * @method gestionTimer
+ 	 * @return 
+ 	 */
+ 	comportement.gestionTimer = function(){
 	 	visualisation.afficheAnnot();
 	 	comportement.curtime();
 	 	if(comportement.segm.length > 0){
@@ -256,29 +269,24 @@ comportement = function(){
 	}
 
 	/**
-	 * Gestion Video : Forward 
-	 * @method fwd
-	 * @return 
-	 */
-	 comportement.fwd = function(){ 
+ 	 * Gestion Video : Forward 
+ 	 * @method fwd
+ 	 * @return 
+ 	 */
+ 	comportement.fwd = function(){ 
 	 	var plan = comportement.currentPlan();
 	 	if(plan < comportement.segm.length){
 	 		comportement.planActuel = plan;
 	 		comportement.vid.currentTime = Math.round(comportement.segm[plan] / 25 * 100) / 100;
 	 	}
-
-	 	comportement.affichage("la");
 	 }
 
-	comportement.affichage = function(machin){
-		console.log(comportement.planActuel, comportement.vid.currentTime, machin);
-	}
 	/**
-	 * Gestion Video : Backward 
-	 * @method bwd
-	 * @return 
-	 */
-	 comportement.bwd = function(){
+ 	 * Gestion Video : Backward 
+ 	 * @method bwd
+ 	 * @return 
+ 	 */
+ 	comportement.bwd = function(){
 	 	var plan = comportement.currentPlan();
 	 	var temp = comportement.segm[plan - 1]/25 - comportement.vid.currentTime; 
 	 	if(temp > -2 && temp < 2){
@@ -288,15 +296,14 @@ comportement = function(){
 	 		comportement.planActuel = plan;
 	 		comportement.vid.currentTime = Math.round(comportement.segm[plan - 1] / 25 * 100) / 100;
 	 	}
-	 	comportement.affichage("truc");
 	}
 
 	/**
-	 * Renvoit l'index dans comportement.segm du prochain plan où il faudra s'arreter en fonction de vid.currentTime 
-	 * @method currentPlan
-	 * @return fin
-	 */
-	 comportement.currentPlan = function(){
+ 	 * Renvoit l'index dans comportement.segm du prochain plan où il faudra s'arreter en fonction de vid.currentTime 
+ 	 * @method currentPlan
+ 	 * @return fin
+ 	 */
+ 	comportement.currentPlan = function(){
 		//Recherche dichotomique du plan courant 
 		// Plan courant : numero de l'index dans segm du prochain point d'arret 
 		var debut = 0; 
@@ -311,52 +318,52 @@ comportement = function(){
 				debut = mid; 
 				mid = Math.round((fin-debut) / 2 + debut) ;
 			}else{ // Si c'est exactement egal 
-			mid = mid + 1;
-			return mid;
+				mid = mid + 1;
+				return mid;
+			}
 		}
+		return fin; 
 	}
-	return fin; 
-}
 
 	/**
-	 * Gestion Video : Stop 
-	 * @method stop
-	 * @return 
-	 */
-	 comportement.stop = function(){
+ 	 * Gestion Video : Stop 
+ 	 * @method stop
+ 	 * @return 
+ 	 */
+ 	comportement.stop = function(){
 	 	comportement.vid.currentTime = 0;
 	 	comportement.planActuel = 0;
 	 	comportement.vid.pause();
 	 }
 
 	/**
-	 * Gestion Video : Plus lentement 
-	 * @method slower
-	 * @return 
-	 */
-	 comportement.slower = function(){
+ 	 * Gestion Video : Plus lentement 
+ 	 * @method slower
+ 	 * @return 
+ 	 */
+ 	comportement.slower = function(){
 	 	comportement.vid.playbackRate -= 0.25;
 	 	comportement.vid.pause();
 	 	comportement.vid.play();
 	 }
 
 	/**
-	 * Gestion Video : Plus rapide 
-	 * @method faster
-	 * @return 
-	 */
-	 comportement.faster = function(){
+ 	 * Gestion Video : Plus rapide 
+ 	 * @method faster
+ 	 * @return 
+ 	 */
+ 	comportement.faster = function(){
 	 	comportement.vid.playbackRate += 0.25;
 	 	comportement.vid.pause();
 	 	comportement.vid.play();
 	 }
 
 	/**
-	 * Gestion Video : Remet a zero la video
-	 * @method vidEnd
-	 * @return 
-	 */
-	 comportement.vidEnd = function() {
+ 	 * Gestion Video : Remet a zero la video
+ 	 * @method vidEnd
+ 	 * @return 
+ 	 */
+ 	comportement.vidEnd = function() {
 	 	comportement.vid.playbackRate = 1;
 	 	comportement.vid.currentTime = 0;
 	 }

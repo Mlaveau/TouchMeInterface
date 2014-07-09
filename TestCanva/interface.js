@@ -4,6 +4,11 @@
 
 interface = function(){
        
+	/**
+	 * Description
+	 * @method interface
+	 * @return 
+	 */
 	function interface(){
 		
 	}
@@ -17,9 +22,12 @@ interface = function(){
   tmp, // Div d'affichage de la duree
   pos; // Div d'affichage de la position
     
-  /* Initialisation de l'interface */
+  /**
+   * Initialisation de l'interface 
+   * @method init
+   * @return 
+   */
   interface.init = function() {
-
     // A enlever quand j'aurai fini les tests
 		document.getElementById("LoginUsername").value = "root";
 		document.getElementById("LoginPassword").value = "camomile";
@@ -118,7 +126,11 @@ interface = function(){
     }
 	}
     
-	/* Recupere les info pour le log */
+	/**
+	 * Recupere les info pour le log 
+	 * @method tologin
+	 * @return 
+	 */
 	interface.tologin = function() {
     interface.username= "";
 		// Log
@@ -126,13 +138,22 @@ interface = function(){
     interface.username = document.getElementById("LoginUsername").value;
 	}
   
-  /* Deconnexion au serveur */
+  /**
+	 * Deconnexion au serveur 
+	 * @method tologout
+	 * @return 
+	 */
 	interface.tologout = function(){
 		camomile.logout(interface.callback_logout);
 	}
     
 	
-	/* Traitement si connexion sucessfull */
+	/**
+	 * Traitement si connexion sucessfull 
+	 * @method callback_login
+	 * @param JSON data Resultat de la requete
+	 * @return 
+	 */
 	interface.callback_login = function(data){
         
 		console.log('Co');
@@ -151,7 +172,12 @@ interface = function(){
 		interface.update_menuCorpus();
 	}
     
-	/* Traitement si deconnexion sucessfull */
+	/**
+	 * Traitement si deconnexion sucessfull 
+	 * @method callback_logout
+	 * @param JSON data Resultat de la requete
+	 * @return 
+	 */
 	interface.callback_logout = function(data){
         
 		console.log('Deco');
@@ -193,7 +219,11 @@ interface = function(){
 		document.getElementById('vidName').innerHTML = "<i class=\"icon-white icon-film\"></i>  Videos  <b class=\"caret \"></b>";
 	}
     
-	/* Met a jour le menu des corpus -> Appele quand on s'est connecte */
+	/**
+	 * Met a jour le menu des corpus -> Appele quand on s'est connecte 
+	 * @method update_menuCorpus
+	 * @return 
+	 */
 	interface.update_menuCorpus = function(){
     document.getElementById('corpName').style.display = "";
     camomile.getCorpus(
@@ -210,7 +240,13 @@ interface = function(){
     );
 	}
     
-	/* Met a jour le menu des videos -> Appele quand on a clique sur un corpus  */
+	/**
+	 * Met a jour le menu des videos -> Appele quand on a clique sur un corpus  
+	 * @method update_menuVid
+	 * @param String corpusId
+	 * @param String corpusName
+	 * @return 
+	 */
 	interface.update_menuVid = function(corpusId, corpusName){
     annotations.idCorp = corpusId;
     camomile.getMedias(
@@ -248,15 +284,25 @@ interface = function(){
     );
     interface.reinitialiseSegm();
 	}
-  
-  /* Permet d'enlever le bouton de plans et reinitialise le tableau des segmentations */ // AJOUTER QUE CA AFFICHE/ENLEVE LES BOUTONS DES PLANS EN BAS
+
+  /**
+   * Permet d'enlever le bouton de plans et reinitialise le tableau des segmentations
+   * @method reinitialiseSegm
+   * @return 
+   */
   interface.reinitialiseSegm = function(){
     // Reinitialise la segmentation et enleve le bouton
     comportement.segm = "";
     document.getElementById('butonPrevious').style.display = "None";
   }
     
-	/* Met a jour le menu des segmentations -> Appele quand on a choisi une video */
+	/**
+	 * Met a jour le menu des segmentations -> Appele quand on a choisi une video 
+	 * @method update_menuSegm
+	 * @param String corpusId
+	 * @param String vidId
+	 * @return 
+	 */
 	interface.update_menuSegm = function(corpusId, vidId){
     // Initialise les id pour les annotations :
     annotations.idMed = vidId;
@@ -320,7 +366,11 @@ interface = function(){
     $j("#modalLayers").modal('show');        
 	}
   
-  /* Reinitialise le menu d'affichage des segmentations disponibles */
+  /**
+   * Reinitialise le menu d'affichage des segmentations disponibles 
+   * @method reinitialiseMenuSegm
+   * @return 
+   */
   interface.reinitialiseMenuSegm = function(){
     var menuSegm = document.getElementById('menuSegm');
     var tmp = " ";
@@ -330,13 +380,24 @@ interface = function(){
 
   }
     
-	/* Met a jour le nom du menu -> Appele quand on a choisi une segmentation */
+	/**
+	 * Met a jour le nom du menu -> Appele quand on a choisi une segmentation 
+	 * @method update_menuNameSegm
+	 * @param String name
+	 * @return 
+	 */
 	interface.update_menuNameSegm = function(name){
 		var divSegmName = document.getElementById('segmName');
 		divSegmName.innerHTML = "<i class=\"icon-white icon-file\"></i> " + name + " <b class=\"caret \"></b>";
 	}
     
-	/* Affiche la video selectionnee -> Appelee quand on a choisi une video */
+	/**
+	 * Affiche la video selectionnee -> Appelee quand on a choisi une video 
+	 * @method update_Med
+	 * @param String url
+	 * @param String vidName
+	 * @return 
+	 */
 	interface.update_Med = function(url, vidName){
 		/* Change le nom du menu Vid */
 		var divVidName = document.getElementById('vidName');
@@ -377,10 +438,10 @@ interface = function(){
     );	
 		var svg = document.getElementById("affichAnnot");
 		divVid.appendChild(svg);
-    var c1 = interface.svg.circle(50, 50, 20).attr(
+    var c1 = interface.svg.circle(50, 50, 40).attr(
       {
         stroke: "green", 
-        strokeWidth: 2,
+        strokeWidth: 5,
         fill : "rgba(0, 0, 0, 0)",
         'display' : 'None', 
         'id' : 'currentPosUser'
@@ -391,7 +452,11 @@ interface = function(){
     comportement.elVid();
 	}
     
-  /* Fait apparaître le menu slide */
+  /**
+	 * Fait apparaître le menu slide 
+	 * @method slideMenu
+	 * @return 
+	 */
 	interface.slideMenu = function(){
 		var slidemenu = document.getElementById('sidebar');
 		var vid = document.getElementById('vid');
@@ -417,14 +482,18 @@ interface = function(){
 		}
 	}
     
-  /* Affiche un menu pour envoyer les annotations */
+  /**
+   * Affiche un menu pour envoyer les annotations 
+   * @method popup
+   * @return 
+   */
   interface.popup = function(){
     var divBadgesNames = document.getElementById("badges");
     divBadgesNames.innerHTML = " ";
     for(var i = 0; i < annotations.temp_name.length; i++){
       divBadgesNames.innerHTML += "<a href=\'#\'><span class=\"badge\" style= \'color:" + annotations.temp_name[i].color + "; background-color:#DDD\' onClick = \"document.getElementById(\'namePerso\').value =\'" +  annotations.temp_name[i].name + "\';\">" + annotations.temp_name[i].name + "</span></a>";
     }
-    $j("#myModal").modal('show');
+    $j("#modalAnnots").modal('show');
   }
 
 	return interface;

@@ -1,13 +1,13 @@
-
-/* AJOUTS POUR L'APPLICATION */
-
+/* 
+ * Style de la page
+ */
 
 /* Pour le menu glissant, les liens sont en blanc */
 #lg-menu>li>a {
     color: white;
 }
 
-/* empeche la selection dans le body -> Plutot mettre que sur la video ?*/
+/* empeche la selection dans le body? */
 body {
     -webkit-user-select: none;
 }
@@ -18,34 +18,41 @@ body {
     zoom: 1; /* zoom initial à 1.0 (et clin d'oeil aux fans d'IE6/7) */
 }
 
-/* Concerne les barres de navigation */
-/* Du haut */
+/*** Concerne les barres de navigation ***/
+/** Du haut **/
 .navbar-collapse {
     padding-top: 7px;
     padding-bottom: 0px;
     margin-bottom: 0px;
 }
 
-/* Barre de loggin */
+/* Affichage du user courant */
+#userName{
+    background-color: #333;
+}
+
+/* Form de loggin */
 #loginForm{
     padding-top: 0px;
     margin-top : 0px;
 }
 
+/* Input de login */
 #LoginUsername {
     padding-top: 0px;
     margin-top: 0px;
 }
 
-#logoutDiv {
-    color: white;
-}
 #LoginPassword {
     padding-top: 0px;
     margin-top: 0px
 }
+/* Div de Logout */
+#logoutDiv {
+    color: white;
+}
 
-/* du bas */
+/** du bas **/
 .nav>li {
     margin-left: 10px;
 }
@@ -64,7 +71,7 @@ nav>#affichage{
     padding-left: 330px;
 }
 
-/* Fenetre modale d'enregistrement des annotations */
+/*** Fenetre modale d'enregistrement des annotations ***/
 .modal-dialog {
     margin: 0px 0px 0px 0px;
     padding: 0px 0px 0px 0px;
@@ -72,7 +79,7 @@ nav>#affichage{
     color: #000;
 }
 
-#myModal, #modalLayers {
+#modalAnnots, #modalLayers {
     bottom: auto;
 }
 
@@ -84,7 +91,8 @@ nav>#affichage{
     opacity: 0.01; /* Ne fonctionne pas avec seulement un '0'*/
 }
 
-/* Div de la video */
+/*** Div du contenu au milieu ***/
+/** La video **/
 #divVid{
     padding-top: 50px;
     margin-top: 45px;
@@ -94,26 +102,21 @@ nav>#affichage{
     padding-bottom: 0px;
 }
 
-
+/** Le svg **/
 #affichAnnot{
 	position:absolute; 
 	z-index:10; 
 	background-color:rgba(255, 255, 255, 0);
 }
 
-/* Menu coulissant */
+/** Menu coulissant **/
 #sidebar{
     margin-top: 50px;
     margin-left: 10px;
 }
 
-/* Container du menu coulissant et de la div de la video */
+/** Container du menu coulissant et de la div de la video **/
 .row{
     color: white;
     z-index: 10;
-}
-
-/* Affichage du user courant */
-#userName{
-    background-color: #333;
 }

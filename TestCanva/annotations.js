@@ -1,5 +1,8 @@
-annotations = function(){
-    
+/* 
+ * Gestion des annotations (recuperees et enregistrees)
+ */
+
+annotations = function(){    
     var temp_pos; // Tableau des positions [(X,Y), ...]
     var temp_evMulti; // Cache pour les frames ayant plusieurs positions
     var temp_name; // Enregistre les noms deja vus[[nom, couleur], ..]
@@ -11,12 +14,24 @@ annotations = function(){
     // Contient les annotation du layer courant
     var annots;
 
-    /* Constructeur */
+    /**
+	 * Constructeur 
+	 * @method annotations
+	 * @return 
+	 */
 	function annotations (){
         
     }
 	
-    /* Enregistre les positions a chaque evenement dans annots */  
+    /**
+     * Enregistre les positions a chaque evenement dans annots 
+     * @method enregistre_pos
+     * @param int frame // Courante
+     * @param string type // type de levenement recupere par Hammer
+     * @param int posX // (<= 100 && >= 0)
+     * @param int posY // (<= 100 && >= 0)
+     * @return 
+     */
     annotations.enregistre_pos = function(frame, type, posX, posY){
         var indexprec = annotations.temp_pos.length - 1; 
         if(!comportement.vid.paused && annotations.idLay != undefined){ // Si on a un layer courant et que la video joue
@@ -24,53 +39,39 @@ annotations = function(){
                 // Si c'est le release d'après doubletap, dont on ne veut pas garder la trace, on ne fait rien
             } else { // Dans tous les autres cas, on enregistre, en extrapolant les positions pour les frames manquantes
                 // l'index de la derniere position enregistree
-                switch(type){
-                    case "drag" : 
+               if(type == "release"){
+                    // release -> Popup pour enregistrer les pos
+                    // Vider le tableau temp_pos pour la prochaine annotation
+                    if(annotations.temp_pos.length > 4){
                         annotations.save(indexprec, frame, posX, posY, type);
-                        break;
-                    case "dragend" : 
-                        annotations.save(indexprec, frame, posX, posY, type);
-                        break;
-                    case "dragstart" : 
-                        annotations.save(indexprec, frame, posX, posY, type);
-                        break;
-                    case "hold" : 
-                        annotations.save(indexprec, frame, posX, posY, type);
-                        break;
-                    case "touch" : 
-                        annotations.save(indexprec, frame, posX, posY, type);
-                        break;
-                    case "release" : // release -> Popup pour enregistrer les pos
-                        // Vider le tableau temp_pos pour la prochaine annotation
-                        if(annotations.temp_pos.length > 4){
-                            annotations.save(indexprec, frame, posX, posY, type);
+                    }
+                    var modal = document.getElementById("modalAnnots");
+                    // Gere la position de la fenetre en fonction de la position pour pas surperposer
+                    if(posY < 50){ // En pourcentage, donc le milieu c'est 50
+                        modal.style.bottom = "10px";
+                        modal.style.top = "auto";
+                        if(posX < 50){
+                            modal.style.left = "";
+                            modal.style.right = "10px";
+                        } else {
+                            modal.style.left = "300px";
+                            modal.style.right = "";
                         }
-                        var modal = document.getElementById("myModal");
-                        // Gere la position de la fenetre en fonction de la position pour pas surperposer
-                        if(posY < 50){ // En pourcentage, donc le milieu c'est 50
-                            modal.style.bottom = "10px";
-                            modal.style.top = "auto";
-                            if(posX < 50){
-                                modal.style.left = "";
-                                modal.style.right = "10px";
-                            } else {
-                                modal.style.left = "300px";
-                                modal.style.right = "";
-                            }
-                        }else{
-                            modal.style.top = "10px";
-                            modal.style.bottom = "auto";
-                            if(posX < 50){
-                                modal.style.left = "";
-                                modal.style.right = "10px";
-                            } else {
-                                modal.style.left = "300px";
-                                modal.style.right = "";
-                            }
+                    }else{
+                        modal.style.top = "10px";
+                        modal.style.bottom = "auto";
+                        if(posX < 50){
+                            modal.style.left = "";
+                            modal.style.right = "10px";
+                        } else {
+                            modal.style.left = "300px";
+                            modal.style.right = "";
                         }
-                        interface.popup();
-                        comportement.vid.pause();
-                        break;
+                    }
+                    interface.popup();
+                    comportement.vid.pause();
+                }else{
+                    annotations.save(indexprec, frame, posX, posY, type);
                 }
             }
         } else if (type == "hold" && annotations.idLay != undefined){ // Si la video est en pause
@@ -80,7 +81,13 @@ annotations = function(){
         }
     }
 
-    /* Veirifie que les entiers passe en parametres sont bien compris entre 0 et 100 */
+    /**
+     * Veirifie que les entiers passe en parametres sont bien compris entre 0 et 100 
+     * @method verifBornes
+     * @param int posX
+     * @param int posY
+     * @return bool 
+     */
     annotations.verifBornes = function(posX, posY){
     	if (posX >= 0 && posY >= 0 && posX <= 100 && posY <= 100){
     		return true;
@@ -89,22 +96,17 @@ annotations = function(){
     	}	    
     
     }
-    /* Extrapole les positions pour l'affichage des annotations */
-    annotations.extrapol = function(i, frame, posX, posY, type) {
-        var valeur = annotations.temp_pos[i];
-        var espace = frame - valeur[0];
-        var decalageX = (valeur[2] - posX) / espace;
-        var decalageY = (valeur[3] - posY) / espace;
-        for (var i = 1; i < espace; i++){
-            annotations.temp_pos.push([valeur[0] + i, "remplissage_auto", valeur[2] + i * decalageX, valeur[3] + i * decalageY]);
-        }
-        annotations.temp_pos.push([frame, type, posX, posY]);
-        annotations.temp_evMulti = [];
-        annotations.temp_evMulti.push([frame, type, posX, posY]);
-    }
     
-    
-    /* Enregistre en verifiant qu'il n'y a pas plusieurs evenements pour la meme frame, si c'est le cas, fais la moyenne de tout */
+    /**
+     * Enregistre en verifiant qu'il n'y a pas plusieurs evenements pour la meme frame, si c'est le cas, fais la moyenne de tout 
+     * @method save
+     * @param int indexprec
+     * @param int frame
+     * @param int posX
+     * @param int posY
+     * @param String type
+     * @return 
+     */
     annotations.save = function(indexprec, frame, posX, posY, type){
         if(annotations.verifBornes(posX, posY)){ // si c'est bien dans les bornes
         	var temp = {};
@@ -143,13 +145,21 @@ annotations = function(){
         }
     }
 
-    /* Envoyer les annotations au serveur puis efface le temp_pos */
+    /**
+     * Envoyer les annotations au serveur puis efface le temp_pos avant de retourner au debut du plan
+     * @method envoyerprevious
+     * @return 
+     */
     annotations.envoyerprevious = function() {
         annotations.envoyer();
         comportement.bwd();
     }
 
-    /* Envoie l'annotation  dans le layer selectionne*/
+    /**
+     * Envoie l'annotation  dans le layer selectionne
+     * @method envoyer
+     * @return 
+     */
     annotations.envoyer = function() {
         // Recupere le nom entre et l'enregistre en verifiant qu'il n'y soit pas deja 
         persoName = document.getElementById("namePerso").value;
@@ -191,13 +201,21 @@ annotations = function(){
         annotations.reset();
     }
     
-    /* Reset le tableau d'annotation et le champ du nom */
+    /**
+     * Reset le tableau d'annotation et le champ du nom 
+     * @method reset
+     * @return 
+     */
     annotations.reset = function(){
         annotations.temp_pos = [];
         document.getElementById("namePerso").value = "";
     }
     
-    /* Creer un layer pour enregistrer des annotations */
+    /**
+     * Creer un layer pour enregistrer des annotations 
+     * @method creerLayer
+     * @return 
+     */
     annotations.creerLayer = function(){
         // Cree le layer en question avec comme source le username de connexion
         camomile.create_layer(
@@ -216,7 +234,13 @@ annotations = function(){
         
     }
     
-    /* Recupere les annotations deja presente dans le layer indique*/
+    /**
+     * Recupere les annotations deja presente dans le layer indique
+     * @method recupAnnot
+     * @param String idLayer
+     * @param String source
+     * @return 
+     */
     annotations.recupAnnot = function(idLayer, source){
     	annotations.annots = Array();
         annotations.idLay = idLayer;
@@ -248,7 +272,11 @@ annotations = function(){
         );
     }
     
-    /* Range les annotations dans l'ordre chronologique */
+    /**
+     * Range les annotations dans l'ordre chronologique 
+     * @method sortAnnots
+     * @return 
+     */
     annotations.sortAnnots = function(){
     	annotations.annots.sort(
             function(a, b){ 
@@ -277,9 +305,8 @@ return annotations;
     }
  }
  , "53884ee3682be502003adae7", "53884f84682be502003adaed", "53a99a1519e7aa02005eeac4"
- /*annotations.idCorp
- , annotations.idMed
- , annotations.idLay*//*);
+ //annotations.idCorp, annotations.idMed, annotations.idLay
+);
  
  for(var i = 0; i < id.length ; i++){
     camomile.remove_annotation(function(data){}, "53884ee3682be502003adae7", "53884f84682be502003adaed", "53a99a1519e7aa02005eeac4", id[i]);
