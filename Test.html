@@ -1,139 +1,270 @@
 <!DOCTYPE html>
 <html>
-<head>
-	<meta charset="UTF-8">
-	<meta name="apple-mobile-web-app-capable" content="yes">
-	<meta name="viewport" content="user-scalable=no, width=device-width, initial-scale=1, maximum-scale=1">
-	<meta name="description" content="">
-	<meta name="author" content="">
-
-	<title>Interface d'annotation de vidéos</title>
-
-	<!-- Bootstrap core CSS -->
-	<link href="bs/css/bootstrap.min.css" rel="stylesheet">
-	
-	<!-- Permet l'utilisation les icones-->
-	<link href="bs/css/bootstrap.css" rel="stylesheet">
-
-	<!-- Pour les modifications propres à l'appli -->
-	<link href="style.css" rel="stylesheet">
-
-</head>
-
+    <head>
+        <meta charset="UTF-8">
+            <meta name="apple-mobile-web-app-capable" content="yes">
+                <meta name="viewport" content="user-scalable=no, width=device-width, initial-scale=1, maximum-scale=1">
+                    <meta name="description" content="">
+                        <meta name="author" content="">
+                            <title>
+                                Interface d'annotation de vidéos
+                            </title>
+                            
+                            <!-- Bootstrap core CSS -->
+                            <link href="bs/css/bootstrap.min.css" rel="stylesheet">
+                                
+                                <!-- Permet l'utilisation les icones-->
+                                <link href="bs/css/bootstrap.css" rel="stylesheet">
+                                    
+                                    <!-- Pour les modifications propres à l'appli -->
+                                    <link href="style.css" rel="stylesheet">
+                                        
+                                        </head>
+    
 	<body>
-
-		<!-- Fixed navbar -->
+        
+		<!-- Navbar inverse top -->
 		<div class="navbar navbar-inverse navbar-fixed-top" role="navigation" >
-			<div class="container">
+			<div class="container" id="navbarTop">
 				<div class="navbar-header">
-					<a class="navbar-brand" href="#">Brand</a>
-				</div> <!--Fin Navbar header-->
-				<div class="navbar-collapse collapse" role="navigation" style="padding-top:7px; padding-bottom : 0px; margin-bottom : 0px">
+					<a class="navbar-brand" href="#">
+                        
+                    </a>
+				</div>
+				<div class="navbar-collapse collapse" role="navigation" >
+                    <!-- Menus deroulants -->
 					<ul class="nav navbar-nav">
-						<li><a href="#"><i class="icon-white icon-home"></i></a></li>
-					
+                        <!-- Corpus -->
 						<li class="dropdown" style="display:none">
-							<a href="#" class="dropdown-toggle" data-toggle="dropdown" id ="corpName"> <i class="icon-white icon-folder-open"></i>   Corpus   <b class="caret"></b></a>
+							<a href="#" class="dropdown-toggle" data-toggle="dropdown" id ="corpName">
+                                <i class="icon-white icon-folder-open"></i>
+                                Corpus
+                                <b class="caret"></b>
+                            </a>
 							<ul class="dropdown-menu" id ="menuCorpus">
-								<li class="dropdown-header"> Veuillez vous connecter pour avoir accès à la liste des corpus </li>
+								<li class="dropdown-header">
+                                    Veuillez vous connecter pour avoir accès à la liste des corpus
+                                </li>
 							</ul>
 							
 						</li>
+                        <!-- Fin Corpus -->   
+                        <!-- Video -->                        
 						<li class="dropdown"  style="display:none">
-							 <a href="#" class="dropdown-toggle" data-toggle="dropdown" id = "vidName" ><i class="icon-white icon-film"></i>   Vidéos   <b class="caret"></b></a>
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" id = "vidName" >
+                                <i class="icon-white icon-film"></i>
+                                Vidéos
+                                <b class="caret"></b>
+                            </a>
 							<ul class="dropdown-menu" id ="menuVid">
-								<li class="dropdown-header" > Veuillez vous connecter et choisir un copus pour avoir accès à la liste des videos correspondantes </li>
+								<li class="dropdown-header" >
+                                    Veuillez vous connecter et choisir un corpus pour avoir accès à la liste des videos correspondantes
+                                </li>
 							</ul>
-						</li>
+						</li>     
+                        <!-- Fin Video -->      
+                        <!-- Segmentation -->
 						<li class="dropdown"  style="display:none">
-							 <a href="#" class="dropdown-toggle" data-toggle="dropdown" id = "segmName" ><i class="icon-white icon-file"></i>   Segmentation   <b class="caret"></b></a>
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" id = "segmName" >
+                                <i class="icon-white icon-file"></i>
+                                Segmentation
+                                <b class="caret"></b>
+                            </a>
 							<ul class="dropdown-menu" id ="menuSegm">
-								<li class="dropdown-header" > Veuillez choisir une video </li>
+								<li class="dropdown-header" >
+                                    Veuillez choisir une segmentation
+                                </li>
 							</ul>
 						</li>
+                        <!-- Fin Segmentation -->   
 					</ul>
-					<form id="loginForm" class="navbar-form navbar-right" style ="padding-top:0px; margin-top : 0px" role="form" action="javascript:interface.tologin();">
+                    <!-- Fin Menus deroulants -->   
+                    <!-- Login Form -->   
+					<form id="loginForm" class="navbar-form navbar-right" role="form" action="javascript:interface.tologin();">
 						<div class="form-group">
-						
-							<input id="LoginUsername" class="form-control"  type="text" placeholder="Login" style ="padding-top:0px; margin-top : 0px">
-							<input id="LoginPassword" class="form-control" type="Password" placeholder="Password" style ="padding-top:0px; margin-top : 0px">
-							<button id="loginButton" class="btn btn-success" type="submit" >
-							Connexion
-							</button>
-						</div>					
-					</form>
-					<div id="logoutDiv" class="navbar-button navbar-right" role="form" style="display:none; color:white">
-						<button id="slideMenuButton" class="btn btn-info" onClick="interface.slideMenu()" type="submit"><i class="icon-white icon-list"></i></button>
-						<button id="logoutButton" class="btn btn-success" onClick="interface.tologout();" type="submit">
-						Deconnexion
+                            <!-- Inputs -->   
+							<input id="LoginUsername" class="form-control"  type="text" placeholder="Login">
+                            <input id="LoginPassword" class="form-control" type="Password" placeholder="Password">
+                            <button id="loginButton" class="btn btn-success" type="submit" style="height : 35px; margin-bottom:7px">
+                            <i class="icon-white icon-off">
+                            </i>
+                            </button>
+                        </div>
+                    </form>
+                    <!-- Fin Form -->  
+                    <!-- Logout Div + affichage root et idLayer-->    
+                    <div id="logoutDiv" class="navbar-button navbar-right" role="form" style="display:none;">
+                        <span id="currentLayer">
+                        </span>
+                        <span class="badge" id="userName">
+                        </span>
+						<!--<button id="slideMenuButton" class="btn btn-info" type="submit">
+                            <i class="icon-white icon-list">
+                            </i>
+                        </button> -->
+						<button id="logoutButton" class="btn btn-success" type="submit">
+                           	<i class="icon-white icon-off"></i>
 						</button>
-
-		
 					</div>
-				
-				</div><!--/.nav-collapse -->
-				
-			</div> <!--Fin container-->
-		</div> <!--Fin Navbar inverse-->
-	
+                    <!-- Fin Logout Div + affichage root et idLayer-->     
+				</div>
+                <!--/.nav-collapse -->
+			</div> 
+            <!--Fin container -->
+		</div> 
+        <!--Fin Navbar inverse Top -->
+        
 		<!-- Contenu -->
-		<div class="row row-offcanvas row-offcanvas-left" style = "color:white ">
-			<!-- sidebar -->
-			<div class="column col-sm-1 col-xs-1 sidebar-offcanvas" id="sidebar" style="margin-top:30px; margin-left:10px; display:None">
+		<div class="row row-offcanvas row-offcanvas-left">
+			<!-- Sidebar -->
+			<div class="column col-sm-1 col-xs-1 sidebar-offcanvas" id="sidebar" style="display:none">
 				<ul class="nav">
-					<li><a href="#" data-toggle="offcanvas" class="visible-xs text-center"><i class="glyphicon glyphicon-chevron-right"></i></a></li>
+					<li>
+                        <a href="#" data-toggle="offcanvas" class="visible-xs text-center">
+                            <i class="icon-white chevron-right">
+                            </i>
+                        </a>
+                    </li>
 				</ul>
-
-				<ul class="nav hidden-xs navbar-left" id="lg-menu" style = "color:white ">
+				<ul class="nav hidden-xs navbar-left" id="lg-menu">
 					<li><a href="#">Truc</a></li>
 					<li><a href="#">Bidule</a></li>
 					<li><a href="#">Machin</a></li>
 					<li><a href="#">Chose</a></li>
 				</ul>
-
-				<!-- tiny only nav-->
-				<ul class="nav visible-xs" id="xs-menu"> <!-- Changer la couleur des lien dans le cas des sidebar en blanc -->
-					<li><a href="#" class="text-center"><i class="glyphicon glyphicon-list-alt"></i></a></li>
-					<li><a href="#" class="text-center"><i class="glyphicon glyphicon-list"></i></a></li>
-					<li><a href="#" class="text-center"><i class="glyphicon glyphicon-paperclip"></i></a></li>
-					<li><a href="#" class="text-center"><i class="glyphicon glyphicon-refresh"></i></a></li>
-				</ul>
 			</div>
-
+            <!-- Fin Sidebar -->
 			<!-- Videos -->
-			<div class="container theme-showcase" role="main" style= "padding-top : 50px; margin-top:45px; padding-left:30px; margin-left:0px; margin-bottom:0px; padding-bottom: 0px; color:white" id="divVid"> <!-- Remplacer en mettant "margin: auto" ? -->
+			<div class="container theme-showcase" role="main" id="divVid"> <!-- Remplacer en mettant "margin: auto" ? -->
 				Veuillez vous connecter pour visualiser les videos
-				<!--<canvas id="can" height= 806 width= 1008 style="background-color: green">
-				</canvas>-->
-			</div> <!--Fin de la video -->
-		</div> <!-- Fin du milieu-->
+			</div> 
+            <!--Fin Video -->
+            <!-- Fenetre Modal Nom Annot -->
+            <div id="modalAnnots" class="modal fade" >
+                <div class="modal-dialog">
+                    <div class="modal-content">
 
-
+                        <div class="modal-header">
+                            <h4 class="modal-title">Enregistrement des annotations </h4>
+                        </div> 
+                        <!-- Input -->
+                        <div class="modal-body">
+                            <div class="divDialogElements" >
+                                Personnage :
+                                <input id="namePerso" class="xlarge" type="text" name="xlInput">
+                            </div>
+                            <div id ="badges">
+                            </div>
+                        </div>
+                        <!-- Fin Input -->
+                        <!-- Boutons -->
+                        <div class="modal-footer">
+                            <button id="annulerAnnot" type="button" class="btn btn-default" data-dismiss="modal">
+                                Annuler
+                            </button>
+                            <button id="envoyerAnnotNext" type="button" data-dismiss="modal" class="btn btn-primary">
+                                Valider  
+                            </button>
+                            <span id="butonPrevious" style="display:none">
+                                <button id="envoyerAnnotPrevious" type="button" data-dismiss="modal" class="btn btn-primary"> 
+                                    Valider & début du plan
+                                </button>
+                            </span>
+                        </div>
+                        <!-- Fin Boutons -->
+                    </div>
+                </div>
+            </div>
+            <!-- Fin Fenetre Modal Annot -->
+            <!-- Fenetre Modal Choix Layer -->
+            <div id="modalLayers" class="modal fade" >
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <!--<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>-->
+                            <h4 class="modal-title"> 
+                                Choix du layer 
+                            </h4>
+                        </div>
+                        <div class="modal-body">
+                            <!-- Badges des layers -->
+                            <div id ="badgesLayers">
+                            </div>
+                            <br>OU<br><br>
+                            <button id="creerLayer" type="button" data-dismiss="modal" class="btn btn-primary"> 
+                                Creer un layer
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Fin Fenetre Modal Choix Layer -->
+        </div>
+        <!-- Fin du milieu-->
+        
+        
 		<!-- Navbar Bottom -->
 		<div class="navbar navbar-inverse navbar-fixed-bottom" role="navigation">
-			<div class="container" style = "color:white ; padding-left: 330px">
+			<div id="container" class="container">
 				<div class="navbar-collapse collapse">
 					<ul class="nav navbar-nav" >
-						<!-- Buttons -->	
+						<!-- Buttons -->
 						<!-- Pause -->
-						<li style = "margin-left:10px"><button class="btn" onclick="javascript:comportement.stop()"> <i class="icon-large icon-stop"></i> </button> </li> 
+						<li>
+                            <button id="stop" class="btn">
+                                <i class="icon-large icon-stop">
+                                </i>
+                            </button>
+                        </li>
 						<!-- Backward -->
-						<li style = "margin-left:10px"><button class="btn" onclick="javascript:comportement.bwd()"> <i class="icon-large icon-step-backward"></i> </button></li> 
-						<!-- Slower -->						
-						<li style = "margin-left:10px"><button class="btn" onclick="javascript:comportement.slower()"> <i class="icon-large icon-backward"></i> </button></li> 
+						<li>
+                            <button id="bwd" class="btn" >
+                                <i class="icon-large icon-step-backward">
+                                </i>
+                            </button>
+                        </li>
+						<!-- Slower -->
+						<li>
+                            <button class="btn" id="slower">
+                                <i class="icon-large icon-backward">
+                                </i>
+                            </button>
+                        </li>
 						<!-- Faster -->
-						<li style = "margin-left:10px"><button class="btn" onclick="javascript:comportement.faster()"> <i class="icon-large icon-forward"></i> </button></li> 
+						<li>
+                            <button class="btn" id="faster" >
+                                <i class="icon-large icon-forward">
+                                </i>
+                            </button>
+                        </li>
 						<!-- Forward -->
-						<li style = "margin-left:10px"><button class="btn" onclick="javascript:comportement.fwd()"> <i class="icon-large icon-step-forward"></i> </button> </li> 
-						<!-- Affichages -->					
-						<li style = "margin-left:15px; margin-top:10px"><span id ="curtime"> 0 </span>/<span id ="temps"> 0 </span></li> 
-						<li style = "margin-left:5px; margin-top:10px"><span id ="position"></span></li> 
-						<li style= "margin-top:10px"><span id ="vitesse"></span></li> 
+						<li>
+                            <button class="btn" id="fwd">
+                                <i class="icon-large icon-step-forward">
+                                </i>
+                            </button>
+                        </li>
+						<!-- Affichages -->
+						<li id = "affichage">
+                            <span id ="curtime"> 
+                                0 
+                            </span>
+                            /
+                            <span id ="temps"> 
+                                0 
+                            </span>
+                            
+                            <span id ="position">
+                            </span>
+                        </li>
 					</ul>
-				</div><!--/.nav-collapse -->
-			</div> <!--Fin container-->
-		</div> <!--Fin Navbar inverse-->
-
+				</div>
+                <!--/.nav-collapse -->
+			</div> 
+            <!--Fin container-->
+		</div> 
+        <!--Fin Navbar inverse-->
+        
 		<!-- JQuery -->
 		<script type="text/javascript" src="bs/js/jquery-1.11.0.min.js"></script>
 		<!-- Bootstrap JS -->
@@ -141,13 +272,21 @@
 		
 		<!-- Comportement de la video -->
 		<script type="text/javascript"  src="comportement.js"></script>
-
+        
 		<!-- Le client pour se connecter au serveur-->
 		<script type="text/javascript" src="camomile.js"></script>
-
+        
 		<!-- Comportement de la page -->
 		<script type="text/javascript" src="interface.js"></script>
+        
+		<!-- Gere les annotations -->
+		<script type="text/javascript" src="annotations.js"></script>
+        
+        <!-- Gere l'affichage des annotations -->
+		<script type="text/javascript" src="visualisation.js"></script>
+		<script type="text/javascript" src="bs/js/snap.svg-min.js"></script>
 
+		
 		<!-- Librairies Hammer -->
 		<script type="text/javascript" src="ga.js"></script>
 		<script type="text/javascript" src="hammer.js"></script>
@@ -158,12 +297,12 @@
 			document.ontouchmove = function(event){
 				event.preventDefault();
 			}
-			// Jquery Conflicts
-			var $j = jQuery.noConflict();
-
-			// Init the videos variables
-			comportement.init();
-		</script>
+            // Jquery Conflicts
+            var $j = jQuery.noConflict();
+            
+            // Init the videos variables
+            interface.init();
+            </script>
 	</body>
 </html>
 

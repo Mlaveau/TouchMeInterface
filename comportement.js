@@ -1,169 +1,371 @@
-/* Gestion de la video */
+/* 
+ * Gestion de la video et du multitouch
+ */
 
-/* REFAIRE LA GESTION DU PLAN ACTUEL AVEC UNE DEDUCTION DU PLAN A PARTIR DE LA SEGMENTATION. PAS EN COMPTANT : */
 comportement = function(){
-	// Variables
-	var vid, time, tmp, vit, pos;
 
-	// Timer 
-	var vidTimer;
-	var decalage;
+	/* Variables */ 
+
+	// Element HTML 5
+	var vid; // Video
+
+    // Timer 
+	var vidTimer; // pour l'affichage des annotations, du temps courant et la detection de changement de plan (Toutes les 100 ms)
 
 	// Segmentation
-	var segm;
-	
+	var segm; // Tableau contenant le numero des frames de changement de plan
+	var planActuel; // Index dans segm du prochain changement de plan
 
-	var planActuel;
-	// Pour le multitouch
-	var hammertime;
+	// Multitouch
+	var hammertime; // Objet qui gere le multitouch
+	var all_events = ["touch", 
+	"release",
+	"gesture",
+	"hold",
+	"tap",
+	"doubletap",
+	"dragstart",
+	"drag",
+	"dragend",
+	"dragleft",
+	"dragright",
+	"dragup",
+	"dragdown",
+	"swipe",
+	"swipeleft",
+	"swiperight",
+	"swipeup",
+	"swipedown",
+	"transformstart",
+	"transform",
+	"transformend",
+	"rotate",
+	"pinch",
+	"pinchin",
+	"pinchout"]; // Ensemble des evenements reconaissables
 
-	// Affichage de la position
-	//var can, ctx;
-	// Recupere tous les elements
-	
-	function comportement (){
-
-	}
-
-	comportement.init = function() {
-		
-		// Initialise decalage
-		comportement.decalage = 0.1;
-		comportement.segm = "";
-		// Canvas, context et document  A REMETTRE SI UN JOUR CA VEUT BIEN FONCTIONNER
-		//can = document.getElementById("can");
-		//ctx = can.getContext("2d");
-
-		// Affichages 
-		comportement.time = document.getElementById("curtime");
-		comportement.pos = document.getElementById("position");
-		comportement.tmp = document.getElementById("temps");	
-		comportement.vit = document.getElementById("vitesse");
-	}
+	var events_annot = ["dragstart",
+	"drag",
+	"dragend", 
+	"hold", 
+	"release"]; // Evenements analyses pour lenregistrement d'annotations
+    
+    /**
+ 	 * Constructeur 
+ 	 * @method comportement
+ 	 * @return 
+ 	 */
+ 	function comportement (){
+	 }
 
 
-	comportement.elVid = function(){
-		// Objects : button et video 
-		comportement.vid = document.getElementById("vid");
-		comportement.vid.addEventListener('ended', comportement.vidEnd, false);
+    /**
+ 	 * Initialise les elements de la page qui ont besoin de la video pour fonctionner 
+ 	 * @method elVid
+ 	 * @return 
+ 	 */
+ 	comportement.elVid = function(){
+	 	/* Initialisation des variables */
+		// Pour les annotations : initialisation des tableaux de nom, position, evenements multiples
+        annotations.temp_evMulti = []; // Tableau des evenements qui sont sur la meme frame
+        annotations.temp_name = []; // Tableau des noms deja utilises
+        annotations.temp_pos = []; // Tableau des positions		
+        annotations.colorName = ['red', 
+			                    'purple', 
+			                    'green', 
+			                    'orange', 
+			                    'blue', 
+			                    'black', 
+			                    'aqua', 
+			                    'white', 
+			                    'lime', 
+			                    'yellow', 
+			                    'maroon', 
+			                    'fuschia', 
+			                    'navy', 
+			                    'silver', 
+			                    'gray', 
+			                    'olive', 
+			                    'teal']; 
+		// Pour le comportement 
+		comportement.vid = document.getElementById("vid"); // Element HTML5 video
+        comportement.vid.addEventListener('ended', comportement.vidEnd, false); // Listener sur ce qu'il y a a faire en fin de video
+        comportement.vidTimer = ""; 
+        comportement.planActuel = 0;
 
-		comportement.vidTimer = "";
-		comportement.planActuel = 0;
-
-		/* Gestion du multitouch */
-		comportement.hammertime = Hammer(comportement.vid);
-
+        /* Mise en place du multitouch */
+		// Sur le svg
+		var svgDiv = document.getElementById("affichAnnot"); // Recupere lelement svg 
+		comportement.hammertime = Hammer(svgDiv); // Associe le Hammer a l'element svg
 		// Gestion des differents mouvements
-		comportement.hammertime.on("doubletap", function(e){comportement.playVideo(); comportement.touchXY(e);}); // Play/pause
-		comportement.hammertime.on("pinchin", function(e){comportement.stop(); comportement.touchXY(e);}); // Stop
-		comportement.hammertime.on("swiperight", function(e){comportement.bwd(); comportement.touchXY(e);}); // Avance de 10 secs -> Faire plutot passer au plan suivant ?
-		comportement.hammertime.on("swipeleft", function(e){comportement.fwd(); comportement.touchXY(e);}); // Recule de 10 secs -> Faire plutot revenir au plan precedent ?
-		comportement.hammertime.on("touch", function(e){comportement.touchXY(e);}); 
-	}
-	
-	comportement.update_segm= function(data){
-		comportement.segm = data;
-		comportement.vidTimer = window.setInterval("comportement.plans()", 1);
-	}
-
-	// Affiche la position
-	comportement.touchXY = function(e) {
-
-		comportement.pos.innerHTML = comportement.planActuel + " : ";
-		for (i = 0; i < e.gesture.touches.length; i++) {
-	 		x = e.gesture.touches[i].pageX;
-			y = e.gesture.touches[i].pageY;
-			comportement.showPos(x, y); 
-		}
-	}
-
-	// Affiche la position et le cercle sous le doigt
-	comportement.showPos = function(canX, canY){
-	  	comportement.pos.innerHTML = comportement.pos.innerHTML + " (" + canX + "," + canY + ") ";
-		/*//A remettre quand j'aurai enfin le canvas. 
-		ctx.clearRect(0, 0, document.width, document.height);
-
-		ctx.beginPath();
-		ctx.arc(canX, canY, 10, 0, 2 * Math.PI, false);
-		ctx.fillStyle = 'white';
-		ctx.fill(); */
-	}
-
-
-
-	comportement.curtime = function(){
-	
-		comportement.time.innerHTML = Math.floor(comportement.vid.currentTime/60) + ":" + Math.floor(comportement.vid.currentTime%60);
-	
-		if(comportement.vid.currentTime > 0 && comportement.vid.currentTime <= 1){ // Oblige car au tout debut on a pas la duree. Ce n'est qu'une fois la vidéo lancée
-			if (Math.round(comportement.vid.duration/60) >0) {
-				comportement.tmp.innerHTML = Math.floor(comportement.vid.duration/60) + ":" ; // Returns the duration in seconds of the current media resource. A NaN value is returned if duration is not available, or Infinity if the media resource is streaming 
+		// Play/pause
+		comportement.hammertime.on("doubletap", 
+			function(e){
+				comportement.playVideo(); // Lance la video
 			}
-			comportement.tmp.innerHTML = comportement.tmp.innerHTML + Math.floor(comportement.vid.duration%60);
-		}	
+		); 
+		
+		// Stop
+		comportement.hammertime.on("pinchin", 
+			function(e){
+				comportement.stop(); // Stop la video
+			}
+		); 
+
+		// Avance au plan suivant	
+		comportement.hammertime.on("swiperight", 
+			function(e){
+				comportement.bwd(); //Revient au plan precedent
+			}
+		); 
+		
+		// Recule au plan precedent
+		comportement.hammertime.on("swipeleft", 
+			function(e){
+				comportement.fwd(); // Avance au plan suivant
+			}
+		); 
+
+		// Pour tous les evenements de events_annot (enregistrement des annotations)
+		comportement.hammertime.on(events_annot.join(" "), 
+			function(e){
+	            // Position en % de la hauteur et de la largeur
+	            var posX = Math.round((((e.gesture.center.pageX - interface.posleft) * 100) / comportement.vid.width) * 100) / 100;
+	            var posY = Math.round((((e.gesture.center.pageY - interface.postop) * 100) / comportement.vid.height) * 100) / 100;
+	            comportement.showPos(posX, posY);
+	            if((comportement.vid.paused == false && e.type != "release")){
+	            	comportement.showCurrentPos(e.gesture.center.pageX - interface.posleft, e.gesture.center.pageY - interface.postop);
+	            }else if (e.type == "release"){
+	            	 document.getElementById("currentPosUser").style.display = "None";
+	            }
+	            annotations.enregistre_pos(Math.round(comportement.vid.currentTime * 25), e.type, posX, posY);
+			}
+		);
 	}
-
-
-	/* Gestion de la video */
-
-	comportement.plans = function(){ 
-		comportement.curtime();
-		var tmp = comportement.segm[comportement.planActuel]/25 - comportement.decalage;
-		if((comportement.vid.currentTime > tmp)){ /* OU changer le if ici ? */
-			comportement.planActuel +=1;
-			comportement.vid.pause();
-		}	
+	
+	/**
+	 * Gere le cercle d'affichage de l'endroit pointe 
+	 * @method showCurrentPos
+	 * @param int cx // (<= 100 && >= 0)
+	 * @param int cy // (<= 100 && >= 0)
+	 * @return 
+	 */
+	comportement.showCurrentPos = function(cx, cy){
+		// change la position du cercle selon les x,y passes
+		var gCircle = document.getElementById("currentPosUser");
+		gCircle.setAttributeNS(null, "cx", cx);
+    	gCircle.setAttributeNS(null, "cy", cy);
+    	// Si pas affiche, s'affiche
+    	if(gCircle.style.display != ""){ 
+    		gCircle.style.display = "";
+    	}
 	}
+	/**
+ 	 * Enregistre la segmentation en plan 
+ 	 * @method update_segm
+ 	 * @param Array[int, int, …] data
+ 	 * @return 
+ 	 */
+ 	comportement.update_segm = function(data){
+	 	document.getElementById("butonPrevious").style.display = "";
+	 	console.log(data);
+	 	console.log("yeah");
+	 	comportement.segm = data;
+	 }
 
-	// Play 
-	comportement.playVideo = function() {
-		if (comportement.vid.paused == true) {
-			comportement.vid.play();
+	/**
+ 	 * Affiche le plan actuel -> A supprimer  
+ 	 * @method touchXY
+ 	 * @param String[] e (Type d'un evenement Hammer)
+ 	 * @return 
+ 	 */
+ 	comportement.touchXY = function(e) {
+	 	interface.pos.innerHTML = comportement.planActuel + " : ";
+	 }
+
+	/**
+ 	 * Affiche la position dans la barre du bas (En pourcentages) 
+ 	 * @method showPos
+ 	 * @param int posX
+ 	 * @param int posY
+ 	 * @return 
+ 	 */
+ 	comportement.showPos = function(posX, posY){
+	 	interface.pos.innerHTML = " (" + posX + "," + posY + ") ";
+	 }
+
+
+    /**
+ 	 * Met a jour l'affichage du temps de la video 
+ 	 * @method curtime
+ 	 * @return 
+ 	 */
+ 	comportement.curtime = function(){
+	 	// Affichage du temps courant
+	 	interface.time.innerHTML = Math.floor(comportement.vid.currentTime/60) + ":" + Math.floor(comportement.vid.currentTime%60);
+	 	// Affichage de la duree totale
+		if(comportement.vid.currentTime > 0 && comportement.vid.currentTime <= 1){ 
+			if (Math.round(comportement.vid.duration/60) >0) {
+				interface.tmp.innerHTML = Math.floor(comportement.vid.duration/60) + ":" ; // Returns the duration in seconds of the current media resource. A NaN value is returned if duration is not available, or Infinity if the media resource is streaming
+			}
+			interface.tmp.innerHTML = interface.tmp.innerHTML + Math.floor(comportement.vid.duration%60);
 		}
-		else {
+	}
+
+
+	/**
+ 	 * Gestion Video : arret de la video au changement de plans 
+ 	 * @method plans
+ 	 * @return 
+ 	 */
+ 	comportement.plans = function(){
+	 	// Recupere le numero de frame du prochain plan
+	 	var tmp = comportement.segm[comportement.planActuel] / 25;
+	 	// Si on l'a atteint
+		if(comportement.vid.currentTime > tmp){ 
+			comportement.planActuel += 1;
 			comportement.vid.pause();
+            // Pour enregistrer les pos si on en a pointees
+            if(annotations.temp_pos != ""){
+            	interface.popup();
+            }
+        }
+    }
+    
+	/**
+ 	 * Gestion Video : Play si Pause, Pause si Play 
+ 	 * @method playVideo
+ 	 * @return 
+ 	 */
+ 	comportement.playVideo = function() {
+		if(document.getElementById('sidebar').style.display != ""){ // Peut être lancee que si le menu est cache (Pour les annotations
+			if (comportement.vid.paused == true) {
+				// Lance le timer a chaque play
+				comportement.vidTimer = window.setInterval("comportement.gestionTimer()", 100);
+				comportement.vid.play();
+                annotations.reset();// Reset les temp des annotations pour etre sur qu'il n'en reste pas
+                comportement.vid.muted = true;
+            }
+            else {
+            	// Reset le timer 
+               	clearInterval(comportement.vidTimer);
+               	// Met en pause
+            	comportement.vid.pause();
+            }
+        }
+    }
+
+	/**
+ 	 * Appelle la mise a jour des affichages d'annotations et de temps courant de la video 
+ 	 * @method gestionTimer
+ 	 * @return 
+ 	 */
+ 	comportement.gestionTimer = function(){
+	 	visualisation.afficheAnnot();
+	 	comportement.curtime();
+	 	if(comportement.segm.length > 0){
+	 		comportement.plans();
 		}
 	}
 
-	// Forward
-	comportement.fwd = function(){
-		comportement.planActuel = comportement.planActuel + 1;
-		comportement.vid.currentTime = comportement.segm[comportement.planActuel]/25 - comportement.decalage;
+	/**
+ 	 * Gestion Video : Forward 
+ 	 * @method fwd
+ 	 * @return 
+ 	 */
+ 	comportement.fwd = function(){ 
+	 	var plan = comportement.currentPlan();
+	 	if(plan < comportement.segm.length){
+	 		comportement.planActuel = plan;
+	 		comportement.vid.currentTime = Math.round(comportement.segm[plan] / 25 * 100) / 100;
+	 	}
+	 }
+
+	/**
+ 	 * Gestion Video : Backward 
+ 	 * @method bwd
+ 	 * @return 
+ 	 */
+ 	comportement.bwd = function(){
+	 	var plan = comportement.currentPlan();
+	 	var temp = comportement.segm[plan - 1]/25 - comportement.vid.currentTime; 
+	 	if(temp > -2 && temp < 2){
+	 		comportement.planActuel = plan - 1;
+	 		comportement.vid.currentTime = Math.round(comportement.segm[plan - 2] / 25 * 100) / 100;
+	 	}else {
+	 		comportement.planActuel = plan;
+	 		comportement.vid.currentTime = Math.round(comportement.segm[plan - 1] / 25 * 100) / 100;
+	 	}
 	}
 
-	// Backward 
-	comportement.bwd = function(){
-		comportement.planActuel = comportement.planActuel - 1;
-		comportement.vid.currentTime = comportement.segm[comportement.planActuel]/25 - comportement.decalage;
+	/**
+ 	 * Renvoit l'index dans comportement.segm du prochain plan où il faudra s'arreter en fonction de vid.currentTime 
+ 	 * @method currentPlan
+ 	 * @return fin
+ 	 */
+ 	comportement.currentPlan = function(){
+		//Recherche dichotomique du plan courant 
+		// Plan courant : numero de l'index dans segm du prochain point d'arret 
+		var debut = 0; 
+		var fin = comportement.segm.length - 1;
+		var mid = Math.round(fin / 2);
+		var curr = comportement.vid.currentTime;
+		while(fin - debut > 1){
+			if(comportement.segm[mid] / 25 > curr){
+				fin = mid; 
+				mid = Math.round((fin-debut) / 2 + debut);
+			}else if(comportement.segm[mid] / 25 < curr){
+				debut = mid; 
+				mid = Math.round((fin-debut) / 2 + debut) ;
+			}else{ // Si c'est exactement egal 
+				mid = mid + 1;
+				return mid;
+			}
+		}
+		return fin; 
 	}
 
-	// Stop 
-	comportement.stop = function(){
-		comportement.vid.currentTime = 0;
-		comportement.planActuel = 0;
-		comportement.vid.pause();
-	}
+	/**
+ 	 * Gestion Video : Stop 
+ 	 * @method stop
+ 	 * @return 
+ 	 */
+ 	comportement.stop = function(){
+	 	comportement.vid.currentTime = 0;
+	 	comportement.planActuel = 0;
+	 	comportement.vid.pause();
+	 }
 
-	// Plus lentement 
-	comportement.slower = function(){
-		comportement.vid.playbackRate -= 0.25;
-		comportement.vid.pause();
-		comportement.vid.play();
-	}
+	/**
+ 	 * Gestion Video : Plus lentement 
+ 	 * @method slower
+ 	 * @return 
+ 	 */
+ 	comportement.slower = function(){
+	 	comportement.vid.playbackRate -= 0.25;
+	 	comportement.vid.pause();
+	 	comportement.vid.play();
+	 }
 
-	// Plus rapide 
-	comportement.faster = function(){
-		comportement.vid.playbackRate += 0.25;
-		comportement.vid.pause();
-		comportement.vid.play();
-	}
+	/**
+ 	 * Gestion Video : Plus rapide 
+ 	 * @method faster
+ 	 * @return 
+ 	 */
+ 	comportement.faster = function(){
+	 	comportement.vid.playbackRate += 0.25;
+	 	comportement.vid.pause();
+	 	comportement.vid.play();
+	 }
 
-	// Evenement de fin de video 
-	comportement.vidEnd = function() {
-		comportement.playButton.value = "Play";
-		comportement.vid.playbackRate = 1;
-		clearTimeout(comportement.vidTimer)
-	}
-	return comportement;	
-}();
-
+	/**
+ 	 * Gestion Video : Remet a zero la video
+ 	 * @method vidEnd
+ 	 * @return 
+ 	 */
+ 	comportement.vidEnd = function() {
+	 	comportement.vid.playbackRate = 1;
+	 	comportement.vid.currentTime = 0;
+	 }
+	 return comportement;	
+	}();
