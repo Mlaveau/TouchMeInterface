@@ -102,6 +102,11 @@
                             <i class="icon-white icon-list">
                             </i>
                         </button> -->
+
+                        <button id="infoButton" class="btn btn-info" type="submit">
+                            <i class="icon-white icon-question-sign">
+                            </i>
+                        </button>
 						<button id="logoutButton" class="btn btn-success" type="submit">
                            	<i class="icon-white icon-off"></i>
 						</button>
@@ -199,6 +204,106 @@
                 </div>
             </div>
             <!-- Fin Fenetre Modal Choix Layer -->
+             <!-- Fenetre Modal Aide -->
+            <div id="modalAide" class="modal fade">
+                <div class="modal-dialog">
+                    <div class="modal-content" style="background-color: black; color : white">
+
+                        <div class="modal-header">
+                         <button type="button" class="close" data-dismiss="modal" aria-hidden="true" style="opacity:1; color : white">&times;</button>
+                            <h4 class="modal-title"> Aide </h4>
+                        </div> 
+                        <!-- Input -->
+                        <div class="modal-body">
+
+                            <!-- Double Tap -->
+                            <table>
+                                <tr>
+                                    <td>
+                                        <img src="images/aide/double_tap.png" alt="Geste du double tap" title="Double Tap" />
+                                    </td>
+                                    <td>
+                                        <p>
+                                            Double tap : <br>  
+                                            Si une segmentation est chargée : <br> 
+                                                <div style = "padding-left: 20px;">
+                                                    - A gauche de l'écran : Revient au plan précédent.<br>
+                                                    - A droit de l'écran : Va au plan suivant. <br>
+                                                    - Au centre : Play/Pause.<br>
+                                                </div>
+                                            Sinon, Play/pause partout.<br>
+                                        </p>
+                                    </td>
+                                </tr>
+                            </table>
+
+                            <!-- Hold -->
+                            <table>
+                                <tr>
+                                    <td>
+                                        <img src="images/aide/hold.png" alt="Geste du hold" title="Hold" />
+                                    </td>
+                                    <td>
+                                        <p>
+                                            Hold : <br>
+                                            Si la video est en pause : Démarre la video en enregistrant la position comme une annotation. <br>
+                                            Sinon, enregistre la postion comme une annotation.
+                                        </p>
+                                    </td>
+                                </tr>
+                            </table>
+                           
+                            <!-- Pinch -->
+                            <table>
+                                <tr>
+                                    <td>
+                                        <img src="images/aide/pinch.png" alt="Geste du pinch" title="pinch"/>
+                                    </td>
+                                    <td>
+                                        <p>
+                                            Pinch : <br>
+                                            Stop la video et la fait redémarrer à 0.
+                                        </p>
+                                    </td>
+                                </tr>
+                            </table>
+
+                            <!-- Drag -->
+                            <table>
+                                <tr>
+                                    <td>
+                                        <img src="images/aide/drag.png" alt="Geste du drag" title="Drag" />
+                                    </td>
+                                    <td>
+                                        <p>
+                                            Drag : <br>
+                                            Enregistre la postion courante comme une annotation.
+                                        </p>
+                                    </td>
+                                </tr>
+                            </table>
+                            <!-- Tap -->
+                            <table>
+                                <tr>
+                                    <td>
+                                        <img src="images/aide/tap.png" alt="Geste du tap" title="Tap" />
+                                    </td>
+                                    <td>
+                                        <p>
+                                            Tap : <br>
+                                            Si la video est en pause, un tap sur une annotation permet d'ouvrir un menu pour effacer cette annotation.                                     
+                                        </p>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                        <!-- <div class="modal-footer">
+                            
+                        </div>-->
+                    </div>
+                </div>
+            </div>
+            <!-- Fin Fenetre Aide -->
         </div>
         <!-- Fin du milieu-->
         
@@ -216,13 +321,6 @@
                                 </i>
                             </button>
                         </li>
-						<!-- Backward -->
-						<li>
-                            <button id="bwd" class="btn" >
-                                <i class="icon-large icon-step-backward">
-                                </i>
-                            </button>
-                        </li>
 						<!-- Slower -->
 						<li>
                             <button class="btn" id="slower">
@@ -234,13 +332,6 @@
 						<li>
                             <button class="btn" id="faster" >
                                 <i class="icon-large icon-forward">
-                                </i>
-                            </button>
-                        </li>
-						<!-- Forward -->
-						<li>
-                            <button class="btn" id="fwd">
-                                <i class="icon-large icon-step-forward">
                                 </i>
                             </button>
                         </li>

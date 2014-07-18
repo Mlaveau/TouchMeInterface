@@ -37,23 +37,63 @@ annotations = function(){
         if(!comportement.vid.paused && annotations.idLay != undefined){ // Si on a un layer courant et que la video joue
             if(type == "release" && annotations.temp_pos.length == 0){
                 // Si c'est le release d'après doubletap, dont on ne veut pas garder la trace, on ne fait rien
-            } else { // Dans tous les autres cas, on enregistre, en extrapolant les positions pour les frames manquantes
-                // l'index de la derniere position enregistree
+            }else{ // Dans tous les autres cas, on enregistre
                if(type == "release"){
                     // release -> Popup pour enregistrer les pos
                     // Vider le tableau temp_pos pour la prochaine annotation
                     if(annotations.temp_pos.length > 4){
                         annotations.save(indexprec, frame, posX, posY, type);
                     }
+                    annotations.affichePopup(posX, posY);
+                    comportement.pauseVideo();
+                }else{
+                    annotations.save(indexprec, frame, posX, posY, type);
+                }
+            }
+        }else if (type == "hold" && annotations.idLay != undefined){ // Si la video est en pause
+            // Demarage de la video
+            comportement.playVideo();
+            annotations.save(indexprec, frame, posX, posY, type);
+            var tempX = posX * comportement.vid.width / 100;
+            var tempY = posY * comportement.vid.height / 100;
+            comportement.showCurrentPos(tempX, tempY);
+        } else if(type == "touch" && comportement.vid.paused){
+            // Met en mode pour effacer l'annotation ! (En calculant la distance au centre de chaque cercle tout en etant moins grande que le rayon pour que ça veuille dire qu'il y en a une de sélectionnée.)
+            // -> Fait apparaître une fenetre modale pour demander le droit.
+
+        }
+    }
+
+    annotations.affichePopup = function(){
+                    // revient au 75%ème plan des annotations qu'on a en stock.
+                    var tmp = Math.round((annotations.temp_pos.length - 1) * 75 / 100);
+                    var temp_annot = annotations.temp_pos[tmp];
+                    comportement.vid.currentTime = Math.round(temp_annot.t / 25);
+                    // Affichage des annotations sur ce plan
+                    visualisation.afficheAnnot();
+                    // Affichage de l'annotation courante qu'on enregistre au moment present
+                    // Insertion d'un cercle 
+                    // Le placer au bon endroit
+                    visualisation.insertCircle("annotationCourante", "green");
+                    var gCircle = document.getElementById("annotationCourante");
+                    var x =  temp_annot.x / 100 * comportement.vid.width;
+                    var y =  temp_annot.y / 100 * comportement.vid.height;
+                    gCircle.setAttributeNS(null, "cx", x);
+                    gCircle.setAttributeNS(null, "cy", y);
+                    gCircle.style.display = "";
+                    // fin des ajouts
+
+                    // Gere la position de la fenetre en fonction de la position pour pas surperposer avec l'annotation en question
+                    var posY = temp_annot.y;
+                    var posX = temp_annot.x; 
                     var modal = document.getElementById("modalAnnots");
-                    // Gere la position de la fenetre en fonction de la position pour pas surperposer
                     if(posY < 50){ // En pourcentage, donc le milieu c'est 50
                         modal.style.bottom = "10px";
                         modal.style.top = "auto";
                         if(posX < 50){
                             modal.style.left = "";
                             modal.style.right = "10px";
-                        } else {
+                        }else{
                             modal.style.left = "300px";
                             modal.style.right = "";
                         }
@@ -63,25 +103,12 @@ annotations = function(){
                         if(posX < 50){
                             modal.style.left = "";
                             modal.style.right = "10px";
-                        } else {
+                        }else{
                             modal.style.left = "300px";
                             modal.style.right = "";
                         }
                     }
                     interface.popup();
-                    comportement.vid.pause();
-                }else{
-                    annotations.save(indexprec, frame, posX, posY, type);
-                }
-            }
-        } else if (type == "hold" && annotations.idLay != undefined){ // Si la video est en pause
-            // Demarage de la video
-            comportement.playVideo();
-            annotations.save(indexprec, frame, posX, posY, type);
-            var tempX = posX * comportement.vid.width / 100;
-            var tempY = posY * comportement.vid.height / 100;
-            comportement.showCurrentPos(tempX, tempY);
-        }
     }
 
     /**
@@ -135,12 +162,12 @@ annotations = function(){
                 	tmp.t = frame;
                 	tmp.type = type;
                 	annotations.temp_pos[indexprec] = tmp;
-            	} else{ // Sinon on enregistre directement
+            	}else{ // Sinon on enregistre directement
                 	annotations.temp_pos.push(temp);
                 	annotations.temp_evMulti = [];
                 	annotations.temp_evMulti.push(temp);
             	}
-        	} else { // Enregsitre directement
+        	}else{ // Enregsitre directement
             	annotations.temp_pos.push(temp);
             	annotations.temp_evMulti = [];
             	annotations.temp_evMulti.push(temp);
@@ -154,8 +181,22 @@ annotations = function(){
      * @return 
      */
     annotations.envoyerprevious = function() {
+        var tempTps = annotations.temp_pos[0].t;
         annotations.envoyer();
-        comportement.bwd();
+        comportement.vid.currentTime = tempTps/25;
+        visualisation.afficheAnnot();      
+    }
+
+    /**
+     * Envoyer les annotations au serveur puis efface le temp_pos avant de retourner au debut du plan
+     * @method envoyerprevious
+     * @return 
+     */
+    annotations.envoyernext = function() {
+        var tempTps = annotations.temp_pos[annotations.temp_pos.length - 1].t;
+        annotations.envoyer();
+        comportement.vid.currentTime = tempTps/25;
+        visualisation.afficheAnnot();        
     }
 
     /**
@@ -188,7 +229,7 @@ annotations = function(){
             fragment.start = annotations.temp_pos[0].t;
             fragment.end = annotations.temp_pos[annotations.temp_pos.length-1].t; // Interval de temps
             var pos = [];
-            for (var i = 0; i < annotations.temp_pos.length; i++){
+            for(var i = 0; i < annotations.temp_pos.length; i++){
                 var tmp = {};
                 tmp.t = annotations.temp_pos[i].t;
                 tmp.x = annotations.temp_pos[i].x;
@@ -212,6 +253,9 @@ annotations = function(){
     annotations.reset = function(){
         annotations.temp_pos = [];
         document.getElementById("namePerso").value = "";
+        if(document.getElementById("annotationCourante")){
+            document.getElementById("annotationCourante").remove();
+        }
     }
     
     /**

@@ -50,15 +50,15 @@ interface = function(){
         el.attachEvent('onclick', interface.tologout);
     }
     
-    /// Boutons de la barre du bas
-    // Video : Saut au plan suivant
-    var el = document.getElementById("fwd");
+    //Fait afficher la doc d'utilisation
+    var el = document.getElementById("infoButton");
     if (el.addEventListener){
-        el.addEventListener("click", comportement.fwd, false);
+        el.addEventListener("click", interface.popupAide, false);
     }else if (el.attachEvent){
-        el.attachEvent('onclick', comportement.fwd);
+        el.attachEvent('onclick', interface.popupAide);
     }
     
+    /// Boutons de la barre du bas
     // Video : Plus rapide
     var el = document.getElementById("faster");
     if (el.addEventListener){
@@ -73,14 +73,6 @@ interface = function(){
         el.addEventListener("click", comportement.slower, false);
     }else if (el.attachEvent){
         el.attachEvent('onclick', comportement.slower);
-    }
-    
-    // Video : Retour au plan precedent
-    var el = document.getElementById("bwd");
-    if (el.addEventListener){
-        el.addEventListener("click", comportement.bwd, false);
-    }else if (el.attachEvent){
-        el.attachEvent('onclick', comportement.bwd);
     }
     
     // Video : Stop la video
@@ -104,9 +96,9 @@ interface = function(){
     // Envoie et continue la lecture normale de la video
     var el = document.getElementById("envoyerAnnotNext");
     if (el.addEventListener){
-        el.addEventListener("click", annotations.envoyer, false);
+        el.addEventListener("click", annotations.envoyernext, false);
     }else if (el.attachEvent){
-        el.attachEvent('onclick', annotations.envoyer);
+        el.attachEvent('onclick', annotations.envoyernext);
     }
     
     // Envoie les annotations et revient au plan precedent
@@ -132,9 +124,9 @@ interface = function(){
 	 * @return 
 	 */
 	interface.tologin = function() {
-    interface.username= "";
+    interface.username = "";
 		// Log
-		camomile.login(interface.callback_login, document.getElementById("LoginUsername").value, document.getElementById("LoginPassword").value, "http://lit-shore-5364.herokuapp.com" );
+		camomile.login(interface.callback_login, document.getElementById("LoginUsername").value, document.getElementById("LoginPassword").value, "http://lit-shore-5364.herokuapp.com");
     interface.username = document.getElementById("LoginUsername").value;
 	}
   
@@ -160,7 +152,7 @@ interface = function(){
     /* Affiche l'utilisateur courant */
 		//var menuSlideButton = document.getElementById("slideMenuButton");
     var username = document.getElementById("userName");
-    username.innerHTML ='User : ' + interface.username;
+    username.innerHTML = 'User : ' + interface.username;
         
 		/* Permet le jeu d'affichage/disparition des boutons de logout/login */
 		document.getElementById("loginForm").style.display = "None";
@@ -196,7 +188,7 @@ interface = function(){
         
 		/* Remet a l'etat initial le menu Corpus et le fait disparaitre */
 		// Le nom
-		document.getElementById('corpName').innerHTML = "<i class=\"icon-white icon-folder-open\"></i>   Corpus   <b class=\"caret\"></b>";
+		document.getElementById('corpName').innerHTML = "<i class=\"icon-white icon-folder-open\"></i> Corpus <b class=\"caret\"></b>";
 		// Le menu
 		var menuCorp =  document.getElementById('menuCorpus');
 		menuCorp.innerHTML = "<li class=\"dropdown-header\"> Veuillez vous connecter pour avoir accès à la liste des corpus </li>";
@@ -216,7 +208,7 @@ interface = function(){
 		menuSegm.parentNode.style.display = "None";
 		menuSegm.innerHTML = "<li class=\"dropdown-header\"> Veuillez choisir une video pour avoir accès à la liste des segmentation </li>";
 		// le nom
-		document.getElementById('vidName').innerHTML = "<i class=\"icon-white icon-film\"></i>  Videos  <b class=\"caret \"></b>";
+		document.getElementById('vidName').innerHTML = "<i class=\"icon-white icon-film\"></i> Videos <b class=\"caret\"></b>";
 	}
     
 	/**
@@ -233,7 +225,7 @@ interface = function(){
         menuCorp.parentNode.style.display = "";
         var temp = "";
         for(var val in data){
-          temp += "<li><a href=\"#\" onclick=\"javascript:interface.update_menuVid('" + data[val]._id + "','" + data[val].name + "')\">" + data[val].name + "</a></li>";
+          temp += "<li><a href=\"#\" onclick=\"javascript:interface.update_menuVid('" + data[val]._id + "', '" + data[val].name + "')\">" + data[val].name + "</a></li>";
         }
         menuCorp.innerHTML = temp;
       }
@@ -258,24 +250,24 @@ interface = function(){
       var temp = "";
       if (data.length != 0){
         for(var val in data){
-          temp += "<li><a href=\"#\" onclick=\"javascript:interface.update_Med('http://"+ data[val].url+ "','" + data[val].name + "'); interface.update_menuSegm('" + corpusId + "','" + data[val]._id + "');\"> " + data[val].name + " </a></li>";
+          temp += "<li><a href=\"#\" onclick=\"javascript:interface.update_Med('http://"+ data[val].url + "', '" + data[val].name + "'); interface.update_menuSegm('" + corpusId + "','" + data[val]._id + "');\"> " + data[val].name + " </a></li>";
         }
       }else {
-        temp +=  "<li class=\"dropdown-header\" > Pas de videos disponibles pour ce corpus </li>";
+        temp +=  "<li class=\"dropdown-header\"> Pas de videos disponibles pour ce corpus </li>";
       }
       menuVid.innerHTML = temp;
       menuVid.parentNode.style.display = "";
 
-      document.getElementById('corpName').innerHTML = "<i class=\"icon-white icon-folder-open\"></i>  " + corpusName + "  <b class=\"caret \"></b>";
+      document.getElementById('corpName').innerHTML = "<i class=\"icon-white icon-folder-open\"></i> " + corpusName + " <b class=\"caret\"></b>";
       /* Reinitialise le nom du menu */
-      document.getElementById('vidName').innerHTML = "<i class=\"icon-white icon-film\"></i> Videos  <b class=\"caret \"></b>";
+      document.getElementById('vidName').innerHTML = "<i class=\"icon-white icon-film\"></i> Videos  <b class=\"caret\"></b>";
 
       /* Reinitialisation du menu Segmentation */
       // Le menu
-      document.getElementById('menuSegm').innerHTML = "<li class=\"dropdown-header\"> Veuillez choisir une video  </li>";
+      document.getElementById('menuSegm').innerHTML = "<li class=\"dropdown-header\"> Veuillez choisir une video </li>";
       // Le nom
       var divSegmName = document.getElementById('segmName');
-      divSegmName.innerHTML = "<i class=\"icon-white icon-file\"></i>  Segmentation  <b class=\"caret \"></b>";
+      divSegmName.innerHTML = "<i class=\"icon-white icon-file\"></i> Segmentation <b class=\"caret\"></b>";
       // Visibilite
       divSegmName.parentNode.style.display = "None";
 
@@ -318,11 +310,12 @@ interface = function(){
                   if (dat.length != 0){
                     var menuSegm = document.getElementById('menuSegm');
                     var tmp = " ";
+                    tmp +=  " <li><a href='#' onclick='javascript:interface.update_menuNameSegm(\"Aucune\");'> Aucune </a></li>";
                     for(var valeur in dat){
-                      tmp +=  "<li><a href = '#' onclick = 'javascript:comportement.update_segm(" + dat[valeur].data + "); interface.update_menuNameSegm(\"" + dat[valeur].fragment + "\");'> "+ dat[valeur].fragment + " </a></li>";
-                      menuSegm.innerHTML = tmp;
-                      menuSegm.parentNode.style.display = "";
+                      tmp +=  "<li><a href='#' onclick='javascript:comportement.update_segm(" + dat[valeur].data + "); interface.update_menuNameSegm(\"" + dat[valeur].fragment + "\");'> " + dat[valeur].fragment + " </a></li>";
                     }
+                    menuSegm.innerHTML = tmp;
+                    menuSegm.parentNode.style.display = "";
                   }
                 },
                 corpusId,
@@ -336,8 +329,7 @@ interface = function(){
         }else {
           interface.reinitialiseMenuSegm();
         }
-       
-        document.getElementById('segmName').innerHTML = "<i class=\"icon-white icon-file\"></i> Segmentation  <b class=\"caret \"></b>";
+        document.getElementById('segmName').innerHTML = "<i class=\"icon-white icon-file\"></i> Segmentation  <b class=\"caret\"></b>";
       },
       corpusId,
       vidId
@@ -350,12 +342,12 @@ interface = function(){
       function(data){
         var badges = document.getElementById("badgesLayers");
         badges.innerHTML = "";
-        if(data.length ==0){
+        if(data.length == 0){
           badges.innerHTML = "Aucun layer d'annotation existant pour cette video";
         } else {
           for(var i = 0; i < data.length; i++){
             if(data[i].layer_type == "Annotations"){
-              badges.innerHTML += "<a href=\'#\'><span class=\"badge\" data-dismiss=\'modal\' onClick = \"annotations.recupAnnot(\'" + data[i]._id + "', '" + data[i].source+ "\');\">" + data[i]._id +" : " + data[i].source +  "</span></a>"
+              badges.innerHTML += "<a href=\'#\'><span class=\"badge\" data-dismiss=\'modal\' onClick=\"annotations.recupAnnot(\'" + data[i]._id + "', '" + data[i].source+ "\');\">" + data[i]._id +" : " + data[i].source +  "</span></a>"
             }
           }
         }
@@ -374,10 +366,9 @@ interface = function(){
   interface.reinitialiseMenuSegm = function(){
     var menuSegm = document.getElementById('menuSegm');
     var tmp = " ";
-    tmp +=  "<li class=\"dropdown-header\" > Pas de segmentation disponible pour cette video </li>";
+    tmp +=  "<li class=\"dropdown-header\"> Pas de segmentation disponible pour cette video </li>";
     menuSegm.innerHTML = tmp;
     menuSegm.parentNode.style.display = "";
-
   }
     
 	/**
@@ -388,7 +379,7 @@ interface = function(){
 	 */
 	interface.update_menuNameSegm = function(name){
 		var divSegmName = document.getElementById('segmName');
-		divSegmName.innerHTML = "<i class=\"icon-white icon-file\"></i> " + name + " <b class=\"caret \"></b>";
+		divSegmName.innerHTML = "<i class=\"icon-white icon-file\"></i> " + name + " <b class=\"caret\"></b>";
 	}
     
 	/**
@@ -401,7 +392,7 @@ interface = function(){
 	interface.update_Med = function(url, vidName){
 		/* Change le nom du menu Vid */
 		var divVidName = document.getElementById('vidName');
-		divVidName.innerHTML = "<i class=\"icon-white icon-film\"></i>   " + vidName + "   <b class=\"caret \"></b>";
+		divVidName.innerHTML = "<i class=\"icon-white icon-film\"></i> " + vidName + " <b class=\"caret\"></b>";
         
 		/* Fait apparaitre la video */
 		var divVid = document.getElementById('divVid');
@@ -421,7 +412,7 @@ interface = function(){
 			interface.posleft = 85;
 		}
       
-		temp = "<video id=\"vid\" width = " + w + " height=" + h + " style=\"z-index:4; top:" + interface.postop + "px; left:" + interface.posleft + "px; position:absolute\" >" // De base : 400/720
+		temp = "<video id=\"vid\" width=" + w + " height=" + h + " style=\"z-index:4; top:" + interface.postop + "px; left:" + interface.posleft + "px; position:absolute\">" // De base : 400/720
         + "<source src=\"" + url + ".webm\" type=\"video/webm\" /><!-- Chrome10+, Ffx4+, Opera10.6+ -->"
         + "<source src=\"" + url + ".mp4\" type=\"video/mp4\"  /> <!-- Safari / iOS, IE9 -->"
         + "Impossible de lire la video avec votre browser"
@@ -447,7 +438,6 @@ interface = function(){
         'id' : 'currentPosUser'
       }
     );
-
     // Ajout
     comportement.elVid();
 	}
@@ -491,10 +481,17 @@ interface = function(){
     var divBadgesNames = document.getElementById("badges");
     divBadgesNames.innerHTML = " ";
     for(var i = 0; i < annotations.temp_name.length; i++){
-      divBadgesNames.innerHTML += "<a href=\'#\'><span class=\"badge\" style= \'color:" + annotations.temp_name[i].color + "; background-color:#DDD\' onClick = \"document.getElementById(\'namePerso\').value =\'" +  annotations.temp_name[i].name + "\';\">" + annotations.temp_name[i].name + "</span></a>";
+      divBadgesNames.innerHTML += "<a href=\'#\'><span class=\"badge\" style=\'color:" + annotations.temp_name[i].color + "; background-color:#DDD\' onClick=\"document.getElementById(\'namePerso\').value =\'" +  annotations.temp_name[i].name + "\';\">" + annotations.temp_name[i].name + "</span></a>";
     }
     $j("#modalAnnots").modal('show');
   }
 
+  interface.popupAide = function(){
+    if(comportement.vid){
+      comportement.pauseVideo();
+    }
+    $j("#modalAide").modal('show');
+  }
 	return interface;
+
 }();

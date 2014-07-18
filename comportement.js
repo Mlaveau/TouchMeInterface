@@ -100,8 +100,20 @@ comportement = function(){
 		// Gestion des differents mouvements
 		// Play/pause
 		comportement.hammertime.on("doubletap", 
-			function(e){
-				comportement.playVideo(); // Lance la video
+			function(e){ 
+				// En fonction de la ou on tape : 
+				if(comportement.segm != ""){ // Si une segmentation est chargee
+					var posX = Math.round((((e.gesture.center.pageX - interface.posleft) * 100) / comportement.vid.width) * 100) / 100;
+					if(posX < 25){ // Dans le quart gauche :
+						comportement.bwd(); // On revient au plan precedent
+					} else if(posX > 75) { // Dans le quart droite :
+						comportement.fwd() // On va au prochain plan
+					} else { // Dans les deux quarts du milieu :
+						comportement.playVideo(); // Lance la video
+					}
+				} else { // S'il n'y en a pas
+					comportement.playVideo(); // Lance la video
+				}
 			}
 		); 
 		
@@ -109,20 +121,6 @@ comportement = function(){
 		comportement.hammertime.on("pinchin", 
 			function(e){
 				comportement.stop(); // Stop la video
-			}
-		); 
-
-		// Avance au plan suivant	
-		comportement.hammertime.on("swiperight", 
-			function(e){
-				comportement.bwd(); //Revient au plan precedent
-			}
-		); 
-		
-		// Recule au plan precedent
-		comportement.hammertime.on("swipeleft", 
-			function(e){
-				comportement.fwd(); // Avance au plan suivant
 			}
 		); 
 
@@ -168,19 +166,7 @@ comportement = function(){
  	 */
  	comportement.update_segm = function(data){
 	 	document.getElementById("butonPrevious").style.display = "";
-	 	console.log(data);
-	 	console.log("yeah");
 	 	comportement.segm = data;
-	 }
-
-	/**
- 	 * Affiche le plan actuel -> A supprimer  
- 	 * @method touchXY
- 	 * @param String[] e (Type d'un evenement Hammer)
- 	 * @return 
- 	 */
- 	comportement.touchXY = function(e) {
-	 	interface.pos.innerHTML = comportement.planActuel + " : ";
 	 }
 
 	/**
@@ -212,24 +198,22 @@ comportement = function(){
 		}
 	}
 
-
+https://dub114.mail.live.com/
 	/**
  	 * Gestion Video : arret de la video au changement de plans 
  	 * @method plans
  	 * @return 
  	 */
  	comportement.plans = function(){
-	 	// Recupere le numero de frame du prochain plan
-	 	var tmp = comportement.segm[comportement.planActuel] / 25;
-	 	// Si on l'a atteint
-		if(comportement.vid.currentTime > tmp){ 
-			comportement.planActuel += 1;
-			comportement.vid.pause();
-            // Pour enregistrer les pos si on en a pointees
-            if(annotations.temp_pos != ""){
+ 		var plan = comportement.currentPlan();
+ 		if(plan > comportement.planActuel){
+ 			comportement.pauseVideo();
+ 			comportement.planActuel = plan;
+ 			if(annotations.temp_pos != ""){
+ 				annotations.affichePopup();
             	interface.popup();
-            }
-        }
+        	}
+ 		}
     }
     
 	/**
@@ -247,12 +231,21 @@ comportement = function(){
                 comportement.vid.muted = true;
             }
             else {
-            	// Reset le timer 
-               	clearInterval(comportement.vidTimer);
-               	// Met en pause
-            	comportement.vid.pause();
+            	comportement.pauseVideo();
             }
         }
+    }
+
+	/**
+ 	 * Gestion Video : Pause et clear interval
+ 	 * @method pauseVideo
+ 	 * @return 
+ 	 */
+    comportement.pauseVideo = function(){
+		// Reset le timer 
+       	clearInterval(comportement.vidTimer);
+       	// Met en pause
+    	comportement.vid.pause();
     }
 
 	/**
@@ -275,10 +268,31 @@ comportement = function(){
  	 */
  	comportement.fwd = function(){ 
 	 	var plan = comportement.currentPlan();
-	 	if(plan < comportement.segm.length){
-	 		comportement.planActuel = plan;
-	 		comportement.vid.currentTime = Math.round(comportement.segm[plan] / 25 * 100) / 100;
-	 	}
+		var temp = comportement.segm[plan]/25 - comportement.vid.currentTime; 
+		var indexMaxTab = comportement.segm.length - 1;
+		console.log(comportement.planActuel, plan, temp, indexMaxTab, comportement.vid.currentTime);
+	 	if(temp < 2 && temp >= 0){// Verifie si on est deja a une fronctiere ou non (Plus ou moins)
+	 		if(plan + 1 < comportement.segm.length){ // Pour pas etre en dehors du tableau. Si oui, 0
+	 			comportement.vid.currentTime = Math.round((comportement.segm[plan + 1]) / 25 * 100) / 100;
+				comportement.planActuel = plan + 2 ;
+		 	} else { 
+		 		comportement.vid.currentTime = Math.round((comportement.segm[indexMaxTab]) / 25 * 100) / 100;
+				comportement.planActuel = indexMaxTab;
+		 	}
+	 	}else { // Sinon, c'est qu'on est au milieu d'un plan donc on va au debut de ce plan
+	 		if(plan > indexMaxTab){ // Pour pas etre en dehors du tableau. Sin oui, 0
+	 			comportement.vid.currentTime = comportement.vid.duration;
+				comportement.planActuel = indexMaxTab + 1;
+		 	} else {
+		 		comportement.vid.currentTime = Math.round((comportement.segm[plan]) / 25 * 100) / 100;
+				comportement.planActuel = plan + 1;
+		 	}
+	 	}	 
+	 	console.log(comportement.planActuel, comportement.vid.currentTime);
+		comportement.pauseVideo();
+
+	 	//Affiche les annotations correspondantes au plan auquel on a saute
+	 	visualisation.afficheAnnot();
 	 }
 
 	/**
@@ -288,14 +302,28 @@ comportement = function(){
  	 */
  	comportement.bwd = function(){
 	 	var plan = comportement.currentPlan();
-	 	var temp = comportement.segm[plan - 1]/25 - comportement.vid.currentTime; 
-	 	if(temp > -2 && temp < 2){
-	 		comportement.planActuel = plan - 1;
-	 		comportement.vid.currentTime = Math.round(comportement.segm[plan - 2] / 25 * 100) / 100;
-	 	}else {
-	 		comportement.planActuel = plan;
-	 		comportement.vid.currentTime = Math.round(comportement.segm[plan - 1] / 25 * 100) / 100;
+		var temp = comportement.segm[plan - 1]/25 - comportement.vid.currentTime; 
+	 	if(temp > -0.5 && temp < 2){// Verifie si on est deja a une fronctiere ou non (Plus ou moins)
+	 		if(plan - 2 >= 0){ // Pour pas etre en dehors du tableau. Si oui, 0
+	 			comportement.vid.currentTime = Math.round((comportement.segm[plan - 2]) / 25 * 100) / 100;
+				comportement.planActuel = plan - 1;
+		 	} else { // Si inférieur
+		 		comportement.vid.currentTime = 0;
+				comportement.planActuel = 0;
+		 	}
+	 	}else { // Sinon, c'est qu'on est au milieu d'un plan donc on va au debut de ce plan
+	 		if(plan - 1 >= 0){ // Pour pas etre en dehors du tableau. Sin oui, 0
+		 		comportement.vid.currentTime = Math.round((comportement.segm[plan - 1]) / 25 * 100) / 100;
+				comportement.planActuel = plan;
+		 	} else {
+		 		comportement.vid.currentTime = 0;//Math.round((comportement.segm[0]) / 25 * 100) / 100;
+				comportement.planActuel = 0;
+		 	}
 	 	}
+		comportement.pauseVideo();
+
+	 	//Affiche les annotations correspondantes au plan auquel on a saute
+	 	visualisation.afficheAnnot();
 	}
 
 	/**
@@ -311,7 +339,9 @@ comportement = function(){
 		var mid = Math.round(fin / 2);
 		var curr = comportement.vid.currentTime;
 		while(fin - debut > 1){
-			if(comportement.segm[mid] / 25 > curr){
+			if(comportement.segm[debut] / 25 > curr){
+				return debut;
+			}if(comportement.segm[mid] / 25 > curr){
 				fin = mid; 
 				mid = Math.round((fin-debut) / 2 + debut);
 			}else if(comportement.segm[mid] / 25 < curr){
@@ -332,7 +362,6 @@ comportement = function(){
  	 */
  	comportement.stop = function(){
 	 	comportement.vid.currentTime = 0;
-	 	comportement.planActuel = 0;
 	 	comportement.vid.pause();
 	 }
 

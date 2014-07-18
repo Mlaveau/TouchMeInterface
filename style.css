@@ -91,6 +91,34 @@ nav>#affichage{
     opacity: 0.01; /* Ne fonctionne pas avec seulement un '0'*/
 }
 
+/*** Fenetre modale d'aide ***/
+.columns {
+    -webkit-columns: 2;
+    -moz-columns: 2;
+    columns: 2;
+}
+
+#modalAide{
+    width: auto;
+    right: auto;
+    bottom: auto;
+    height : 550px;
+    left : 450px;
+
+}
+
+#modalAide>.modal-dialog>.modal-content{
+    height : 548px;
+}
+
+#modalAide>.modal-dialog>.modal-content>.modal-body{
+    max-height : 100%;
+}
+td > img {
+    height : 80px; 
+    width : 80px;
+}
+
 /*** Div du contenu au milieu ***/
 /** La video **/
 #divVid{
