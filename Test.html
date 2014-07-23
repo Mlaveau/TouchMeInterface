@@ -145,7 +145,7 @@
 			</div> 
             <!--Fin Video -->
             <!-- Fenetre Modal Nom Annot -->
-            <div id="modalAnnots" class="modal fade" >
+            <div id="modalAnnots" class="modal fade" data-backdrop="static">
                 <div class="modal-dialog">
                     <div class="modal-content">
 
@@ -182,7 +182,7 @@
             </div>
             <!-- Fin Fenetre Modal Annot -->
             <!-- Fenetre Modal Choix Layer -->
-            <div id="modalLayers" class="modal fade" >
+            <div id="modalLayers" class="modal fade" data-backdrop="static">
                 <div class="modal-dialog">
                     <div class="modal-content">
                         <div class="modal-header">
@@ -303,7 +303,34 @@
                     </div>
                 </div>
             </div>
-            <!-- Fin Fenetre Aide -->
+            <!-- Fin Fenetre modale Aide -->
+
+            <!-- Fenetre modale Confirmation effacer Annot -->
+            <div id="modaleRemoveAnnot" class="modal fade" data-backdrop="static">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                         <button type="button" class="close" data-dismiss="modal" aria-hidden="true" >&times;</button>
+                            <h4 class="modal-title"> Remove </h4>
+                        </div> 
+                        <!-- Input -->
+                        <div class="modal-body">
+                            Voulez vous vraiment effacer l'annotation suivante ? 
+                            <span id="annotRemove">
+                            </span>
+                        </div>
+                        <div class="modal-footer"> 
+                            <button type="button" class="btn btn-default" data-dismiss="modal">
+                                Annuler
+                            </button>
+                            <button id="validDeleteButton" type="button" data-dismiss="modal" class="btn btn-primary">
+                                Valider  
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Fin Fenetre modale Confirmation effacer Annot -->
         </div>
         <!-- Fin du milieu-->
         
@@ -379,7 +406,6 @@
 
 		
 		<!-- Librairies Hammer -->
-		<script type="text/javascript" src="ga.js"></script>
 		<script type="text/javascript" src="hammer.js"></script>
 
 		<!-- Pour gerer les conflits Jquery/Hammer, Jquery/Bootstrap -->
@@ -393,7 +419,7 @@
             
             // Init the videos variables
             interface.init();
+            //interface.tologin();
             </script>
 	</body>
 </html>
-

@@ -93,6 +93,10 @@ comportement = function(){
         comportement.vidTimer = ""; 
         comportement.planActuel = 0;
 
+        // Initialise l'id de l'annot a remov
+        annotations.annotIDRemov = "";
+
+
         /* Mise en place du multitouch */
 		// Sur le svg
 		var svgDiv = document.getElementById("affichAnnot"); // Recupere lelement svg 
@@ -103,7 +107,7 @@ comportement = function(){
 			function(e){ 
 				// En fonction de la ou on tape : 
 				if(comportement.segm != ""){ // Si une segmentation est chargee
-					var posX = Math.round((((e.gesture.center.pageX - interface.posleft) * 100) / comportement.vid.width) * 100) / 100;
+					var posX = comportement.posX(e);
 					if(posX < 25){ // Dans le quart gauche :
 						comportement.bwd(); // On revient au plan precedent
 					} else if(posX > 75) { // Dans le quart droite :
@@ -124,12 +128,22 @@ comportement = function(){
 			}
 		); 
 
+		// Effacer une annotation
+		comportement.hammertime.on("tap", 
+			function(e){
+				if(comportement.vid.paused){
+					annotations.effaceAnnot(comportement.posX(e), comportement.posY(e)); // Stop la video
+				}
+			}
+		); 
+
+
 		// Pour tous les evenements de events_annot (enregistrement des annotations)
 		comportement.hammertime.on(events_annot.join(" "), 
 			function(e){
 	            // Position en % de la hauteur et de la largeur
-	            var posX = Math.round((((e.gesture.center.pageX - interface.posleft) * 100) / comportement.vid.width) * 100) / 100;
-	            var posY = Math.round((((e.gesture.center.pageY - interface.postop) * 100) / comportement.vid.height) * 100) / 100;
+	            var posX = comportement.posX(e);
+	            var posY = comportement.posY(e);
 	            comportement.showPos(posX, posY);
 	            if((comportement.vid.paused == false && e.type != "release")){
 	            	comportement.showCurrentPos(e.gesture.center.pageX - interface.posleft, e.gesture.center.pageY - interface.postop);
@@ -140,7 +154,16 @@ comportement = function(){
 			}
 		);
 	}
-	
+
+	/** Retourne en pourcentage la position x d'un evenement e **/
+	comportement.posX = function(e){
+		return Math.round((((e.gesture.center.pageX - interface.posleft) * 100) / comportement.vid.width) * 100) / 100;
+	}
+		
+	/** Retourne en pourcentage la position y d'un evenement e **/
+	comportement.posY = function(e){
+		return Math.round((((e.gesture.center.pageY - interface.postop) * 100) / comportement.vid.height) * 100) / 100;
+	}
 	/**
 	 * Gere le cercle d'affichage de l'endroit pointe 
 	 * @method showCurrentPos
@@ -188,17 +211,16 @@ comportement = function(){
  	 */
  	comportement.curtime = function(){
 	 	// Affichage du temps courant
-	 	interface.time.innerHTML = Math.floor(comportement.vid.currentTime/60) + ":" + Math.floor(comportement.vid.currentTime%60);
+	 	interface.time.innerHTML = Math.floor(comportement.vid.currentTime / 60) + ":" + Math.floor(comportement.vid.currentTime % 60);
 	 	// Affichage de la duree totale
 		if(comportement.vid.currentTime > 0 && comportement.vid.currentTime <= 1){ 
-			if (Math.round(comportement.vid.duration/60) >0) {
-				interface.tmp.innerHTML = Math.floor(comportement.vid.duration/60) + ":" ; // Returns the duration in seconds of the current media resource. A NaN value is returned if duration is not available, or Infinity if the media resource is streaming
+			if (Math.round(comportement.vid.duration / 60) >0) {
+				interface.tmp.innerHTML = Math.floor(comportement.vid.duration / 60) + ":" ; // Returns the duration in seconds of the current media resource. A NaN value is returned if duration is not available, or Infinity if the media resource is streaming
 			}
-			interface.tmp.innerHTML = interface.tmp.innerHTML + Math.floor(comportement.vid.duration%60);
+			interface.tmp.innerHTML = interface.tmp.innerHTML + Math.floor(comportement.vid.duration % 60);
 		}
 	}
 
-https://dub114.mail.live.com/
 	/**
  	 * Gestion Video : arret de la video au changement de plans 
  	 * @method plans
@@ -229,6 +251,7 @@ https://dub114.mail.live.com/
 				comportement.vid.play();
                 annotations.reset();// Reset les temp des annotations pour etre sur qu'il n'en reste pas
                 comportement.vid.muted = true;
+                annotations.annotIDRemov = "";
             }
             else {
             	comportement.pauseVideo();
@@ -268,11 +291,10 @@ https://dub114.mail.live.com/
  	 */
  	comportement.fwd = function(){ 
 	 	var plan = comportement.currentPlan();
-		var temp = comportement.segm[plan]/25 - comportement.vid.currentTime; 
+		var temp = comportement.segm[plan] / 25 - comportement.vid.currentTime; 
 		var indexMaxTab = comportement.segm.length - 1;
-		console.log(comportement.planActuel, plan, temp, indexMaxTab, comportement.vid.currentTime);
 	 	if(temp < 2 && temp >= 0){// Verifie si on est deja a une fronctiere ou non (Plus ou moins)
-	 		if(plan + 1 < comportement.segm.length){ // Pour pas etre en dehors du tableau. Si oui, 0
+	 		if((plan + 1) < comportement.segm.length){ // Pour pas etre en dehors du tableau. Si oui, 0
 	 			comportement.vid.currentTime = Math.round((comportement.segm[plan + 1]) / 25 * 100) / 100;
 				comportement.planActuel = plan + 2 ;
 		 	} else { 
@@ -288,7 +310,6 @@ https://dub114.mail.live.com/
 				comportement.planActuel = plan + 1;
 		 	}
 	 	}	 
-	 	console.log(comportement.planActuel, comportement.vid.currentTime);
 		comportement.pauseVideo();
 
 	 	//Affiche les annotations correspondantes au plan auquel on a saute
@@ -302,7 +323,7 @@ https://dub114.mail.live.com/
  	 */
  	comportement.bwd = function(){
 	 	var plan = comportement.currentPlan();
-		var temp = comportement.segm[plan - 1]/25 - comportement.vid.currentTime; 
+		var temp = comportement.segm[plan - 1] / 25 - comportement.vid.currentTime; 
 	 	if(temp > -0.5 && temp < 2){// Verifie si on est deja a une fronctiere ou non (Plus ou moins)
 	 		if(plan - 2 >= 0){ // Pour pas etre en dehors du tableau. Si oui, 0
 	 			comportement.vid.currentTime = Math.round((comportement.segm[plan - 2]) / 25 * 100) / 100;
@@ -363,6 +384,8 @@ https://dub114.mail.live.com/
  	comportement.stop = function(){
 	 	comportement.vid.currentTime = 0;
 	 	comportement.vid.pause();
+	 	//Affiche les annotations correspondantes -> Ici aucune
+	 	visualisation.afficheAnnot();
 	 }
 
 	/**

@@ -14,6 +14,9 @@ annotations = function(){
     // Contient les annotation du layer courant
     var annots;
 
+    // Id de l'annot a remov actuellement
+    var annotIDRemov; 
+
     /**
 	 * Constructeur 
 	 * @method annotations
@@ -65,50 +68,50 @@ annotations = function(){
     }
 
     annotations.affichePopup = function(){
-                    // revient au 75%ème plan des annotations qu'on a en stock.
-                    var tmp = Math.round((annotations.temp_pos.length - 1) * 75 / 100);
-                    var temp_annot = annotations.temp_pos[tmp];
-                    comportement.vid.currentTime = Math.round(temp_annot.t / 25);
-                    // Affichage des annotations sur ce plan
-                    visualisation.afficheAnnot();
-                    // Affichage de l'annotation courante qu'on enregistre au moment present
-                    // Insertion d'un cercle 
-                    // Le placer au bon endroit
-                    visualisation.insertCircle("annotationCourante", "green");
-                    var gCircle = document.getElementById("annotationCourante");
-                    var x =  temp_annot.x / 100 * comportement.vid.width;
-                    var y =  temp_annot.y / 100 * comportement.vid.height;
-                    gCircle.setAttributeNS(null, "cx", x);
-                    gCircle.setAttributeNS(null, "cy", y);
-                    gCircle.style.display = "";
-                    // fin des ajouts
+        // revient au 75%ème plan des annotations qu'on a en stock.
+        var tmp = Math.round((annotations.temp_pos.length - 1) * 75 / 100);
+        var temp_annot = annotations.temp_pos[tmp];
+        comportement.vid.currentTime = Math.round(temp_annot.t / 25);
+        // Affichage des annotations sur ce plan
+        visualisation.afficheAnnot();
+        // Affichage de l'annotation courante qu'on enregistre au moment present
+        // Insertion d'un cercle 
+        // Le placer au bon endroit
+        visualisation.insertCircle("annotationCourante", "green");
+        var gCircle = document.getElementById("annotationCourante");
+        var x =  temp_annot.x / 100 * comportement.vid.width;
+        var y =  temp_annot.y / 100 * comportement.vid.height;
+        gCircle.setAttributeNS(null, "cx", x);
+        gCircle.setAttributeNS(null, "cy", y);
+        gCircle.style.display = "";
+        // fin des ajouts
 
-                    // Gere la position de la fenetre en fonction de la position pour pas surperposer avec l'annotation en question
-                    var posY = temp_annot.y;
-                    var posX = temp_annot.x; 
-                    var modal = document.getElementById("modalAnnots");
-                    if(posY < 50){ // En pourcentage, donc le milieu c'est 50
-                        modal.style.bottom = "10px";
-                        modal.style.top = "auto";
-                        if(posX < 50){
-                            modal.style.left = "";
-                            modal.style.right = "10px";
-                        }else{
-                            modal.style.left = "300px";
-                            modal.style.right = "";
-                        }
-                    }else{
-                        modal.style.top = "10px";
-                        modal.style.bottom = "auto";
-                        if(posX < 50){
-                            modal.style.left = "";
-                            modal.style.right = "10px";
-                        }else{
-                            modal.style.left = "300px";
-                            modal.style.right = "";
-                        }
-                    }
-                    interface.popup();
+        // Gere la position de la fenetre en fonction de la position pour pas surperposer avec l'annotation en question
+        var posY = temp_annot.y;
+        var posX = temp_annot.x; 
+        var modaleAnnot = document.getElementById("modalAnnots");
+        if(posY < 50){ // En pourcentage, donc le milieu c'est 50
+            modaleAnnot.style.bottom = "10px";
+            modaleAnnot.style.top = "auto";
+            if(posX < 50){
+                modaleAnnot.style.left = "";
+                modaleAnnot.style.right = "10px";
+            }else{
+                modaleAnnot.style.left = "300px";
+                modaleAnnot.style.right = "";
+            }
+        }else{
+            modaleAnnot.style.top = "10px";
+            modaleAnnot.style.bottom = "auto";
+            if(posX < 50){
+                modaleAnnot.style.left = "";
+                modaleAnnot.style.right = "10px";
+            }else{
+                modaleAnnot.style.left = "300px";
+                modaleAnnot.style.right = "";
+            }
+        }
+        interface.popupAnnot();
     }
 
     /**
@@ -181,9 +184,8 @@ annotations = function(){
      * @return 
      */
     annotations.envoyerprevious = function() {
-        var tempTps = annotations.temp_pos[0].t;
         annotations.envoyer();
-        comportement.vid.currentTime = tempTps/25;
+        comportement.bwd();
         visualisation.afficheAnnot();      
     }
 
@@ -227,7 +229,7 @@ annotations = function(){
             // Enregistrer l'annotation dans le bon layer
             var fragment = {}
             fragment.start = annotations.temp_pos[0].t;
-            fragment.end = annotations.temp_pos[annotations.temp_pos.length-1].t; // Interval de temps
+            fragment.end = annotations.temp_pos[annotations.temp_pos.length - 1].t; // Interval de temps
             var pos = [];
             for(var i = 0; i < annotations.temp_pos.length; i++){
                 var tmp = {};
@@ -236,7 +238,7 @@ annotations = function(){
                 tmp.y = annotations.temp_pos[i].y;
                 pos.push(tmp);
             }
-            var dat = {}; // // data = {label : _, position : [{x : _ , y : _ , t : _ }, ... ]}
+            var dat = {}; // data = {label : _, position : [{x : _ , y : _ , t : _ }, ... ]}
             dat.label = persoName;
             dat.position = pos;
             camomile.create_annotation(function(data){annotations.annots.push(data);}, annotations.idCorp, annotations.idMed, annotations.idLay, fragment, dat);
@@ -301,7 +303,7 @@ annotations = function(){
                         if(annotations.temp_name[j].name == dat[i].data.label){
                             vu = true;
                         }
-                    }
+                    } 
                     
                     // Enregistre le nom pour pouvoir le reafficher
                     if(!vu) {
@@ -327,6 +329,7 @@ annotations = function(){
     annotations.sortAnnots = function(){
     	annotations.annots.sort(
             function(a, b){ 
+
                 var tmp = a.fragment.start-b.fragment.start; 
                 if(tmp == 0){
                 	tmp = a.fragment.end - b.fragment.end;
@@ -336,8 +339,63 @@ annotations = function(){
         );
     }
            					
+    annotations.effaceAnnot = function(posX, posY){
+        if(annotations.verifBornes(posX, posY)){
+            // Parcourir les annotations représentées à ce moment là 
+            // faire la distance au centre pour voir lequel est le plus proche, tout en etant en dessous de diametre des cercles (50 ?)
+            // Recuperer l'id
+            // L'effacer du serveur et de temps_pos
+            var tmp = document.getElementById("affichAnnot").childNodes;
+            var tmpX = comportement.vid.width;
+            var tmpY = comportement.vid.height;
+            var tmpId = "";
+            for (var valeur in tmp){
+                if(tmp[valeur].localName == "g"){
+                    // Calcule
+                    var dx = tmp[valeur].childNodes[1].getAttributeNS(null, "cx") - (posX * comportement.vid.width / 100);
+                    var dy = tmp[valeur].childNodes[1].getAttributeNS(null, "cy") - (posY * comportement.vid.height / 100);
+                    if( ((dx * dx + dy * dy) < (tmpY * tmpY + tmpX * tmpX)) 
+                        && 
+                        ((dx < 50 && dx > -50) && (dy > -50 && dy < 50))){
+                        tmpX = dx; 
+                        tmpY = dy;
+                        tmpId = tmp[valeur].id;
+                        var affichage = document.getElementById("annotRemove");
+                        affichage.innerHTML = "<br><b>Nom :</b> " + tmp[valeur].childNodes[0].firstChild.data + "<br>";
+                        affichage.innerHTML += "<b>Id :</b> " + tmpId;
+                        // MODIDIFIER L'EMPLACEMENT DE LA FENETRE MODALE EN FONCTION DE L'ENDROIT OU ON TOUCHE
+                        $j("#modaleRemoveAnnot").modal('show');
+                        annotations.annotIDRemov = tmpId;
+                    }
+                }
+            }
+        }
+    }
 
-return annotations;
+    /* Delete Annot function */
+    annotations.deleteAnnot = function(){
+        camomile.remove_annotation(
+            function(data){
+                annotations.calbackRemove(data);
+            }, 
+            annotations.idCorp, 
+            annotations.idMed, 
+            annotations.idLay, 
+            annotations.annotIDRemov);
+    }
+
+    /* Callback Remove Annot */
+    annotations.calbackRemove = function(data){
+        for(var i = 0; i < annotations.annots.length; i++){
+            if(annotations.annots[i]._id == annotations.annotIDRemov){
+                annotations.annots.splice(i, 1);
+                var tmp = document.getElementById(annotations.annotIDRemov);
+                tmp.remove();
+                break;
+            }
+        }
+    }
+    return annotations;
 }();
 
 

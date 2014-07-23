@@ -6,13 +6,13 @@
 visualisation = function(){
 
 	/**
-	 * Description
+	 * Constructeur
 	 * @method visualisation
 	 * @return 
 	 */
 	function visualisation (){
         
-    }
+  }
     
   /**
    * Calcule la position du cercle et du text de toutes les annotations 
@@ -88,7 +88,7 @@ visualisation = function(){
     var t = interface.svg.text(30, 30, label).attr(
       {
         stroke: 'white', 
-        'font-size': 18, 
+        'font-size': 18,
         fill : 'white', 
         'id' : id + "Text"
       }

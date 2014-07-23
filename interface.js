@@ -5,7 +5,7 @@
 interface = function(){
        
 	/**
-	 * Description
+	 * Constructeur
 	 * @method interface
 	 * @return 
 	 */
@@ -116,6 +116,15 @@ interface = function(){
     }else if (el.attachEvent){
         el.attachEvent('onclick', annotations.reset);
     }
+
+    // Bouton de la fenetre modale du remove
+    // Delete l'annotation selectionnee
+    var el = document.getElementById("validDeleteButton");
+    if (el.addEventListener){
+        el.addEventListener("click", annotations.deleteAnnot, false);
+    }else if (el.attachEvent){
+        el.attachEvent('onclick', annotations.deleteAnnot);
+    }
 	}
     
 	/**
@@ -148,7 +157,7 @@ interface = function(){
 	 */
 	interface.callback_login = function(data){
         
-		console.log('Co');
+		//console.log('Co');
     /* Affiche l'utilisateur courant */
 		//var menuSlideButton = document.getElementById("slideMenuButton");
     var username = document.getElementById("userName");
@@ -162,6 +171,13 @@ interface = function(){
         
 		/* Met a jour le menu des Corpus disponibles et l'affiche */
 		interface.update_menuCorpus();
+
+
+    // A ENLEVER : RACCOURCIS POUR LE DEBEUG
+    //interface.update_menuVid('53884ee3682be502003adae7', 'TBBT1.season1');
+    //interface.update_menuSegm('53884ee3682be502003adae7','53884f84682be502003adaed');
+    //interface.update_Med('http://perso.limsi.fr/laveau/videos/TBBT1', 'ep1');
+
 	}
     
 	/**
@@ -172,7 +188,7 @@ interface = function(){
 	 */
 	interface.callback_logout = function(data){
         
-		console.log('Deco');
+		//console.log('Deco');
         
 		/* Permet le jeu d'affichage/disparition des boutons de login/logout */
 		document.getElementById("loginForm").style.display = "";
@@ -392,8 +408,9 @@ interface = function(){
 	interface.update_Med = function(url, vidName){
 		/* Change le nom du menu Vid */
 		var divVidName = document.getElementById('vidName');
+
 		divVidName.innerHTML = "<i class=\"icon-white icon-film\"></i> " + vidName + " <b class=\"caret\"></b>";
-        
+
 		/* Fait apparaitre la video */
 		var divVid = document.getElementById('divVid');
 		var temp = "";
@@ -412,7 +429,7 @@ interface = function(){
 			interface.posleft = 85;
 		}
       
-		temp = "<video id=\"vid\" width=" + w + " height=" + h + " style=\"z-index:4; top:" + interface.postop + "px; left:" + interface.posleft + "px; position:absolute\">" // De base : 400/720
+		temp = "<video id=\"vid\" width=" + w + " height=" + h + " style = \"z-index:4; top:" + interface.postop + "px; left:" + interface.posleft + "px; position:absolute\">" // De base : 400/720
         + "<source src=\"" + url + ".webm\" type=\"video/webm\" /><!-- Chrome10+, Ffx4+, Opera10.6+ -->"
         + "<source src=\"" + url + ".mp4\" type=\"video/mp4\"  /> <!-- Safari / iOS, IE9 -->"
         + "Impossible de lire la video avec votre browser"
@@ -438,6 +455,12 @@ interface = function(){
         'id' : 'currentPosUser'
       }
     );
+    // Remet les annotations a zero 
+    annotations.annots = [];
+    if(document.getElementById("currentLayer")!= null){
+      document.getElementById("currentLayer").childNodes[0].remove();
+    }
+
     // Ajout
     comportement.elVid();
 	}
@@ -462,7 +485,7 @@ interface = function(){
 			// resize de la video
 			vid.height = 411;
 			vid.width = 740;
-            vid.style.left = "85px";
+      vid.style.left = "85px";
 			interface.posleft = 85;
 			// Met la video en pause
 			vid.pause();
@@ -474,10 +497,10 @@ interface = function(){
     
   /**
    * Affiche un menu pour envoyer les annotations 
-   * @method popup
+   * @method popupAnnot
    * @return 
    */
-  interface.popup = function(){
+  interface.popupAnnot = function(){
     var divBadgesNames = document.getElementById("badges");
     divBadgesNames.innerHTML = " ";
     for(var i = 0; i < annotations.temp_name.length; i++){
@@ -486,12 +509,18 @@ interface = function(){
     $j("#modalAnnots").modal('show');
   }
 
+  /**
+   * Affiche le popup d'aide 
+   * @method popupAide
+   * @return 
+   */
   interface.popupAide = function(){
     if(comportement.vid){
       comportement.pauseVideo();
     }
     $j("#modalAide").modal('show');
   }
+
 	return interface;
 
 }();

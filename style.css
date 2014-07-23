@@ -79,7 +79,7 @@ nav>#affichage{
     color: #000;
 }
 
-#modalAnnots, #modalLayers {
+#modalAnnots, #modalLayers, #modaleRemoveAnnot, #modalAide {
     bottom: auto;
 }
 
@@ -101,10 +101,7 @@ nav>#affichage{
 #modalAide{
     width: auto;
     right: auto;
-    bottom: auto;
-    height : 550px;
     left : 450px;
-
 }
 
 #modalAide>.modal-dialog>.modal-content{

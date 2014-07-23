@@ -6,7 +6,7 @@ camomile = function(){
 	var adresse = ""
 	
 	/**
-	 * Description
+	 * Constructeur
 	 * @method camomile
 	 * @return 
 	 */
