@@ -16,12 +16,14 @@ interface = function(){
   /* Variables globales */
   var posleft, postop; // Position par rapport à la gauche et au top de la video et du svg
   var username; // Username de l'utilisateur courant
+  var url;
 
   /* Div d'affichage */
   var time, // Div d'affichage du temps courant
   tmp, // Div d'affichage de la duree
   pos; // Div d'affichage de la position
-    
+
+ 
   /**
    * Initialisation de l'interface 
    * @method init
@@ -30,7 +32,7 @@ interface = function(){
   interface.init = function() {
     // A enlever quand j'aurai fini les tests
 		document.getElementById("LoginUsername").value = "root";
-		document.getElementById("LoginPassword").value = "camomile";
+		document.getElementById("LoginPassword").value = "5h3Ld0n";
 
 		// Initialise des variables concernant la segm en plan
 		comportement.decalage = 0; // Pour le moment, aucun decalage
@@ -56,31 +58,6 @@ interface = function(){
         el.addEventListener("click", interface.popupAide, false);
     }else if (el.attachEvent){
         el.attachEvent('onclick', interface.popupAide);
-    }
-    
-    /// Boutons de la barre du bas
-    // Video : Plus rapide
-    var el = document.getElementById("faster");
-    if (el.addEventListener){
-        el.addEventListener("click", comportement.faster, false);
-    }else if (el.attachEvent){
-        el.attachEvent('onclick', comportement.faster);
-    }
-    
-    // Video : Plus lentement
-    var el = document.getElementById("slower");
-    if (el.addEventListener){
-        el.addEventListener("click", comportement.slower, false);
-    }else if (el.attachEvent){
-        el.attachEvent('onclick', comportement.slower);
-    }
-    
-    // Video : Stop la video
-    var el = document.getElementById("stop");
-    if (el.addEventListener){
-        el.addEventListener("click", comportement.stop, false);
-    }else if (el.attachEvent){
-        el.attachEvent('onclick', comportement.stop);
     }
     
     /// Fenetre modale des layers 
@@ -134,8 +111,9 @@ interface = function(){
 	 */
 	interface.tologin = function() {
     interface.username = "";
+    interface.url = "https://flower.limsi.fr/dev/data";
 		// Log
-		camomile.login(interface.callback_login, document.getElementById("LoginUsername").value, document.getElementById("LoginPassword").value, "http://lit-shore-5364.herokuapp.com");
+		camomile.login(interface.callback_login, document.getElementById("LoginUsername").value, document.getElementById("LoginPassword").value, interface.url);
     interface.username = document.getElementById("LoginUsername").value;
 	}
   
@@ -156,12 +134,8 @@ interface = function(){
 	 * @return 
 	 */
 	interface.callback_login = function(data){
-        
-		//console.log('Co');
-    /* Affiche l'utilisateur courant */
-		//var menuSlideButton = document.getElementById("slideMenuButton");
-    var username = document.getElementById("userName");
-    username.innerHTML = 'User : ' + interface.username;
+    /* Affiche l'utilisateur courant dans le bouton */
+    document.getElementById("logoutButton").innerHTML += interface.username;
         
 		/* Permet le jeu d'affichage/disparition des boutons de logout/login */
 		document.getElementById("loginForm").style.display = "None";
@@ -174,7 +148,7 @@ interface = function(){
 
 
     // A ENLEVER : RACCOURCIS POUR LE DEBEUG
-    //interface.update_menuVid('53884ee3682be502003adae7', 'TBBT1.season1');
+    interface.update_menuVid('53d26d9e3660710d002828c3', 'The Big Bang Theory');
     //interface.update_menuSegm('53884ee3682be502003adae7','53884f84682be502003adaed');
     //interface.update_Med('http://perso.limsi.fr/laveau/videos/TBBT1', 'ep1');
 
@@ -187,13 +161,11 @@ interface = function(){
 	 * @return 
 	 */
 	interface.callback_logout = function(data){
-        
-		//console.log('Deco');
-        
+
 		/* Permet le jeu d'affichage/disparition des boutons de login/logout */
 		document.getElementById("loginForm").style.display = "";
 		document.getElementById("logoutDiv").style.display = "None";
-		
+		document.getElementById("logoutButton").appendChild(document.createElement("t").textContent = interface.username)
         
 		/* Mise a jour du contenu de la div de la video */
 		document.getElementById('menuVid').innerHTML = "<li class=\"dropdown-header\"> Veuillez vous connecter pour avoir accès à la liste des vidéos disponibles</li>";
@@ -256,6 +228,7 @@ interface = function(){
 	 * @return 
 	 */
 	interface.update_menuVid = function(corpusId, corpusName){
+    document.getElementById("timelineAffich").style.display = "None";
     annotations.idCorp = corpusId;
     camomile.getMedias(
       function(data){
@@ -266,7 +239,7 @@ interface = function(){
       var temp = "";
       if (data.length != 0){
         for(var val in data){
-          temp += "<li><a href=\"#\" onclick=\"javascript:interface.update_Med('http://"+ data[val].url + "', '" + data[val].name + "'); interface.update_menuSegm('" + corpusId + "','" + data[val]._id + "');\"> " + data[val].name + " </a></li>";
+          temp += "<li><a href=\"#\" onclick=\"javascript:interface.update_Med('" + data[val].name + "', '" +  data[val]._id + "'); interface.update_menuSegm('" + corpusId + "','" + data[val]._id + "');\"> " + data[val].name + " </a></li>";
         }
       }else {
         temp +=  "<li class=\"dropdown-header\"> Pas de videos disponibles pour ce corpus </li>";
@@ -361,9 +334,10 @@ interface = function(){
         if(data.length == 0){
           badges.innerHTML = "Aucun layer d'annotation existant pour cette video";
         } else {
+          console.log(data);
           for(var i = 0; i < data.length; i++){
-            if(data[i].layer_type == "Annotations"){
-              badges.innerHTML += "<a href=\'#\'><span class=\"badge\" data-dismiss=\'modal\' onClick=\"annotations.recupAnnot(\'" + data[i]._id + "', '" + data[i].source+ "\');\">" + data[i]._id +" : " + data[i].source +  "</span></a>"
+            if(data[i].data_type == "tracking" && data[i].fragment_type == "annotations"){
+              badges.innerHTML += "<a href=\'#\'><span class=\"badge\" data-dismiss=\'modal\' onClick=\"annotations.recupAnnot(\'" + data[i]._id + "\', \'" + data[i].source+ "\', \'" + data[i].layer_type + "\');\">" + data[i].history[0].date + " : " + data[i].layer_type +" : " + data[i].source +  "</span></a>"
             }
           }
         }
@@ -405,7 +379,8 @@ interface = function(){
 	 * @param String vidName
 	 * @return 
 	 */
-	interface.update_Med = function(url, vidName){
+	interface.update_Med = function(vidName, idmedia){
+    annotations.idMed = idmedia;
 		/* Change le nom du menu Vid */
 		var divVidName = document.getElementById('vidName');
 
@@ -430,8 +405,9 @@ interface = function(){
 		}
       
 		temp = "<video id=\"vid\" width=" + w + " height=" + h + " style = \"z-index:4; top:" + interface.postop + "px; left:" + interface.posleft + "px; position:absolute\">" // De base : 400/720
-        + "<source src=\"" + url + ".webm\" type=\"video/webm\" /><!-- Chrome10+, Ffx4+, Opera10.6+ -->"
-        + "<source src=\"" + url + ".mp4\" type=\"video/mp4\"  /> <!-- Safari / iOS, IE9 -->"
+        + "<source src=\"" + interface.url + "/corpus/" + annotations.idCorp + "/media/" + annotations.idMed + "/mp4\" type=\"video/mp4\"  />" 
+        + "<source src=\"" + interface.url + "/corpus/" + annotations.idCorp + "/media/" + annotations.idMed + "/webm\" type=\"video/webm\" />"
+        + "<source src=\"" + interface.url + "/corpus/" + annotations.idCorp + "/media/" + annotations.idMed + "/ogv\" type=\"video/ogv\"  />"
         + "Impossible de lire la video avec votre browser"
         + "</video>";
     divVid.innerHTML = "";
@@ -463,6 +439,12 @@ interface = function(){
 
     // Ajout
     comportement.elVid();
+    timeline.affichTimeline(-30, 5, 40, 150, 10)
+    timeline.moveSlider(0);
+    // Pour pouvoir avoir la duree totale dès le debut
+    comportement.playVideo();
+    comportement.playVideo();
+
 	}
     
   /**

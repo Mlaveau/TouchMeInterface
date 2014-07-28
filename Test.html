@@ -24,13 +24,8 @@
 	<body>
         
 		<!-- Navbar inverse top -->
-		<div class="navbar navbar-inverse navbar-fixed-top" role="navigation" >
+		<div class="navbar navbar-inverse navbar-fixed-top" role="navigation" style="position:absolute">
 			<div class="container" id="navbarTop">
-				<div class="navbar-header">
-					<a class="navbar-brand" href="#">
-                        
-                    </a>
-				</div>
 				<div class="navbar-collapse collapse" role="navigation" >
                     <!-- Menus deroulants -->
 					<ul class="nav navbar-nav">
@@ -51,7 +46,7 @@
                         <!-- Fin Corpus -->   
                         <!-- Video -->                        
 						<li class="dropdown"  style="display:none">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" id = "vidName" >
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" id = "vidName">
                                 <i class="icon-white icon-film"></i>
                                 Vidéos
                                 <b class="caret"></b>
@@ -67,12 +62,12 @@
 						<li class="dropdown"  style="display:none">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown" id = "segmName" >
                                 <i class="icon-white icon-file"></i>
-                                Segmentation
+                                Annotations
                                 <b class="caret"></b>
                             </a>
 							<ul class="dropdown-menu" id ="menuSegm">
 								<li class="dropdown-header" >
-                                    Veuillez choisir une segmentation
+                                    Veuillez choisir une video
                                 </li>
 							</ul>
 						</li>
@@ -96,13 +91,6 @@
                     <div id="logoutDiv" class="navbar-button navbar-right" role="form" style="display:none;">
                         <span id="currentLayer">
                         </span>
-                        <span class="badge" id="userName">
-                        </span>
-						<!--<button id="slideMenuButton" class="btn btn-info" type="submit">
-                            <i class="icon-white icon-list">
-                            </i>
-                        </button> -->
-
                         <button id="infoButton" class="btn btn-info" type="submit">
                             <i class="icon-white icon-question-sign">
                             </i>
@@ -150,7 +138,7 @@
                     <div class="modal-content">
 
                         <div class="modal-header">
-                            <h4 class="modal-title">Enregistrement des annotations </h4>
+                            <h4 class="modal-title">Enregistrement des annotations</h4>
                         </div> 
                         <!-- Input -->
                         <div class="modal-body">
@@ -196,9 +184,14 @@
                             <div id ="badgesLayers">
                             </div>
                             <br>OU<br><br>
-                            <button id="creerLayer" type="button" data-dismiss="modal" class="btn btn-primary"> 
-                                Creer un layer
-                            </button>
+                            <div>
+                                <form>
+                                    <input id="nameLayer" class="xlarge" type="text" name="xlInput" placeholder= "Nom du Layer">
+                                    <button id="creerLayer" type="button" data-dismiss="modal" class="btn btn-primary"> 
+                                        Creer un layer
+                                    </button>
+                                </form>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -336,45 +329,42 @@
         
         
 		<!-- Navbar Bottom -->
-		<div class="navbar navbar-inverse navbar-fixed-bottom" role="navigation">
+		<div class="navbar navbar-inverse navbar-fixed-bottom" role="navigation" style="position:absolute;">
 			<div id="container" class="container">
 				<div class="navbar-collapse collapse">
 					<ul class="nav navbar-nav" >
-						<!-- Buttons -->
-						<!-- Pause -->
-						<li>
-                            <button id="stop" class="btn">
-                                <i class="icon-large icon-stop">
-                                </i>
-                            </button>
-                        </li>
-						<!-- Slower -->
-						<li>
-                            <button class="btn" id="slower">
-                                <i class="icon-large icon-backward">
-                                </i>
-                            </button>
-                        </li>
-						<!-- Faster -->
-						<li>
-                            <button class="btn" id="faster" >
-                                <i class="icon-large icon-forward">
-                                </i>
-                            </button>
-                        </li>
-						<!-- Affichages -->
-						<li id = "affichage">
-                            <span id ="curtime"> 
-                                0 
-                            </span>
-                            /
-                            <span id ="temps"> 
-                                0 
-                            </span>
-                            
-                            <span id ="position">
-                            </span>
-                        </li>
+						<!-- Time line & affichage -->
+                        <li id="timelineAffich" style="display:None">
+                            <div id="timeline">
+                                <canvas id="moncanevas" style="z-index:0; background-color: rgba(255, 0, 0, 0.2);">
+                                  Canvas requiert un navigateur moderne: Chrome, Firefox, IE9, Safari.
+                                </canvas>
+                                <div style="position:absolute; right:-950px; margin-left: 0px; padding-left: 0px;">
+                                    <span id ="curtimeSecSec"> 
+                                        0 
+                                    </span>
+                                    /
+                                    <span id ="tempsSecSec"> 
+                                        0 
+                                    </span>
+                                    <br>
+                                     <span id ="curtimeMin"> 
+                                        0 
+                                    </span> :
+                                    <span id ="curtimeSec"> 
+                                        0 
+                                    </span>
+                                    /
+                                    <span id ="tempsMin"> 
+                                        0 
+                                    </span> :
+                                    <span id ="tempsSec"> 
+                                        0 
+                                    </span>
+                                </div>
+                            </div>
+                        </li>     
+                        
 					</ul>
 				</div>
                 <!--/.nav-collapse -->
@@ -404,6 +394,8 @@
 		<script type="text/javascript" src="visualisation.js"></script>
 		<script type="text/javascript" src="bs/js/snap.svg-min.js"></script>
 
+        <!-- Gere l'affichage de la timeline -->
+        <script type="text/javascript" src="timeline.js"></script>
 		
 		<!-- Librairies Hammer -->
 		<script type="text/javascript" src="hammer.js"></script>
@@ -419,7 +411,7 @@
             
             // Init the videos variables
             interface.init();
-            //interface.tologin();
-            </script>
+            interface.tologin();
+        </script>
 	</body>
 </html>

@@ -25,6 +25,13 @@ body {
     padding-bottom: 0px;
     margin-bottom: 0px;
 }
+/* Limite la taille des entêtes des dropdown */
+.navbar-inverse .nav > li > a{
+    width:200px;
+    height:33px;
+    white-space: nowrap;
+    overflow: hidden;
+}   
 
 /* Affichage du user courant */
 #userName{
@@ -57,18 +64,8 @@ body {
     margin-left: 10px;
 }
 
-.nav>#affichage {
-    margin-left: 5px;
-    margin-top: 10px
-}
-
-nav>#affichage{
-    margin-top: 10px;
-}
-
 #container {
     color: white;
-    padding-left: 330px;
 }
 
 /*** Fenetre modale d'enregistrement des annotations ***/
@@ -144,4 +141,15 @@ td > img {
 .row{
     color: white;
     z-index: 10;
+}
+
+
+
+#slider{
+    z-index:11;
+}
+
+#svgTimeline{
+    z-index:10; 
+    background-color:rgba(255, 0, 255, 0);
 }

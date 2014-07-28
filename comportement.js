@@ -144,7 +144,6 @@ comportement = function(){
 	            // Position en % de la hauteur et de la largeur
 	            var posX = comportement.posX(e);
 	            var posY = comportement.posY(e);
-	            comportement.showPos(posX, posY);
 	            if((comportement.vid.paused == false && e.type != "release")){
 	            	comportement.showCurrentPos(e.gesture.center.pageX - interface.posleft, e.gesture.center.pageY - interface.postop);
 	            }else if (e.type == "release"){
@@ -190,36 +189,8 @@ comportement = function(){
  	comportement.update_segm = function(data){
 	 	document.getElementById("butonPrevious").style.display = "";
 	 	comportement.segm = data;
+	 	timeline.insertAffichPlan();
 	 }
-
-	/**
- 	 * Affiche la position dans la barre du bas (En pourcentages) 
- 	 * @method showPos
- 	 * @param int posX
- 	 * @param int posY
- 	 * @return 
- 	 */
- 	comportement.showPos = function(posX, posY){
-	 	interface.pos.innerHTML = " (" + posX + "," + posY + ") ";
-	 }
-
-
-    /**
- 	 * Met a jour l'affichage du temps de la video 
- 	 * @method curtime
- 	 * @return 
- 	 */
- 	comportement.curtime = function(){
-	 	// Affichage du temps courant
-	 	interface.time.innerHTML = Math.floor(comportement.vid.currentTime / 60) + ":" + Math.floor(comportement.vid.currentTime % 60);
-	 	// Affichage de la duree totale
-		if(comportement.vid.currentTime > 0 && comportement.vid.currentTime <= 1){ 
-			if (Math.round(comportement.vid.duration / 60) >0) {
-				interface.tmp.innerHTML = Math.floor(comportement.vid.duration / 60) + ":" ; // Returns the duration in seconds of the current media resource. A NaN value is returned if duration is not available, or Infinity if the media resource is streaming
-			}
-			interface.tmp.innerHTML = interface.tmp.innerHTML + Math.floor(comportement.vid.duration % 60);
-		}
-	}
 
 	/**
  	 * Gestion Video : arret de la video au changement de plans 
@@ -278,7 +249,9 @@ comportement = function(){
  	 */
  	comportement.gestionTimer = function(){
 	 	visualisation.afficheAnnot();
-	 	comportement.curtime();
+	 	timeline.updateTimeAffich();
+	 	timeline.moveSlider(timeline.longueur * comportement.vid.currentTime / comportement.vid.duration);
+	 	// METTRE A JOUR l'affichage du curseur !!
 	 	if(comportement.segm.length > 0){
 	 		comportement.plans();
 		}
@@ -418,6 +391,9 @@ comportement = function(){
  	comportement.vidEnd = function() {
 	 	comportement.vid.playbackRate = 1;
 	 	comportement.vid.currentTime = 0;
+	 	timeline.updateTimeAffich();
+	 	timeline.moveSlider(0);
+       	clearInterval(comportement.vidTimer);
 	 }
 	 return comportement;	
 	}();

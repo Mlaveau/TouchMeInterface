@@ -242,6 +242,7 @@ annotations = function(){
             dat.label = persoName;
             dat.position = pos;
             camomile.create_annotation(function(data){annotations.annots.push(data);}, annotations.idCorp, annotations.idMed, annotations.idLay, fragment, dat);
+            timeline.insertSegmAnnot(fragment.start, fragment.end);
         }
         // Reinitialisation du champ du nom et du tableau de positions
         annotations.reset();
@@ -266,6 +267,8 @@ annotations = function(){
      * @return 
      */
     annotations.creerLayer = function(){
+        var name = document.getElementById("nameLayer").value;
+        console.log("Truc" + name);
         // Cree le layer en question avec comme source le username de connexion
         camomile.create_layer(
             function(dat){
@@ -274,9 +277,9 @@ annotations = function(){
             }, 
             annotations.idCorp, 
             annotations.idMed, 
-            "Annotations", 
-            "temps", 
-            "name pos", 
+            name, 
+            "annotations", 
+            "tracking", 
             interface.username
         );
         annotations.annots = [];
@@ -290,10 +293,10 @@ annotations = function(){
      * @param String source
      * @return 
      */
-    annotations.recupAnnot = function(idLayer, source){
+    annotations.recupAnnot = function(idLayer, source, name){
     	annotations.annots = Array();
         annotations.idLay = idLayer;
-        document.getElementById("currentLayer").innerHTML = source + " : " + idLayer;
+        document.getElementById("currentLayer").innerHTML = source + " : " + name;
         camomile.getAnnotations(
             function(dat){
                 for(var i = 0; i < dat.length; i++){
@@ -312,6 +315,7 @@ annotations = function(){
                         tmp.color = annotations.colorName[annotations.temp_name.length % annotations.colorName.length];
                         annotations.temp_name.push(tmp);
                     }
+                    timeline.insertAnnot();
                 }
                 annotations.sortAnnots();
             }, 
