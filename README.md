@@ -3,13 +3,17 @@ TouchMeInterface
 
 Interface d'annotation pour iPad
 
-A faire : 
 
-* Verifier si le canva fonctionne
-* gerer la connection qui reste même en etant parti de la page
-* Verifier les inputs de lutilisateur pour le pass et le username*
-* Voir pour ne pas mettre la function d'initialisation de la page comme ça mais plutôt un appel de fonction autre (< script>)
-* Faire fenetre slide de la droite pour avoir un panneau coulissant
-* Recuperer la shot segmentation qui correspond
-* Ajuster la video a la taille de l'écran
-* 
+Indications sur les formats JSON 
+
+ - Layer d'annotations 
+Chaque layer d'annotation contient autant d'Annotation que l'on veut
+    * layer_type : Nom donne par le createur
+    * data_type : "tracking"
+    * fragment_type : "annotations"
+
+ - Layer de Segmentation
+Chaque layer est une segmentation différente et contient une seule Annotation ("data" : [ ], "fragment" : "")
+    * layer_type : Nom de la segmentation. (Exemples : References, Automatique, ...)
+    * data_type : "tracking"
+    * fragment_type : "segmentation"
