@@ -76,8 +76,8 @@ visualisation = function(){
   /**
    * Ajoute au svg le cercle de l'annotation dont l'id et le label sont passes en parametre 
    * @method insertCircleText
-   * @param String id
-   * @param String label
+   * @param {} id
+   * @param {} label
    * @return 
    */
   visualisation.insertCircleText = function(id, label){
@@ -106,9 +106,9 @@ visualisation = function(){
   /**
    * Cree le cercle de l'annotation de la couleur demande 
    * @method insertCircle
-   * @param String id
-   * @param String couleur
-   * @return 
+   * @param {} id
+   * @param {} couleur
+   * @return c1
    */
   visualisation.insertCircle = function(id, couleur){
     var c1 = interface.svg.circle(50, 50, 50).attr(

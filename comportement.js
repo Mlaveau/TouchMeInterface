@@ -15,6 +15,7 @@ comportement = function(){
 	// Segmentation
 	var segm; // Tableau contenant le numero des frames de changement de plan
 	var planActuel; // Index dans segm du prochain changement de plan
+	var idLayerSegm; // Id du layer contenant les segmentations
 
 	// Multitouch
 	var hammertime; // Objet qui gere le multitouch
@@ -51,20 +52,20 @@ comportement = function(){
 	"release"]; // Evenements analyses pour lenregistrement d'annotations
     
     /**
- 	 * Constructeur 
- 	 * @method comportement
- 	 * @return 
- 	 */
- 	function comportement (){
+	  * Constructeur 
+	  * @method comportement
+	  * @return 
+	  */
+	 function comportement (){
 	 }
 
 
     /**
- 	 * Initialise les elements de la page qui ont besoin de la video pour fonctionner 
- 	 * @method elVid
- 	 * @return 
- 	 */
- 	comportement.elVid = function(){
+	  * Initialise les elements de la page qui ont besoin de la video pour fonctionner 
+	  * @method elVid
+	  * @return 
+	  */
+	 comportement.elVid = function(){
 	 	/* Initialisation des variables */
 		// Pour les annotations : initialisation des tableaux de nom, position, evenements multiples
         annotations.temp_evMulti = []; // Tableau des evenements qui sont sur la meme frame
@@ -132,7 +133,7 @@ comportement = function(){
 		comportement.hammertime.on("tap", 
 			function(e){
 				if(comportement.vid.paused){
-					annotations.effaceAnnot(comportement.posX(e), comportement.posY(e)); // Stop la video
+					annotations.effaceAnnot(comportement.posX(e), comportement.posY(e)); 
 				}
 			}
 		); 
@@ -154,20 +155,31 @@ comportement = function(){
 		);
 	}
 
-	/** Retourne en pourcentage la position x d'un evenement e **/
+	/**
+	 * Retourne en pourcentage la position x d'un evenement e *
+	 * @method posX
+	 * @param {} e
+	 * @return BinaryExpression
+	 */
 	comportement.posX = function(e){
 		return Math.round((((e.gesture.center.pageX - interface.posleft) * 100) / comportement.vid.width) * 100) / 100;
 	}
 		
-	/** Retourne en pourcentage la position y d'un evenement e **/
+	/**
+	 * Retourne en pourcentage la position y d'un evenement e *
+	 * @method posY
+	 * @param {} e
+	 * @return BinaryExpression
+	 */
 	comportement.posY = function(e){
 		return Math.round((((e.gesture.center.pageY - interface.postop) * 100) / comportement.vid.height) * 100) / 100;
 	}
+	
 	/**
 	 * Gere le cercle d'affichage de l'endroit pointe 
 	 * @method showCurrentPos
-	 * @param int cx // (<= 100 && >= 0)
-	 * @param int cy // (<= 100 && >= 0)
+	 * @param {} cx
+	 * @param {} cy
 	 * @return 
 	 */
 	comportement.showCurrentPos = function(cx, cy){
@@ -180,24 +192,51 @@ comportement = function(){
     		gCircle.style.display = "";
     	}
 	}
+	
 	/**
- 	 * Enregistre la segmentation en plan 
- 	 * @method update_segm
- 	 * @param Array[int, int, …] data
- 	 * @return 
- 	 */
- 	comportement.update_segm = function(data){
-	 	document.getElementById("butonPrevious").style.display = "";
+	  * Récupere la semgnentation en plan selectionnée 
+	  * @method getSegmentation
+	  * @return 
+	  */
+	 comportement.getSegmentation = function(){
+
+		var tmp = document.getElementById("formSegm");
+		for(var i = 0; i < tmp.childNodes.length; i++){
+			if(tmp.childNodes[i].checked == true){
+				comportement.idLayerSegm = tmp.childNodes[i].value;
+			}
+		}
+		if(comportement.idLayerSegm != "aucun"){
+		 	camomile.getAnnotations(function (data){
+				comportement.update_segm(data[0].data);
+		 	}, 
+		 	annotations.idCorp, 
+		 	annotations.idMed, 
+		 	comportement.idLayerSegm
+		 	);
+		}else{
+			comportement.update_segm("");
+		}
+	}
+
+	/**
+	  * Enregistre la segmentation en plan 
+	  * @method update_segm
+	  * @param {} data
+	  * @return 
+	  */
+	 comportement.update_segm = function(data){
+		document.getElementById("butonPrevious").style.display = "";
 	 	comportement.segm = data;
-	 	timeline.insertAffichPlan();
+ 		timeline.insertAffichPlan();
 	 }
 
 	/**
- 	 * Gestion Video : arret de la video au changement de plans 
- 	 * @method plans
- 	 * @return 
- 	 */
- 	comportement.plans = function(){
+	  * Gestion Video : arret de la video au changement de plans 
+	  * @method plans
+	  * @return 
+	  */
+	 comportement.plans = function(){
  		var plan = comportement.currentPlan();
  		if(plan > comportement.planActuel){
  			comportement.pauseVideo();
@@ -210,31 +249,29 @@ comportement = function(){
     }
     
 	/**
- 	 * Gestion Video : Play si Pause, Pause si Play 
- 	 * @method playVideo
- 	 * @return 
- 	 */
- 	comportement.playVideo = function() {
-		if(document.getElementById('sidebar').style.display != ""){ // Peut être lancee que si le menu est cache (Pour les annotations
-			if (comportement.vid.paused == true) {
-				// Lance le timer a chaque play
-				comportement.vidTimer = window.setInterval("comportement.gestionTimer()", 100);
-				comportement.vid.play();
-                annotations.reset();// Reset les temp des annotations pour etre sur qu'il n'en reste pas
-                comportement.vid.muted = true;
-                annotations.annotIDRemov = "";
-            }
-            else {
-            	comportement.pauseVideo();
-            }
+	  * Gestion Video : Play si Pause, Pause si Play 
+	  * @method playVideo
+	  * @return 
+	  */
+	 comportement.playVideo = function() {
+		if (comportement.vid.paused == true) {
+			// Lance le timer a chaque play
+			comportement.vidTimer = window.setInterval("comportement.gestionTimer()", 100);
+			comportement.vid.play();
+            annotations.reset();// Reset les temp des annotations pour etre sur qu'il n'en reste pas
+            comportement.vid.muted = true;
+            annotations.annotIDRemov = "";
+        }
+        else {
+        	comportement.pauseVideo();
         }
     }
 
 	/**
- 	 * Gestion Video : Pause et clear interval
- 	 * @method pauseVideo
- 	 * @return 
- 	 */
+     * Gestion Video : Pause et clear interval
+     * @method pauseVideo
+     * @return 
+     */
     comportement.pauseVideo = function(){
 		// Reset le timer 
        	clearInterval(comportement.vidTimer);
@@ -243,26 +280,25 @@ comportement = function(){
     }
 
 	/**
- 	 * Appelle la mise a jour des affichages d'annotations et de temps courant de la video 
- 	 * @method gestionTimer
- 	 * @return 
- 	 */
- 	comportement.gestionTimer = function(){
+	  * Appelle la mise a jour des affichages d'annotations et de temps courant de la video 
+	  * @method gestionTimer
+	  * @return 
+	  */
+	 comportement.gestionTimer = function(){
 	 	visualisation.afficheAnnot();
 	 	timeline.updateTimeAffich();
 	 	timeline.moveSlider(timeline.longueur * comportement.vid.currentTime / comportement.vid.duration);
-	 	// METTRE A JOUR l'affichage du curseur !!
 	 	if(comportement.segm.length > 0){
 	 		comportement.plans();
 		}
 	}
 
 	/**
- 	 * Gestion Video : Forward 
- 	 * @method fwd
- 	 * @return 
- 	 */
- 	comportement.fwd = function(){ 
+	  * Gestion Video : Forward 
+	  * @method fwd
+	  * @return 
+	  */
+	 comportement.fwd = function(){ 
 	 	var plan = comportement.currentPlan();
 		var temp = comportement.segm[plan] / 25 - comportement.vid.currentTime; 
 		var indexMaxTab = comportement.segm.length - 1;
@@ -290,11 +326,11 @@ comportement = function(){
 	 }
 
 	/**
- 	 * Gestion Video : Backward 
- 	 * @method bwd
- 	 * @return 
- 	 */
- 	comportement.bwd = function(){
+	  * Gestion Video : Backward 
+	  * @method bwd
+	  * @return 
+	  */
+	 comportement.bwd = function(){
 	 	var plan = comportement.currentPlan();
 		var temp = comportement.segm[plan - 1] / 25 - comportement.vid.currentTime; 
 	 	if(temp > -0.5 && temp < 2){// Verifie si on est deja a une fronctiere ou non (Plus ou moins)
@@ -321,11 +357,11 @@ comportement = function(){
 	}
 
 	/**
- 	 * Renvoit l'index dans comportement.segm du prochain plan où il faudra s'arreter en fonction de vid.currentTime 
- 	 * @method currentPlan
- 	 * @return fin
- 	 */
- 	comportement.currentPlan = function(){
+	  * Renvoit l'index dans comportement.segm du prochain plan où il faudra s'arreter en fonction de vid.currentTime 
+	  * @method currentPlan
+	  * @return fin
+	  */
+	 comportement.currentPlan = function(){
 		//Recherche dichotomique du plan courant 
 		// Plan courant : numero de l'index dans segm du prochain point d'arret 
 		var debut = 0; 
@@ -350,45 +386,46 @@ comportement = function(){
 	}
 
 	/**
- 	 * Gestion Video : Stop 
- 	 * @method stop
- 	 * @return 
- 	 */
- 	comportement.stop = function(){
+	  * Gestion Video : Stop 
+	  * @method stop
+	  * @return 
+	  */
+	 comportement.stop = function(){
 	 	comportement.vid.currentTime = 0;
 	 	comportement.vid.pause();
 	 	//Affiche les annotations correspondantes -> Ici aucune
 	 	visualisation.afficheAnnot();
+	 	timeline.moveSlider(0);
 	 }
 
 	/**
- 	 * Gestion Video : Plus lentement 
- 	 * @method slower
- 	 * @return 
- 	 */
- 	comportement.slower = function(){
+	  * Gestion Video : Plus lentement 
+	  * @method slower
+	  * @return 
+	  */
+	 comportement.slower = function(){
 	 	comportement.vid.playbackRate -= 0.25;
 	 	comportement.vid.pause();
 	 	comportement.vid.play();
 	 }
 
 	/**
- 	 * Gestion Video : Plus rapide 
- 	 * @method faster
- 	 * @return 
- 	 */
- 	comportement.faster = function(){
+	  * Gestion Video : Plus rapide 
+	  * @method faster
+	  * @return 
+	  */
+	 comportement.faster = function(){
 	 	comportement.vid.playbackRate += 0.25;
 	 	comportement.vid.pause();
 	 	comportement.vid.play();
 	 }
 
 	/**
- 	 * Gestion Video : Remet a zero la video
- 	 * @method vidEnd
- 	 * @return 
- 	 */
- 	comportement.vidEnd = function() {
+	  * Gestion Video : Remet a zero la video
+	  * @method vidEnd
+	  * @return 
+	  */
+	 comportement.vidEnd = function() {
 	 	comportement.vid.playbackRate = 1;
 	 	comportement.vid.currentTime = 0;
 	 	timeline.updateTimeAffich();

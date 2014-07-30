@@ -24,7 +24,7 @@
 	<body>
         
 		<!-- Navbar inverse top -->
-		<div class="navbar navbar-inverse navbar-fixed-top" role="navigation" style="position:absolute">
+		<div id="navbartop"class="navbar navbar-inverse navbar-fixed-top" role="navigation">
 			<div class="container" id="navbarTop">
 				<div class="navbar-collapse collapse" role="navigation" >
                     <!-- Menus deroulants -->
@@ -32,11 +32,11 @@
                         <!-- Corpus -->
 						<li class="dropdown" style="display:none">
 							<a href="#" class="dropdown-toggle" data-toggle="dropdown" id ="corpName">
+                                <b class="caret"></b>
                                 <i class="icon-white icon-folder-open"></i>
                                 Corpus
-                                <b class="caret"></b>
                             </a>
-							<ul class="dropdown-menu" id ="menuCorpus">
+							<ul class="dropdown-menu" id ="menuCorp">
 								<li class="dropdown-header">
                                     Veuillez vous connecter pour avoir accès à la liste des corpus
                                 </li>
@@ -47,9 +47,9 @@
                         <!-- Video -->                        
 						<li class="dropdown"  style="display:none">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown" id = "vidName">
+                                <b class="caret"></b>
                                 <i class="icon-white icon-film"></i>
                                 Vidéos
-                                <b class="caret"></b>
                             </a>
 							<ul class="dropdown-menu" id ="menuVid">
 								<li class="dropdown-header" >
@@ -60,12 +60,12 @@
                         <!-- Fin Video -->      
                         <!-- Segmentation -->
 						<li class="dropdown"  style="display:none">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" id = "segmName" >
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" id = "annotName">
+                                <b class="caret"></b>
                                 <i class="icon-white icon-file"></i>
                                 Annotations
-                                <b class="caret"></b>
                             </a>
-							<ul class="dropdown-menu" id ="menuSegm">
+							<ul class="dropdown-menu" id ="menuAnnot">
 								<li class="dropdown-header" >
                                     Veuillez choisir une video
                                 </li>
@@ -80,7 +80,7 @@
                             <!-- Inputs -->   
 							<input id="LoginUsername" class="form-control"  type="text" placeholder="Login">
                             <input id="LoginPassword" class="form-control" type="Password" placeholder="Password">
-                            <button id="loginButton" class="btn btn-success" type="submit" style="height : 35px; margin-bottom:7px">
+                            <button id="loginButton" class="btn btn-success" type="submit">
                             <i class="icon-white icon-off">
                             </i>
                             </button>
@@ -89,8 +89,9 @@
                     <!-- Fin Form -->  
                     <!-- Logout Div + affichage root et idLayer-->    
                     <div id="logoutDiv" class="navbar-button navbar-right" role="form" style="display:none;">
-                        <span id="currentLayer">
-                        </span>
+                        <button id="segmButton" class="btn btn-info" type="submit" style="display:None">
+                           Segm
+                        </button>
                         <button id="infoButton" class="btn btn-info" type="submit">
                             <i class="icon-white icon-question-sign">
                             </i>
@@ -109,48 +110,31 @@
         
 		<!-- Contenu -->
 		<div class="row row-offcanvas row-offcanvas-left">
-			<!-- Sidebar -->
-			<div class="column col-sm-1 col-xs-1 sidebar-offcanvas" id="sidebar" style="display:none">
-				<ul class="nav">
-					<li>
-                        <a href="#" data-toggle="offcanvas" class="visible-xs text-center">
-                            <i class="icon-white chevron-right">
-                            </i>
-                        </a>
-                    </li>
-				</ul>
-				<ul class="nav hidden-xs navbar-left" id="lg-menu">
-					<li><a href="#">Truc</a></li>
-					<li><a href="#">Bidule</a></li>
-					<li><a href="#">Machin</a></li>
-					<li><a href="#">Chose</a></li>
-				</ul>
-			</div>
-            <!-- Fin Sidebar -->
+
 			<!-- Videos -->
 			<div class="container theme-showcase" role="main" id="divVid"> <!-- Remplacer en mettant "margin: auto" ? -->
 				Veuillez vous connecter pour visualiser les videos
 			</div> 
             <!--Fin Video -->
+
             <!-- Fenetre Modal Nom Annot -->
             <div id="modalAnnots" class="modal fade" data-backdrop="static">
                 <div class="modal-dialog">
                     <div class="modal-content">
-
+                        <!-- Modal Header -->
                         <div class="modal-header">
                             <h4 class="modal-title">Enregistrement des annotations</h4>
                         </div> 
-                        <!-- Input -->
+                        <!-- Modal Body -->
                         <div class="modal-body">
                             <div class="divDialogElements" >
                                 Personnage :
                                 <input id="namePerso" class="xlarge" type="text" name="xlInput">
                             </div>
-                            <div id ="badges">
+                            <div id ="badgesName">
                             </div>
                         </div>
-                        <!-- Fin Input -->
-                        <!-- Boutons -->
+                        <!-- Modal Footer -->
                         <div class="modal-footer">
                             <button id="annulerAnnot" type="button" class="btn btn-default" data-dismiss="modal">
                                 Annuler
@@ -164,62 +148,95 @@
                                 </button>
                             </span>
                         </div>
-                        <!-- Fin Boutons -->
                     </div>
                 </div>
             </div>
-            <!-- Fin Fenetre Modal Annot -->
-            <!-- Fenetre Modal Choix Layer -->
-            <div id="modalLayers" class="modal fade" data-backdrop="static">
+            <!-- Fin Fenetre Modal Nom Annot -->
+
+            <!-- Fenetre Modal Nom layer -->
+            <div id="modalNomLayer" class="modal fade" data-backdrop="static">
                 <div class="modal-dialog">
                     <div class="modal-content">
+                        <!-- Modal Header -->
                         <div class="modal-header">
-                            <!--<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>-->
-                            <h4 class="modal-title"> 
-                                Choix du layer 
-                            </h4>
-                        </div>
+                            <h4 class="modal-title">Nom du layer</h4>
+                        </div> 
+                        <!-- Modal Body -->
                         <div class="modal-body">
-                            <!-- Badges des layers -->
-                            <div id ="badgesLayers">
+                            <div class="divDialogElements" >
+                                <input id="nameLayer" class="xlarge" type="text" name="xlInput">
                             </div>
-                            <br>OU<br><br>
-                            <div>
-                                <form>
-                                    <input id="nameLayer" class="xlarge" type="text" name="xlInput" placeholder= "Nom du Layer">
-                                    <button id="creerLayer" type="button" data-dismiss="modal" class="btn btn-primary"> 
-                                        Creer un layer
-                                    </button>
-                                </form>
-                            </div>
+                        </div>
+                        <!-- Modal Footer -->
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">
+                                Annuler
+                            </button>
+                            <button id="validerNomLayer" type="button" data-dismiss="modal" class="btn btn-primary">
+                                Valider  
+                            </button>
                         </div>
                     </div>
                 </div>
             </div>
-            <!-- Fin Fenetre Modal Choix Layer -->
-             <!-- Fenetre Modal Aide -->
+            <!-- Fin Fenetre Modal Layer -->
+
+
+            <!-- Fenetre Modal Segmentation -->
+            <div id="modalSegm" class="modal fade" data-backdrop="static">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <!-- Modal Header -->
+                        <div class="modal-header">
+                              <button type="button" class="close" data-dismiss="modal" aria-hidden="true" style="opacity:1;">&times;</button>
+                            <h4 class="modal-title">Choix de la segmentation</h4>
+                        </div> 
+                        <!-- Modal Body -->
+                        <div class="modal-body">
+                            <!-- Affiche les choix possible de segmentations -->
+                            <div id="segmChoix">
+                            </div>
+                        </div>
+                        <!-- Modal Footer -->
+                        <div class="modal-footer">
+                            <!-- Buttons -->
+                            <button id="annulerSegm" type="button" class="btn btn-default" data-dismiss="modal">
+                                Annuler
+                            </button>
+                            <button id="validerSegm" type="button" data-dismiss="modal" class="btn btn-primary">
+                                Valider  
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Fin Fenetre Modal Segmentation -->
+            
+            <!-- Fenetre Modal Aide -->
             <div id="modalAide" class="modal fade">
                 <div class="modal-dialog">
-                    <div class="modal-content" style="background-color: black; color : white">
-
+                    <div class="modal-content">
+                        <!-- Modal Header -->
                         <div class="modal-header">
                          <button type="button" class="close" data-dismiss="modal" aria-hidden="true" style="opacity:1; color : white">&times;</button>
                             <h4 class="modal-title"> Aide </h4>
                         </div> 
-                        <!-- Input -->
+                        <!-- Modal Body -->
                         <div class="modal-body">
 
                             <!-- Double Tap -->
                             <table>
                                 <tr>
+                                    <!-- Image -->
                                     <td>
                                         <img src="images/aide/double_tap.png" alt="Geste du double tap" title="Double Tap" />
                                     </td>
+                                    <!-- Commentaire -->
                                     <td>
                                         <p>
                                             Double tap : <br>  
                                             Si une segmentation est chargée : <br> 
-                                                <div style = "padding-left: 20px;">
+                                                <div id="decalagedroit">
                                                     - A gauche de l'écran : Revient au plan précédent.<br>
                                                     - A droit de l'écran : Va au plan suivant. <br>
                                                     - Au centre : Play/Pause.<br>
@@ -233,9 +250,11 @@
                             <!-- Hold -->
                             <table>
                                 <tr>
+                                    <!-- Image -->
                                     <td>
                                         <img src="images/aide/hold.png" alt="Geste du hold" title="Hold" />
                                     </td>
+                                    <!-- Commentaire -->
                                     <td>
                                         <p>
                                             Hold : <br>
@@ -249,9 +268,11 @@
                             <!-- Pinch -->
                             <table>
                                 <tr>
+                                    <!-- Image -->
                                     <td>
                                         <img src="images/aide/pinch.png" alt="Geste du pinch" title="pinch"/>
                                     </td>
+                                    <!-- Commentaire -->
                                     <td>
                                         <p>
                                             Pinch : <br>
@@ -264,9 +285,11 @@
                             <!-- Drag -->
                             <table>
                                 <tr>
+                                    <!-- Image -->
                                     <td>
                                         <img src="images/aide/drag.png" alt="Geste du drag" title="Drag" />
                                     </td>
+                                    <!-- Commentaire -->
                                     <td>
                                         <p>
                                             Drag : <br>
@@ -275,12 +298,15 @@
                                     </td>
                                 </tr>
                             </table>
+
                             <!-- Tap -->
                             <table>
                                 <tr>
+                                    <!-- Image -->
                                     <td>
                                         <img src="images/aide/tap.png" alt="Geste du tap" title="Tap" />
                                     </td>
+                                    <!-- Commentaire -->
                                     <td>
                                         <p>
                                             Tap : <br>
@@ -289,10 +315,27 @@
                                     </td>
                                 </tr>
                             </table>
+
+                            <!-- Timeline -->
+                            <table>
+                                <tr>
+                                    <!-- Image -->
+                                    <td>
+                                        <img id="timelineIMG" src="images/aide/timeline.png" alt="Geste du tap" title="Tap"/>
+                                    </td>
+                                    <!-- Commentaire -->
+                                    <td>
+                                        <p>
+                                            Timeline : <br>
+                                            Le slider rouge se positionne le long de la timeline en fonction de l'avancée de la vidéo. (Possibilité de se déplacer le long de la vidéo avec le slider). <br>
+                                            En bas, en vert, sont représentées les plans si une segmentation est chargée. <br>
+                                            En haut, en orange, sont représentées les annotations si un layer est sélectionné. <br>
+                                        </p>
+                                    </td>
+                                </tr>
+                            </table>
                         </div>
-                        <!-- <div class="modal-footer">
-                            
-                        </div>-->
+                        <!-- Fin Modal Body-->
                     </div>
                 </div>
             </div>
@@ -302,16 +345,19 @@
             <div id="modaleRemoveAnnot" class="modal fade" data-backdrop="static">
                 <div class="modal-dialog">
                     <div class="modal-content">
+                        <!-- Modal header -->
                         <div class="modal-header">
-                         <button type="button" class="close" data-dismiss="modal" aria-hidden="true" >&times;</button>
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true" >&times;</button>
                             <h4 class="modal-title"> Remove </h4>
                         </div> 
-                        <!-- Input -->
+                        <!-- Modal Body -->
                         <div class="modal-body">
                             Voulez vous vraiment effacer l'annotation suivante ? 
+                            <!-- Affiche l'annot selectionnee -->
                             <span id="annotRemove">
                             </span>
                         </div>
+                        <!-- Modal Footer -->
                         <div class="modal-footer"> 
                             <button type="button" class="btn btn-default" data-dismiss="modal">
                                 Annuler
@@ -329,17 +375,20 @@
         
         
 		<!-- Navbar Bottom -->
-		<div class="navbar navbar-inverse navbar-fixed-bottom" role="navigation" style="position:absolute;">
+		<div id="navbarbot" class="navbar navbar-inverse navbar-fixed-bottom" role="navigation">
 			<div id="container" class="container">
 				<div class="navbar-collapse collapse">
 					<ul class="nav navbar-nav" >
 						<!-- Time line & affichage -->
                         <li id="timelineAffich" style="display:None">
                             <div id="timeline">
-                                <canvas id="moncanevas" style="z-index:0; background-color: rgba(255, 0, 0, 0.2);">
+                                <!-- Canvas sert a afficher la barre blanche de la timeline. Editee pour mettre les annots et les segmentations -->
+                                <canvas id="canvasTimeline">
                                   Canvas requiert un navigateur moderne: Chrome, Firefox, IE9, Safari.
                                 </canvas>
-                                <div style="position:absolute; right:-950px; margin-left: 0px; padding-left: 0px;">
+                                <!-- Affichage du temps courant et de la duree -->
+                                <div>
+                                    <!-- En seconde -->
                                     <span id ="curtimeSecSec"> 
                                         0 
                                     </span>
@@ -348,16 +397,19 @@
                                         0 
                                     </span>
                                     <br>
+                                    <!-- En minute:secs -->
                                      <span id ="curtimeMin"> 
                                         0 
-                                    </span> :
+                                    </span> 
+                                    :
                                     <span id ="curtimeSec"> 
                                         0 
                                     </span>
                                     /
                                     <span id ="tempsMin"> 
                                         0 
-                                    </span> :
+                                    </span> 
+                                    :
                                     <span id ="tempsSec"> 
                                         0 
                                     </span>
@@ -411,7 +463,7 @@
             
             // Init the videos variables
             interface.init();
-            interface.tologin();
+            //interface.tologin();
         </script>
 	</body>
 </html>

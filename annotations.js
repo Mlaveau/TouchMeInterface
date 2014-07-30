@@ -29,10 +29,10 @@ annotations = function(){
     /**
      * Enregistre les positions a chaque evenement dans annots 
      * @method enregistre_pos
-     * @param int frame // Courante
-     * @param string type // type de levenement recupere par Hammer
-     * @param int posX // (<= 100 && >= 0)
-     * @param int posY // (<= 100 && >= 0)
+     * @param {} frame
+     * @param {} type
+     * @param {} posX
+     * @param {} posY
      * @return 
      */
     annotations.enregistre_pos = function(frame, type, posX, posY){
@@ -67,6 +67,11 @@ annotations = function(){
         }
     }
 
+    /**
+     * Description
+     * @method affichePopup
+     * @return 
+     */
     annotations.affichePopup = function(){
         // revient au 75%ème plan des annotations qu'on a en stock.
         var tmp = Math.round((annotations.temp_pos.length - 1) * 75 / 100);
@@ -117,9 +122,9 @@ annotations = function(){
     /**
      * Verifie que les entiers passe en parametres sont bien compris entre 0 et 100 
      * @method verifBornes
-     * @param int posX
-     * @param int posY
-     * @return bool 
+     * @param {} posX
+     * @param {} posY
+     * @return 
      */
     annotations.verifBornes = function(posX, posY){
     	if (posX >= 0 && posY >= 0 && posX <= 100 && posY <= 100){
@@ -133,11 +138,11 @@ annotations = function(){
     /**
      * Enregistre en verifiant qu'il n'y a pas plusieurs evenements pour la meme frame, si c'est le cas, fais la moyenne de tout 
      * @method save
-     * @param int indexprec
-     * @param int frame
-     * @param int posX
-     * @param int posY
-     * @param String type
+     * @param {} indexprec
+     * @param {} frame
+     * @param {} posX
+     * @param {} posY
+     * @param {} type
      * @return 
      */
     annotations.save = function(indexprec, frame, posX, posY, type){
@@ -191,7 +196,7 @@ annotations = function(){
 
     /**
      * Envoyer les annotations au serveur puis efface le temp_pos avant de retourner au debut du plan
-     * @method envoyerprevious
+     * @method envoyernext
      * @return 
      */
     annotations.envoyernext = function() {
@@ -241,8 +246,7 @@ annotations = function(){
             var dat = {}; // data = {label : _, position : [{x : _ , y : _ , t : _ }, ... ]}
             dat.label = persoName;
             dat.position = pos;
-            camomile.create_annotation(function(data){annotations.annots.push(data);}, annotations.idCorp, annotations.idMed, annotations.idLay, fragment, dat);
-            timeline.insertSegmAnnot(fragment.start, fragment.end);
+            camomile.create_annotation(function(data){annotations.annots.push(data); annotations.sortAnnots(); timeline.insertSegmAnnot(fragment.start/25, fragment.end/25);}, annotations.idCorp, annotations.idMed, annotations.idLay, fragment, dat);
         }
         // Reinitialisation du champ du nom et du tableau de positions
         annotations.reset();
@@ -268,12 +272,14 @@ annotations = function(){
      */
     annotations.creerLayer = function(){
         var name = document.getElementById("nameLayer").value;
-        console.log("Truc" + name);
         // Cree le layer en question avec comme source le username de connexion
         camomile.create_layer(
             function(dat){
                 // Enregistre l'id du layer en question
                 annotations.idLay = dat._id;
+                interface.update_menuNameAnnot(name);
+                console.log(dat);
+                document.getElementById('menuAnnot').innerHTML += "<li><a href='#' onclick='javascript:interface.update_Annot(\"" + annotations.idLay + "\", \"" + name + "\", \"" + interface.username + "\");'> " + name + "[" + interface.username + ", " + dat.history[0].date.substring(0,10) + "]" + " </a></li>";
             }, 
             annotations.idCorp, 
             annotations.idMed, 
@@ -283,20 +289,19 @@ annotations = function(){
             interface.username
         );
         annotations.annots = [];
-        
     }
     
     /**
      * Recupere les annotations deja presente dans le layer indique
      * @method recupAnnot
-     * @param String idLayer
-     * @param String source
+     * @param {} idLayer
+     * @param {} source
+     * @param {} name
      * @return 
      */
     annotations.recupAnnot = function(idLayer, source, name){
     	annotations.annots = Array();
         annotations.idLay = idLayer;
-        document.getElementById("currentLayer").innerHTML = source + " : " + name;
         camomile.getAnnotations(
             function(dat){
                 for(var i = 0; i < dat.length; i++){
@@ -343,6 +348,13 @@ annotations = function(){
         );
     }
            					
+    /**
+     * Description
+     * @method effaceAnnot
+     * @param {} posX
+     * @param {} posY
+     * @return 
+     */
     annotations.effaceAnnot = function(posX, posY){
         if(annotations.verifBornes(posX, posY)){
             // Parcourir les annotations représentées à ce moment là 
@@ -376,11 +388,17 @@ annotations = function(){
         }
     }
 
-    /* Delete Annot function */
+    /**
+     * Delete Annot function 
+     * @method deleteAnnot
+     * @return 
+     */
     annotations.deleteAnnot = function(){
         camomile.remove_annotation(
             function(data){
                 annotations.calbackRemove(data);
+                timeline.redrawLine();
+
             }, 
             annotations.idCorp, 
             annotations.idMed, 
@@ -388,7 +406,12 @@ annotations = function(){
             annotations.annotIDRemov);
     }
 
-    /* Callback Remove Annot */
+    /**
+     * Callback Remove Annot 
+     * @method calbackRemove
+     * @param {} data
+     * @return 
+     */
     annotations.calbackRemove = function(data){
         for(var i = 0; i < annotations.annots.length; i++){
             if(annotations.annots[i]._id == annotations.annotIDRemov){
@@ -420,5 +443,5 @@ annotations = function(){
  for(var i = 0; i < id.length ; i++){
     camomile.remove_annotation(function(data){}, "53884ee3682be502003adae7", "53884f84682be502003adaed", "53a99a1519e7aa02005eeac4", id[i]);
  }
- 
+  
  */

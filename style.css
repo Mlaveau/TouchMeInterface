@@ -25,18 +25,19 @@ body {
     padding-bottom: 0px;
     margin-bottom: 0px;
 }
+
+/* Permet de garder la barre en top meme quand le clavier apparait */
+#navbartop, #navbarbot{
+    position:absolute;
+}
+
 /* Limite la taille des entêtes des dropdown */
 .navbar-inverse .nav > li > a{
-    width:200px;
+    width:225px;
     height:33px;
     white-space: nowrap;
     overflow: hidden;
 }   
-
-/* Affichage du user courant */
-#userName{
-    background-color: #333;
-}
 
 /* Form de loggin */
 #loginForm{
@@ -44,7 +45,13 @@ body {
     margin-top : 0px;
 }
 
-/* Input de login */
+/* Taille du Button de login */
+#loginButton{
+    height : 35px; 
+    margin-bottom:7px;
+}
+
+/* Inputs de login */
 #LoginUsername {
     padding-top: 0px;
     margin-top: 0px;
@@ -54,6 +61,7 @@ body {
     padding-top: 0px;
     margin-top: 0px
 }
+
 /* Div de Logout */
 #logoutDiv {
     color: white;
@@ -68,6 +76,17 @@ body {
     color: white;
 }
 
+#canvasTimeline{
+    z-index:0; 
+    background-color: rgba(255, 0, 0, 0.2);
+}
+
+#timeline>div{
+    position:absolute; 
+    right:-950px; 
+    margin-left: 0px; 
+    padding-left: 0px;
+}
 /*** Fenetre modale d'enregistrement des annotations ***/
 .modal-dialog {
     margin: 0px 0px 0px 0px;
@@ -76,7 +95,7 @@ body {
     color: #000;
 }
 
-#modalAnnots, #modalLayers, #modaleRemoveAnnot, #modalAide {
+#modalAnnots, #modalSegm, #modaleRemoveAnnot, #modalAide, #modalNomLayer{
     bottom: auto;
 }
 
@@ -97,20 +116,42 @@ body {
 
 #modalAide{
     width: auto;
-    right: auto;
-    left : 450px;
+    right: 50px;
+    left : 350px;
+    top : 60px;
 }
 
 #modalAide>.modal-dialog>.modal-content{
-    height : 548px;
+    height : 630px; /* 548px; */
+    background-color: black; 
+    color : white;
 }
 
 #modalAide>.modal-dialog>.modal-content>.modal-body{
     max-height : 100%;
 }
+
+/* Gere l'affichage des images des mouvements possibles*/
 td > img {
     height : 80px; 
     width : 80px;
+}
+
+/* Affichage de l'image de la timeline*/
+#timelineIMG{
+    height:46px; 
+    width:101px; 
+    padding-right: 10px;
+}
+
+/* Decalage a droite de la liste */
+#decalagedroit{
+    padding-left: 20px;
+}
+
+/*** Fenetre modale des segmantations ***/
+input[type="radio"]{
+    margin: 4px 10px 5px;
 }
 
 /*** Div du contenu au milieu ***/
@@ -131,19 +172,11 @@ td > img {
 	background-color:rgba(255, 255, 255, 0);
 }
 
-/** Menu coulissant **/
-#sidebar{
-    margin-top: 50px;
-    margin-left: 10px;
-}
-
 /** Container du menu coulissant et de la div de la video **/
 .row{
     color: white;
     z-index: 10;
 }
-
-
 
 #slider{
     z-index:11;
