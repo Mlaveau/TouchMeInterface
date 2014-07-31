@@ -73,7 +73,7 @@ camomile = function(){
 					callbackFunction(data);
                 },
                 crossDomain: true,
-                //dataType: 'json', // Format of the answer
+                //dataType: 'json', // Format of the answer -> Mettre quand le serveur sera effectivement JSON tout le temps
                 xhrFields: {
 					withCredentials: true
                 },
@@ -101,7 +101,7 @@ camomile = function(){
 					callbackFunction(data);
                 },
                 crossDomain: true,
-                //dataType: 'json',  // Format of the answer
+                //dataType: 'json',  // Format of the answer -> Mettre quand le serveur sera effectivement JSON tout le temps
                 xhrFields: {
 					withCredentials: true
                 },
@@ -132,7 +132,7 @@ camomile = function(){
 						callbackFunction(data);
                     },
                     crossDomain: true,
-                    //dataType: 'json',  // Format of the answer
+                    //dataType: 'json',  // Format of the answer -> Mettre quand le serveur sera effectivement JSON tout le temps
                     xhrFields: {
 						withCredentials: true
                     },
@@ -150,7 +150,7 @@ camomile = function(){
 						callbackFunction(data);
                     },
                     crossDomain: true,
-                    //dataType: 'json',  // Format of the answer
+                    //dataType: 'json',  // Format of the answer -> Mettre quand le serveur sera effectivement JSON tout le temps
                     xhrFields: {
 						withCredentials: true
                     },
@@ -182,7 +182,7 @@ camomile = function(){
 					callbackFunction(data);
                 },
                 crossDomain: true,
-                //dataType: 'json',  // Format of the answer
+                //dataType: 'json',  // Format of the answer -> Mettre quand le serveur sera effectivement JSON tout le temps
                 xhrFields: {
 					withCredentials: true
                 },
@@ -596,7 +596,7 @@ camomile = function(){
 	 * @param String idLayer
 	 * @param String idAnnotation
 	 * @param String frag
-	 * @param String dat
+	 * @param String dat // Forme : "[1, 2, 3, …]"
 	 * @return 
 	 */
 	camomile.set_annotation = function(callbackFunction, idCorpus, idMedia, idLayer, idAnnotation, frag, dat){

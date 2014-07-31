@@ -29,10 +29,10 @@ annotations = function(){
     /**
      * Enregistre les positions a chaque evenement dans annots 
      * @method enregistre_pos
-     * @param {} frame
-     * @param {} type
-     * @param {} posX
-     * @param {} posY
+     * @param naturel frame
+     * @param String type
+     * @param int posX
+     * @param int posY
      * @return 
      */
     annotations.enregistre_pos = function(frame, type, posX, posY){
@@ -42,33 +42,27 @@ annotations = function(){
                 // Si c'est le release d'après doubletap, dont on ne veut pas garder la trace, on ne fait rien
             }else{ // Dans tous les autres cas, on enregistre
                if(type == "release"){
-                    // release -> Popup pour enregistrer les pos
-                    // Vider le tableau temp_pos pour la prochaine annotation
-                    if(annotations.temp_pos.length > 4){
-                        annotations.save(indexprec, frame, posX, posY, type);
-                    }
+                    // On save
+                    annotations.save(indexprec, frame, posX, posY, type);
+                    // et on affiche le popup pour envoyer les positions
                     annotations.affichePopup(posX, posY);
                     comportement.pauseVideo();
-                }else{
+                }else{ // Sinon, on save la position
                     annotations.save(indexprec, frame, posX, posY, type);
                 }
             }
-        }else if (type == "hold" && annotations.idLay != undefined){ // Si la video est en pause
-            // Demarage de la video
+        }else if (type == "hold" && annotations.idLay != undefined){ 
+            // Si la video est en pause, on peut la lancer via un hold en enregistrant directement
             comportement.playVideo();
             annotations.save(indexprec, frame, posX, posY, type);
             var tempX = posX * comportement.vid.width / 100;
             var tempY = posY * comportement.vid.height / 100;
             comportement.showCurrentPos(tempX, tempY);
-        } else if(type == "touch" && comportement.vid.paused){
-            // Met en mode pour effacer l'annotation ! (En calculant la distance au centre de chaque cercle tout en etant moins grande que le rayon pour que ça veuille dire qu'il y en a une de sélectionnée.)
-            // -> Fait apparaître une fenetre modale pour demander le droit.
-
-        }
+        } 
     }
 
     /**
-     * Description
+     * Affiche le popup d'enregistrement de l'annotation (position variable)
      * @method affichePopup
      * @return 
      */
@@ -79,6 +73,7 @@ annotations = function(){
         comportement.vid.currentTime = Math.round(temp_annot.t / 25);
         // Affichage des annotations sur ce plan
         visualisation.afficheAnnot();
+
         // Affichage de l'annotation courante qu'on enregistre au moment present
         // Insertion d'un cercle 
         // Le placer au bon endroit
@@ -89,7 +84,6 @@ annotations = function(){
         gCircle.setAttributeNS(null, "cx", x);
         gCircle.setAttributeNS(null, "cy", y);
         gCircle.style.display = "";
-        // fin des ajouts
 
         // Gere la position de la fenetre en fonction de la position pour pas surperposer avec l'annotation en question
         var posY = temp_annot.y;
@@ -122,8 +116,8 @@ annotations = function(){
     /**
      * Verifie que les entiers passe en parametres sont bien compris entre 0 et 100 
      * @method verifBornes
-     * @param {} posX
-     * @param {} posY
+     * @param int posX
+     * @param int posY
      * @return 
      */
     annotations.verifBornes = function(posX, posY){
@@ -138,11 +132,11 @@ annotations = function(){
     /**
      * Enregistre en verifiant qu'il n'y a pas plusieurs evenements pour la meme frame, si c'est le cas, fais la moyenne de tout 
      * @method save
-     * @param {} indexprec
-     * @param {} frame
-     * @param {} posX
-     * @param {} posY
-     * @param {} type
+     * @param naturel indexprec
+     * @param naturel frame
+     * @param int posX
+     * @param int posY
+     * @param string type
      * @return 
      */
     annotations.save = function(indexprec, frame, posX, posY, type){
@@ -278,7 +272,6 @@ annotations = function(){
                 // Enregistre l'id du layer en question
                 annotations.idLay = dat._id;
                 interface.update_menuNameAnnot(name);
-                console.log(dat);
                 document.getElementById('menuAnnot').innerHTML += "<li><a href='#' onclick='javascript:interface.update_Annot(\"" + annotations.idLay + "\", \"" + name + "\", \"" + interface.username + "\");'> " + name + "[" + interface.username + ", " + dat.history[0].date.substring(0,10) + "]" + " </a></li>";
             }, 
             annotations.idCorp, 
@@ -294,9 +287,9 @@ annotations = function(){
     /**
      * Recupere les annotations deja presente dans le layer indique
      * @method recupAnnot
-     * @param {} idLayer
-     * @param {} source
-     * @param {} name
+     * @param String idLayer
+     * @param String source
+     * @param String name
      * @return 
      */
     annotations.recupAnnot = function(idLayer, source, name){
@@ -313,7 +306,7 @@ annotations = function(){
                         }
                     } 
                     
-                    // Enregistre le nom pour pouvoir le reafficher
+                    // Enregistre le nom pour pouvoir le reafficher dans le popup
                     if(!vu) {
                         var tmp = {};
                         tmp.name = dat[i].data.label;
@@ -338,8 +331,7 @@ annotations = function(){
     annotations.sortAnnots = function(){
     	annotations.annots.sort(
             function(a, b){ 
-
-                var tmp = a.fragment.start-b.fragment.start; 
+                var tmp = a.fragment.start - b.fragment.start; 
                 if(tmp == 0){
                 	tmp = a.fragment.end - b.fragment.end;
                 }
@@ -349,10 +341,10 @@ annotations = function(){
     }
            					
     /**
-     * Description
+     * Affiche le popup pour effacer une annotation 
      * @method effaceAnnot
-     * @param {} posX
-     * @param {} posY
+     * @param int posX
+     * @param int posY
      * @return 
      */
     annotations.effaceAnnot = function(posX, posY){
@@ -365,11 +357,14 @@ annotations = function(){
             var tmpX = comportement.vid.width;
             var tmpY = comportement.vid.height;
             var tmpId = "";
+            // Pour chaque cercle dans le svg
             for (var valeur in tmp){
                 if(tmp[valeur].localName == "g"){
-                    // Calcule
+                    // Calcule la distance par rapport a l'endroit touche
                     var dx = tmp[valeur].childNodes[1].getAttributeNS(null, "cx") - (posX * comportement.vid.width / 100);
                     var dy = tmp[valeur].childNodes[1].getAttributeNS(null, "cy") - (posY * comportement.vid.height / 100);
+
+                    // Si la distance est plus petite que la derniere enregistree, pour savoir laquelle supprimer
                     if( ((dx * dx + dy * dy) < (tmpY * tmpY + tmpX * tmpX)) 
                         && 
                         ((dx < 50 && dx > -50) && (dy > -50 && dy < 50))){
@@ -379,7 +374,6 @@ annotations = function(){
                         var affichage = document.getElementById("annotRemove");
                         affichage.innerHTML = "<br><b>Nom :</b> " + tmp[valeur].childNodes[0].firstChild.data + "<br>";
                         affichage.innerHTML += "<b>Id :</b> " + tmpId;
-                        // MODIDIFIER L'EMPLACEMENT DE LA FENETRE MODALE EN FONCTION DE L'ENDROIT OU ON TOUCHE
                         $j("#modaleRemoveAnnot").modal('show');
                         annotations.annotIDRemov = tmpId;
                     }
@@ -397,19 +391,19 @@ annotations = function(){
         camomile.remove_annotation(
             function(data){
                 annotations.calbackRemove(data);
-                timeline.redrawLine();
-
+                timeline.redrawLine(); // retrace la timeline
             }, 
             annotations.idCorp, 
             annotations.idMed, 
             annotations.idLay, 
-            annotations.annotIDRemov);
+            annotations.annotIDRemov
+        );
     }
 
     /**
      * Callback Remove Annot 
      * @method calbackRemove
-     * @param {} data
+     * @param JSON data
      * @return 
      */
     annotations.calbackRemove = function(data){
@@ -424,24 +418,3 @@ annotations = function(){
     }
     return annotations;
 }();
-
-
-
-/* Remove all Annotations d'un layer
- 
- var id = [];
- 
- camomile.getAnnotations(function(data){
-    for (var i = 0; i < data.length; i ++){
-        id.push(data[i]._id);
-    }
- }
- , "53884ee3682be502003adae7", "53884f84682be502003adaed", "53a99a1519e7aa02005eeac4"
- //annotations.idCorp, annotations.idMed, annotations.idLay
-);
- 
- for(var i = 0; i < id.length ; i++){
-    camomile.remove_annotation(function(data){}, "53884ee3682be502003adae7", "53884f84682be502003adaed", "53a99a1519e7aa02005eeac4", id[i]);
- }
-  
- */

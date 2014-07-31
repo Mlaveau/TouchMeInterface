@@ -20,16 +20,18 @@ visualisation = function(){
    * @return 
    */
   visualisation.afficheAnnot = function(){
+    // S'il y a effectivement des annotations 
     if(annotations.annots != undefined){
       var i = 0;
     	var frame = Math.round(comportement.vid.currentTime * 25);
+      // Parcourt les annotations 
     	for(var j = 0; j < annotations.annots.length; j++){
     		var annot = annotations.annots[j];
     		if((annot.fragment.start < frame) && (annot.fragment.end > frame)){
     			if(document.getElementById(annotations.annots[j]._id) == null){
     				visualisation.insertCircleText(annot._id, annot.data.label);
     			}
-          // Recupere le cercle et le text
+          // Recupere le cercle et le text dans le DOM 
           var gCircle = document.getElementById(annotations.annots[j]._id+"Circle");
           var gText = document.getElementById(annotations.annots[j]._id+"Text");
           var positions = annot.data.position;
@@ -58,12 +60,13 @@ visualisation = function(){
             var dt = (positions[fin].t - positions[debut].t) * (frame - positions[debut].t)/100;  					
             dx = (positions[fin].x + (positions[debut].x - positions[fin].x) * dt) / 100 * comportement.vid.width;
             dy = (positions[fin].y + (positions[debut].y - positions[fin].y) * dt) / 100 * comportement.vid.height;
-          }
+          } 
           // Change la position et affiche le texte et le cercle (Impossible de déplace le g directement.)
           gCircle.setAttributeNS(null, "cx", dx);
           gCircle.setAttributeNS(null, "cy", dy);
-          gText.setAttributeNS(null, "x", dx - 30); // Petit decalage de 30 pour que le nom soit au milieu du cercle
+          gText.setAttributeNS(null, "x", dx - 30); // Decalage de 30 pour que le nom soit au milieu du cercle
           gText.setAttributeNS(null, "y", dy);
+          // Affiche le groupe dans lequel le cercle et le text sont 
           document.getElementById(annotations.annots[j]._id).style.display = "";
         }else if((frame > annot.fragment.end || frame < annot.fragment.start) && document.getElementById(annotations.annots[j]._id) != null) {
           // Fais disparaitre le cercle si on est en dehors du temps couvert par le fragment
@@ -76,8 +79,8 @@ visualisation = function(){
   /**
    * Ajoute au svg le cercle de l'annotation dont l'id et le label sont passes en parametre 
    * @method insertCircleText
-   * @param {} id
-   * @param {} label
+   * @param String id
+   * @param String label
    * @return 
    */
   visualisation.insertCircleText = function(id, label){
@@ -93,7 +96,7 @@ visualisation = function(){
         'id' : id + "Text"
       }
     );
-  	
+    
     // Le g, qui regroupe le texte et le cercle
   	interface.svg.g(t, c1).attr(
       { 
@@ -106,11 +109,12 @@ visualisation = function(){
   /**
    * Cree le cercle de l'annotation de la couleur demande 
    * @method insertCircle
-   * @param {} id
-   * @param {} couleur
+   * @param String id
+   * @param String couleur
    * @return c1
    */
   visualisation.insertCircle = function(id, couleur){
+    // Cree le cercle dans le svg 
     var c1 = interface.svg.circle(50, 50, 50).attr(
       {
         stroke: couleur, 

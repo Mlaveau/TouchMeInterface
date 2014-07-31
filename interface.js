@@ -1,6 +1,7 @@
-
-/* Utiliser le DOM pour modifier plutôt qu'INNERHTML */
-/* Factoriser les messages dans les menus pour dire de se connecter */
+/* 
+ * Gere l'affichage de l'interface
+ * (menus, video,... )
+ */
 
 interface = function(){
        
@@ -139,7 +140,7 @@ interface = function(){
 	/**
 	 * Traitement si connexion sucessfull 
 	 * @method callback_login
-	 * @param {JSON} data
+	 * @param JSON data
 	 * @return 
 	 */
 	interface.callback_login = function(data){
@@ -169,7 +170,7 @@ interface = function(){
 	/**
 	 * Traitement si deconnexion sucessfull 
 	 * @method callback_logout
-	 * @param {JSON} data
+	 * @param JSON data
 	 * @return 
 	 */
 	interface.callback_logout = function(data){
@@ -237,8 +238,8 @@ interface = function(){
 	/**
 	 * Met a jour le menu des videos -> Appele quand on a clique sur un corpus  
 	 * @method update_menuVid
-	 * @param {String} corpusId
-	 * @param {String} corpusName
+	 * @param String corpusId
+	 * @param String corpusName
 	 * @return 
 	 */
 	interface.update_menuVid = function(corpusId, corpusName){
@@ -303,8 +304,8 @@ interface = function(){
 	/**
 	 * Met a jour le menu des segmentations -> Appele quand on a choisi une video 
 	 * @method update_menuAnnot
-	 * @param {String} corpusId
-	 * @param {String} vidId
+	 * @param String corpusId
+	 * @param String vidId
 	 * @return 
 	 */
 	interface.update_menuAnnot = function(corpusId, vidId){
@@ -339,9 +340,9 @@ interface = function(){
   /**
    * Met a jour tout ce qui concerne les annots : l'array, l'affichage de la timeline, le nom du menu 
    * @method update_Annot
-   * @param {String} id
-   * @param {String} name
-   * @param {String} source
+   * @param String id
+   * @param String name
+   * @param String source
    * @return 
    */
   interface.update_Annot = function(id, name, source){
@@ -366,7 +367,7 @@ interface = function(){
 	/**
 	 * Met a jour le nom du menu -> Appele quand on a choisi une segmentation 
 	 * @method update_menuNameAnnot
-	 * @param {String} name
+	 * @param String name
 	 * @return 
 	 */
 	interface.update_menuNameAnnot = function(name){
@@ -376,8 +377,8 @@ interface = function(){
 	/**
 	 * Affiche la video selectionnee -> Appelee quand on a choisi une video 
 	 * @method update_Med
-	 * @param {String} vidName
-	 * @param {String} idmedia
+	 * @param String vidName
+	 * @param String idmedia
 	 * @return 
 	 */
 	interface.update_Med = function(vidName, idmedia){

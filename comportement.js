@@ -132,7 +132,7 @@ comportement = function(){
 		// Effacer une annotation
 		comportement.hammertime.on("tap", 
 			function(e){
-				if(comportement.vid.paused){
+				if(comportement.vid.paused){// Si la video est en pause
 					annotations.effaceAnnot(comportement.posX(e), comportement.posY(e)); 
 				}
 			}
@@ -156,20 +156,20 @@ comportement = function(){
 	}
 
 	/**
-	 * Retourne en pourcentage la position x d'un evenement e *
+	 * Retourne en pourcentage la position x d'un evenement e 
 	 * @method posX
-	 * @param {} e
-	 * @return BinaryExpression
+	 * @param evenement e
+	 * @return int
 	 */
 	comportement.posX = function(e){
 		return Math.round((((e.gesture.center.pageX - interface.posleft) * 100) / comportement.vid.width) * 100) / 100;
 	}
 		
 	/**
-	 * Retourne en pourcentage la position y d'un evenement e *
+	 * Retourne en pourcentage la position y d'un evenement e 
 	 * @method posY
-	 * @param {} e
-	 * @return BinaryExpression
+	 * @param evenement e
+	 * @return int
 	 */
 	comportement.posY = function(e){
 		return Math.round((((e.gesture.center.pageY - interface.postop) * 100) / comportement.vid.height) * 100) / 100;
@@ -178,8 +178,8 @@ comportement = function(){
 	/**
 	 * Gere le cercle d'affichage de l'endroit pointe 
 	 * @method showCurrentPos
-	 * @param {} cx
-	 * @param {} cy
+	 * @param int cx
+	 * @param int cy
 	 * @return 
 	 */
 	comportement.showCurrentPos = function(cx, cy){
@@ -201,12 +201,16 @@ comportement = function(){
 	 comportement.getSegmentation = function(){
 
 		var tmp = document.getElementById("formSegm");
+		//Cherche la segmentation choisie
 		for(var i = 0; i < tmp.childNodes.length; i++){
 			if(tmp.childNodes[i].checked == true){
 				comportement.idLayerSegm = tmp.childNodes[i].value;
 			}
 		}
+
+		// Si une segmentation a ete choisie
 		if(comportement.idLayerSegm != "aucun"){
+			// On recupere l'annotation correspondante
 		 	camomile.getAnnotations(function (data){
 				comportement.update_segm(data[0].data);
 		 	}, 
@@ -214,7 +218,7 @@ comportement = function(){
 		 	annotations.idMed, 
 		 	comportement.idLayerSegm
 		 	);
-		}else{
+		}else{// Sinon on met a zero
 			comportement.update_segm("");
 		}
 	}
@@ -222,7 +226,7 @@ comportement = function(){
 	/**
 	  * Enregistre la segmentation en plan 
 	  * @method update_segm
-	  * @param {} data
+	  * @param [] data // "" Si aucune segmentation
 	  * @return 
 	  */
 	 comportement.update_segm = function(data){
@@ -238,16 +242,44 @@ comportement = function(){
 	  */
 	 comportement.plans = function(){
  		var plan = comportement.currentPlan();
- 		if(plan > comportement.planActuel){
- 			comportement.pauseVideo();
- 			comportement.planActuel = plan;
- 			if(annotations.temp_pos != ""){
+ 		if(plan > comportement.planActuel){ // si on a depasse le prochain plan ou il faut s'arreter par rapport a la derniere fois
+ 			comportement.pauseVideo(); // video pause
+ 			comportement.planActuel = plan; // On update le plan actuel
+ 			if(annotations.temp_pos != ""){ // Si on enregistrait un annotation -> Popup
  				annotations.affichePopup();
-            	interface.popup();
         	}
  		}
     }
     
+	/**
+	  * Renvoit l'index dans comportement.segm du prochain plan où il faudra s'arreter en fonction de vid.currentTime 
+	  * @method currentPlan
+	  * @return fin
+	  */
+	 comportement.currentPlan = function(){
+		//Recherche dichotomique du plan courant 
+		// Plan courant : numero de l'index dans segm du prochain point d'arret 
+		var debut = 0; 
+		var fin = comportement.segm.length - 1;
+		var mid = Math.round(fin / 2);
+		var curr = comportement.vid.currentTime;
+		while(fin - debut > 1){
+			if(comportement.segm[debut] / 25 > curr){
+				return debut;
+			}if(comportement.segm[mid] / 25 > curr){
+				fin = mid; 
+				mid = Math.round((fin-debut) / 2 + debut);
+			}else if(comportement.segm[mid] / 25 < curr){
+				debut = mid; 
+				mid = Math.round((fin-debut) / 2 + debut) ;
+			}else{ // Si c'est exactement egal 
+				mid = mid + 1;
+				return mid;
+			}
+		}
+		return fin; 
+	}
+
 	/**
 	  * Gestion Video : Play si Pause, Pause si Play 
 	  * @method playVideo
@@ -268,7 +300,7 @@ comportement = function(){
     }
 
 	/**
-     * Gestion Video : Pause et clear interval
+     * Gestion Video : Pause video et clear interval
      * @method pauseVideo
      * @return 
      */
@@ -280,21 +312,7 @@ comportement = function(){
     }
 
 	/**
-	  * Appelle la mise a jour des affichages d'annotations et de temps courant de la video 
-	  * @method gestionTimer
-	  * @return 
-	  */
-	 comportement.gestionTimer = function(){
-	 	visualisation.afficheAnnot();
-	 	timeline.updateTimeAffich();
-	 	timeline.moveSlider(timeline.longueur * comportement.vid.currentTime / comportement.vid.duration);
-	 	if(comportement.segm.length > 0){
-	 		comportement.plans();
-		}
-	}
-
-	/**
-	  * Gestion Video : Forward 
+	  * Gestion Video : Forward
 	  * @method fwd
 	  * @return 
 	  */
@@ -346,7 +364,7 @@ comportement = function(){
 		 		comportement.vid.currentTime = Math.round((comportement.segm[plan - 1]) / 25 * 100) / 100;
 				comportement.planActuel = plan;
 		 	} else {
-		 		comportement.vid.currentTime = 0;//Math.round((comportement.segm[0]) / 25 * 100) / 100;
+		 		comportement.vid.currentTime = 0;
 				comportement.planActuel = 0;
 		 	}
 	 	}
@@ -354,35 +372,6 @@ comportement = function(){
 
 	 	//Affiche les annotations correspondantes au plan auquel on a saute
 	 	visualisation.afficheAnnot();
-	}
-
-	/**
-	  * Renvoit l'index dans comportement.segm du prochain plan où il faudra s'arreter en fonction de vid.currentTime 
-	  * @method currentPlan
-	  * @return fin
-	  */
-	 comportement.currentPlan = function(){
-		//Recherche dichotomique du plan courant 
-		// Plan courant : numero de l'index dans segm du prochain point d'arret 
-		var debut = 0; 
-		var fin = comportement.segm.length - 1;
-		var mid = Math.round(fin / 2);
-		var curr = comportement.vid.currentTime;
-		while(fin - debut > 1){
-			if(comportement.segm[debut] / 25 > curr){
-				return debut;
-			}if(comportement.segm[mid] / 25 > curr){
-				fin = mid; 
-				mid = Math.round((fin-debut) / 2 + debut);
-			}else if(comportement.segm[mid] / 25 < curr){
-				debut = mid; 
-				mid = Math.round((fin-debut) / 2 + debut) ;
-			}else{ // Si c'est exactement egal 
-				mid = mid + 1;
-				return mid;
-			}
-		}
-		return fin; 
 	}
 
 	/**
@@ -399,23 +388,25 @@ comportement = function(){
 	 }
 
 	/**
-	  * Gestion Video : Plus lentement 
+	  * Gestion Video : Plus lentement NON UTILISE DANS L INTERFACE ACTUELLE
 	  * @method slower
 	  * @return 
 	  */
 	 comportement.slower = function(){
 	 	comportement.vid.playbackRate -= 0.25;
+	 	// Pour que le changement soit effectif
 	 	comportement.vid.pause();
 	 	comportement.vid.play();
 	 }
 
 	/**
-	  * Gestion Video : Plus rapide 
+	  * Gestion Video : Plus rapide NON UTILISE DANS L INTERFACE ACTUELLE
 	  * @method faster
 	  * @return 
 	  */
 	 comportement.faster = function(){
 	 	comportement.vid.playbackRate += 0.25;
+	 	// Pour que le changement soit effectif
 	 	comportement.vid.pause();
 	 	comportement.vid.play();
 	 }

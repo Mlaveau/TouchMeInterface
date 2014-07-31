@@ -26,12 +26,12 @@ timeline = function(){
   /**
    * Trace une ligne en fonction des paramètres passés 
    * @method drawLine
-   * @param {} xstart
-   * @param {} ystart
-   * @param {} xend
-   * @param {} yend
-   * @param {} couleur
-   * @param {} lw
+   * @param int xstart
+   * @param int ystart
+   * @param int xend
+   * @param int yend
+   * @param String couleur
+   * @param Reel lw : ligne width
    * @return 
    */
   timeline.drawLine = function(xstart, ystart, xend, yend, couleur, lw){
@@ -39,12 +39,15 @@ timeline = function(){
     if (timeline.canvas.getContext){    
       context = timeline.canvas.getContext('2d'); 
     }
+    // Trace la ligne de la timeline
     context.beginPath();
     context.moveTo(xstart, ystart);
     context.lineTo(xend, yend);
     context.lineWidth = lw; 
     context.strokeStyle = couleur; 
     context.stroke(); 
+
+    // Enregistre les parametres
     timeline.xend = xend;
     timeline.xstart = xstart;
     timeline.yend = yend;
@@ -54,11 +57,12 @@ timeline = function(){
   }  
 
   /**
-   * Reaffiche la timeline ainsi que tous les plans/segmentations 
+   * Reaffiche la timeline ainsi que tous les plans/segmentations (Si changement de video/corpus)
    * @method reaffichTimeLine
    * @return 
    */
   timeline.reaffichTimeLine = function(){
+    // Supprime le svg et donc le slider pour le recreer. (Sinon, ça va pas. )
     document.getElementById('svgTimeline').remove();
     timeline.affichTimeline(timeline.decalageLeft, timeline.decalageBottom, timeline.hauteur, -timeline.longueur + document.body.clientWidth, timeline.debordement);
     timeline.moveSlider(timeline.longueur * comportement.vid.currentTime / comportement.vid.duration);
@@ -69,11 +73,11 @@ timeline = function(){
   /**
    * Affiche la timeline ainsi que le slider 
    * @method affichTimeline
-   * @param {} decLeft
-   * @param {} decBot
-   * @param {} haut
-   * @param {} longu
-   * @param {} debord
+   * @param int decLeft : decalage gauche par rapport au bord
+   * @param int decBot : Decalage par rapport au bas
+   * @param int haut : 
+   * @param int longu
+   * @param int debord
    * @return 
    */
   timeline.affichTimeline = function (decLeft, decBot, haut, longu, debord){
@@ -83,14 +87,15 @@ timeline = function(){
     timeline.debordement = debord;
     timeline.longueur = document.body.clientWidth - longu;
 
+    // Placement du canvas
     document.getElementById("timelineAffich").style.display = "";
     timeline.canvas = document.getElementById("canvasTimeline"); 
-    timeline.canvas.setAttributeNS(null, "width", timeline.longueur); //width="2000" height="40"
+    timeline.canvas.setAttributeNS(null, "width", timeline.longueur);
     timeline.canvas.setAttributeNS(null, "height", timeline.hauteur);
     timeline.canvas.style.position = "absolute"; 
     timeline.canvas.style.left = timeline.decalageLeft + "px"; 
 
-    // Cree le svg et y insère le slider rouge
+    // Cree le svg et y insere le slider rouge -> On pourrait améliorer en ne recreeant pas a chaque fois
     var svg = Snap(timeline.longueur, timeline.hauteur + timeline.debordement).attr(
       {
         'id' : "svgTimeline"
@@ -115,12 +120,14 @@ timeline = function(){
       function(data){
       }
     );
+    // Placement du svg qui contient le slider
     var svg = document.getElementById("svgTimeline");
     svg.style.position = "absolute"; 
     svg.style.left = timeline.decalageLeft + "px";
     svg.style.bottom = (-40 - 5) + "px";
     document.getElementById("timeline").appendChild(svg);
 
+    // Trace la ligne blanche de la timeline
     timeline.drawLine(0, timeline.hauteur/2, timeline.longueur, timeline.hauteur/2, 'white', timeline.hauteur);
 
     // Ajoute le listener pour pouvoir 'sauter' le long de la timeline
@@ -133,21 +140,22 @@ timeline = function(){
   /**
    * Update le temps courant de la video pour se deplacer dedans 
    * @method updateTimeVid
-   * @param {} x
+   * @param int x
    * @return 
    */
   timeline.updateTimeVid = function(x){
+    // Recupere la position de l'endroit ou l'on a clique ou bouge le slider
     var pos = x + timeline.decalageLeft;
-    //Calcul du pourcentage que ça represente
-    if(pos > 0 && pos < timeline.longueur){
+    // Calcul du pourcentage que ça represente et update l'affichage en fonction de ça
+    if(pos > 0 && pos < timeline.longueur){ // Si on est bien reste dans la longueur
       var pourcentage = (x + timeline.decalageLeft) / timeline.longueur;
       // Application a la video
       comportement.vid.currentTime =  Math.round(comportement.vid.duration * pourcentage);
       timeline.updateTimeAffich();
-    }else if(pos < 0 ){
+    }else if(pos < 0 ){ // Si c'est en dehors avant 
       comportement.vid.currentTime = 0;
       timeline.updateTimeAffich();
-    }else{
+    }else{ // Si dehors au bout
       comportement.vid.currentTime = Math.round(comportement.vid.duration);
       timeline.updateTimeAffich();
     }    
@@ -159,7 +167,7 @@ timeline = function(){
    * @return 
    */
   timeline.updateTimeAffich = function(){
-  // A ENLEVER APRES : Mettre a jour qu'une fois les durees totales
+    // Met a jour la duree totale de la video
     if(comportement.vid.duration >= 0){
       document.getElementById("tempsSecSec").innerHTML = Math.round(comportement.vid.duration);
       document.getElementById("tempsMin").innerHTML = Math.floor(comportement.vid.duration / 60);
@@ -169,6 +177,8 @@ timeline = function(){
       document.getElementById("tempsMin").innerHTML = 0;
       document.getElementById("tempsSec").innerHTML = 0;
     }
+
+    // Met a jour le temps courant 
     document.getElementById("curtimeSecSec").innerHTML = Math.round(comportement.vid.currentTime);
     document.getElementById("curtimeMin").innerHTML = Math.floor(comportement.vid.currentTime / 60);
     document.getElementById("curtimeSec").innerHTML = Math.round(comportement.vid.currentTime % 60);
@@ -177,11 +187,10 @@ timeline = function(){
   /**
    * Bouge le slider le long de la timeline en fonction de x ou x est la position où on veut le bouger 
    * @method moveSlider
-   * @param {} x
+   * @param int x
    * @return 
    */
   timeline.moveSlider = function(x){
-    // Application a la video
     var posX =  x;
     var slid = document.getElementById("slider"); 
     if(posX > 0 && posX < timeline.longueur){
@@ -206,6 +215,7 @@ timeline = function(){
     // Si une segmentatione est chargee, on affiche
     if(comportement.segm != ""){
       for(var j = 0; j < comportement.segm.length; j++){
+        // A chaque plan, on trace un trait en vert au bon endroit sur la timeline
         tmp = (comportement.segm[j] / 25) / comportement.vid.duration * timeline.longueur;
         timeline.drawLine(tmp, timeline.hauteur/2, tmp, timeline.hauteur, 'green', 1);
       }
@@ -216,10 +226,10 @@ timeline = function(){
 
 
   /**
-   * Insere un trait orange pour les annotations dont time debut et end en secondes 
+   * Insere un trait orange representant une annotation
    * @method insertSegmAnnot
-   * @param {} timeDebut
-   * @param {} timeEnd
+   * @param int timeDebut : en secondes
+   * @param int timeEnd : en secondes 
    * @return 
    */
   timeline.insertSegmAnnot = function(timeDebut, timeEnd){
@@ -229,7 +239,7 @@ timeline = function(){
   }
 
   /**
-   * Insere toutes les annotations du layer choisi 
+   * Parcour les annotations pour toutes les inserer
    * @method insertAnnot
    * @return 
    */

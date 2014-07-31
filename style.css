@@ -2,36 +2,31 @@
  * Style de la page
  */
 
-/* Pour le menu glissant, les liens sont en blanc */
-#lg-menu>li>a {
-    color: white;
-}
-
-/* empeche la selection dans le body? */
+/* empeche la selection dans le body */
 body {
     -webkit-user-select: none;
 }
 
-/* Servira probablement plus tard quand Safari mobile l'aura implemente au detriment des meta */
 @viewport {
     width: device-width; /* largeur du viewport */
-    zoom: 1; /* zoom initial à 1.0 (et clin d'oeil aux fans d'IE6/7) */
+    zoom: 1; /* zoom initial à 1.0 */
 }
 
-/*** Concerne les barres de navigation ***/
-/** Du haut **/
+/**** BARRES DE NAVIGATION ****/
+
+/*** Du haut ***/
 .navbar-collapse {
     padding-top: 7px;
     padding-bottom: 0px;
     margin-bottom: 0px;
 }
 
-/* Permet de garder la barre en top meme quand le clavier apparait */
+/** Permet de garder la barre en top meme quand le clavier apparait **/
 #navbartop, #navbarbot{
     position:absolute;
 }
 
-/* Limite la taille des entêtes des dropdown */
+/** Limite la taille des entêtes des dropdown **/
 .navbar-inverse .nav > li > a{
     width:225px;
     height:33px;
@@ -39,19 +34,19 @@ body {
     overflow: hidden;
 }   
 
-/* Form de loggin */
+/** Form de loggin **/
 #loginForm{
     padding-top: 0px;
     margin-top : 0px;
 }
 
-/* Taille du Button de login */
+/** Taille du Button de login **/
 #loginButton{
     height : 35px; 
     margin-bottom:7px;
 }
 
-/* Inputs de login */
+/** Inputs de login **/
 #LoginUsername {
     padding-top: 0px;
     margin-top: 0px;
@@ -62,12 +57,12 @@ body {
     margin-top: 0px
 }
 
-/* Div de Logout */
+/** Div de Logout **/
 #logoutDiv {
     color: white;
 }
 
-/** du bas **/
+/*** Du Bas ***/
 .nav>li {
     margin-left: 10px;
 }
@@ -87,16 +82,24 @@ body {
     margin-left: 0px; 
     padding-left: 0px;
 }
+
+#svgTimeline{
+    z-index:10; 
+    background-color:rgba(255, 0, 255, 0);
+}
+
+/**** FENETRES MODALES ****/
+
+#modalAnnots, #modalSegm, #modaleRemoveAnnot, #modalAide, #modalNomLayer{
+    bottom: auto;
+}
+
 /*** Fenetre modale d'enregistrement des annotations ***/
 .modal-dialog {
     margin: 0px 0px 0px 0px;
     padding: 0px 0px 0px 0px;
     width: auto;
     color: #000;
-}
-
-#modalAnnots, #modalSegm, #modaleRemoveAnnot, #modalAide, #modalNomLayer{
-    bottom: auto;
 }
 
 #modal-body>#divDialogElements{
@@ -149,13 +152,14 @@ td > img {
     padding-left: 20px;
 }
 
-/*** Fenetre modale des segmantations ***/
+/*** Fenetre modale des segmentations ***/
 input[type="radio"]{
     margin: 4px 10px 5px;
 }
 
-/*** Div du contenu au milieu ***/
-/** La video **/
+/**** CENTRE ****/
+
+/*** La video ***/
 #divVid{
     padding-top: 50px;
     margin-top: 45px;
@@ -163,26 +167,12 @@ input[type="radio"]{
     margin-left: 10px;
     margin-bottom: 0px;
     padding-bottom: 0px;
+    color: white;
 }
 
-/** Le svg **/
+/*** Le svg ***/
 #affichAnnot{
 	position:absolute; 
 	z-index:10; 
 	background-color:rgba(255, 255, 255, 0);
-}
-
-/** Container du menu coulissant et de la div de la video **/
-.row{
-    color: white;
-    z-index: 10;
-}
-
-#slider{
-    z-index:11;
-}
-
-#svgTimeline{
-    z-index:10; 
-    background-color:rgba(255, 0, 255, 0);
 }
