@@ -212,7 +212,7 @@ comportement = function(){
 			// On recupere l'annotation correspondante
 		 	camomile.getAnnotations(function (data){
 				comportement.update_segm(data[0].data);
-				comportement.segm.sort();
+				//comportement.segm.sort();
 		 	}, 
 		 	annotations.idCorp, 
 		 	annotations.idMed, 

@@ -112,6 +112,7 @@ timeline = function(){
       function(dx, dy, x, y){
         timeline.moveSlider(x + timeline.decalageLeft);
         timeline.updateTimeVid(x);
+        comportement.planActuel = comportement.currentPlan();
       }, 
       function(data){
       }, 
@@ -132,6 +133,7 @@ timeline = function(){
     svg.addEventListener('mouseup', function(evt) {
       timeline.moveSlider(evt.clientX + timeline.decalageLeft);
       timeline.updateTimeVid(evt.clientX);
+      comportement.planActuel = comportement.currentPlan();
     }, false);
   }
   
