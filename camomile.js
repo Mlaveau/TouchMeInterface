@@ -522,7 +522,7 @@ camomile = function(){
 	 * @param String callbackFunction
 	 * @return 
 	 */
-	camomile.remove_layer = function(callbackFunction, idCorpus, idMedia, idLayer, callbackFunction){
+	camomile.remove_layer = function(callbackFunction, idCorpus, idMedia, idLayer){
 		camomile.del(camomile.route(idCorpus, idMedia, idLayer), callbackFunction);
         
 	}

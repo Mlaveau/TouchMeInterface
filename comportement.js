@@ -281,6 +281,23 @@ comportement = function(){
 	}
 
 	/**
+	 * Appelle la mise a jour des affichages d'annotations et de temps courant de la video
+	 * @method gestionTimer
+	 * @return
+	 */
+	comportement.gestionTimer = function(){
+		// Affiche les annotations
+		visualisation.afficheAnnot();
+		// Update l'affichage du temps et move le slider
+		timeline.updateTimeAffich();
+		timeline.moveSlider(timeline.longueur * comportement.vid.currentTime / comportement.vid.duration);
+		// Si segmentation en plan -> Verification si on est arrive a un changement de plan
+		if(comportement.segm.length > 0){
+			comportement.plans();
+		}
+	}
+
+	/**
 	  * Gestion Video : Play si Pause, Pause si Play 
 	  * @method playVideo
 	  * @return 
