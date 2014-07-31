@@ -31,9 +31,6 @@ interface = function(){
    * @return 
    */
   interface.init = function() {
-    // A enlever quand j'aurai fini les tests
-		document.getElementById("LoginUsername").value = "root";
-		document.getElementById("LoginPassword").value = "5h3Ld0n";
 
 		// Initialise des variables concernant la segm en plan
 		comportement.decalage = 0; // Pour le moment, aucun decalage
