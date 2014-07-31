@@ -1,13 +1,11 @@
 TouchMeInterface
 ================
 
-Interface d'annotation pour iPad
+Interface d'annotation pour iPad : Indications sur les formats JSON
 --------------------------------
 
 
-Indications sur les formats JSON 
-
- - Layer d'annotations 
+### - Layer d'annotations 
 
 Chaque layer d'annotation contient autant d'Annotation que l'on veut
 
@@ -20,7 +18,7 @@ Format de ses annotations
     * data : [{"t" : tempsT, "x" : posX, "y" : posY}, {"t" : tempsT, "x" : posX, "y" : posY}, ... ]
     * fragment : {"start" : numeroDeLaFrameDuDebut, "end" : numeroDeLaFrameDeFin}
 
- - Layer de Segmentation
+### - Layer de segmentation
  
 Chaque layer est une segmentation différente et contient une seule Annotation
 
