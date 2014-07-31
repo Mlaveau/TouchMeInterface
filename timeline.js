@@ -1,6 +1,5 @@
 /* 
- * Gere l'affichage des annotations et leur mouvement, 
- * avec extrapolation de la position pour les frames dont on a pas de valeur.
+ * Gere l'affichage de la timeline (slider, temps courant, ...)
  */
 
 timeline = function(){
@@ -66,7 +65,6 @@ timeline = function(){
     document.getElementById('svgTimeline').remove();
     timeline.affichTimeline(timeline.decalageLeft, timeline.decalageBottom, timeline.hauteur, -timeline.longueur + document.body.clientWidth, timeline.debordement);
     timeline.moveSlider(timeline.longueur * comportement.vid.currentTime / comportement.vid.duration);
-    timeline.insertAnnot();
     timeline.insertAffichPlan();
   }  
 
@@ -216,7 +214,7 @@ timeline = function(){
     if(comportement.segm != ""){
       for(var j = 0; j < comportement.segm.length; j++){
         // A chaque plan, on trace un trait en vert au bon endroit sur la timeline
-        tmp = (comportement.segm[j] / 25) / comportement.vid.duration * timeline.longueur;
+        tmp = comportement.segm[j] / comportement.vid.duration * timeline.longueur;
         timeline.drawLine(tmp, timeline.hauteur/2, tmp, timeline.hauteur, 'green', 1);
       }
     }else{ // Sinon, on efface en dessinant un trait blanc par dessus
@@ -244,8 +242,9 @@ timeline = function(){
    * @return 
    */
   timeline.insertAnnot = function(){
+    console.log(annotations.annots.length, annotations.annots);
     for(var i = 0; i < annotations.annots.length; i++){
-      timeline.insertSegmAnnot(annotations.annots[i].fragment.start / 25, annotations.annots[i].fragment.end / 25);
+      timeline.insertSegmAnnot(annotations.annots[i].fragment.start, annotations.annots[i].fragment.end);
     }
   }
 

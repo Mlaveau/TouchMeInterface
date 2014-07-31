@@ -29,13 +29,13 @@ annotations = function(){
     /**
      * Enregistre les positions a chaque evenement dans annots 
      * @method enregistre_pos
-     * @param naturel frame
+     * @param naturel currTime
      * @param String type
      * @param int posX
      * @param int posY
      * @return 
      */
-    annotations.enregistre_pos = function(frame, type, posX, posY){
+    annotations.enregistre_pos = function(currTime, type, posX, posY){
         var indexprec = annotations.temp_pos.length - 1; 
         if(!comportement.vid.paused && annotations.idLay != undefined){ // Si on a un layer courant et que la video joue
             if(type == "release" && annotations.temp_pos.length == 0){
@@ -43,18 +43,18 @@ annotations = function(){
             }else{ // Dans tous les autres cas, on enregistre
                if(type == "release"){
                     // On save
-                    annotations.save(indexprec, frame, posX, posY, type);
+                    annotations.save(indexprec, currTime, posX, posY, type);
                     // et on affiche le popup pour envoyer les positions
                     annotations.affichePopup(posX, posY);
                     comportement.pauseVideo();
                 }else{ // Sinon, on save la position
-                    annotations.save(indexprec, frame, posX, posY, type);
+                    annotations.save(indexprec, currTime, posX, posY, type);
                 }
             }
         }else if (type == "hold" && annotations.idLay != undefined){ 
             // Si la video est en pause, on peut la lancer via un hold en enregistrant directement
             comportement.playVideo();
-            annotations.save(indexprec, frame, posX, posY, type);
+            annotations.save(indexprec, currTime, posX, posY, type);
             var tempX = posX * comportement.vid.width / 100;
             var tempY = posY * comportement.vid.height / 100;
             comportement.showCurrentPos(tempX, tempY);
@@ -70,7 +70,7 @@ annotations = function(){
         // revient au 75%ème plan des annotations qu'on a en stock.
         var tmp = Math.round((annotations.temp_pos.length - 1) * 75 / 100);
         var temp_annot = annotations.temp_pos[tmp];
-        comportement.vid.currentTime = Math.round(temp_annot.t / 25);
+        comportement.vid.currentTime = Math.round(temp_annot.t);
         // Affichage des annotations sur ce plan
         visualisation.afficheAnnot();
 
@@ -130,27 +130,27 @@ annotations = function(){
     }
     
     /**
-     * Enregistre en verifiant qu'il n'y a pas plusieurs evenements pour la meme frame, si c'est le cas, fais la moyenne de tout 
+     * Enregistre en verifiant qu'il n'y a pas plusieurs evenements pour la meme time, si c'est le cas, fais la moyenne de tout 
      * @method save
      * @param naturel indexprec
-     * @param naturel frame
+     * @param naturel time
      * @param int posX
      * @param int posY
      * @param string type
      * @return 
      */
-    annotations.save = function(indexprec, frame, posX, posY, type){
+    annotations.save = function(indexprec, currTime, posX, posY, type){
         if(annotations.verifBornes(posX, posY)){ // si c'est bien dans les bornes
         	var temp = {};
      	    temp.x = posX;
      	    temp.y = posY;
-     	    temp.t = frame;
+     	    temp.t = currTime;
      	    temp.type = type;
-            // S'il y a deja des evenements il faut comparer les frames
+            // S'il y a deja des evenements il faut comparer le currTime
 			if(annotations.temp_pos.length > 0){
-                // Si l'evenement precedent est sur la meme frame
-       	 		if(annotations.temp_pos[indexprec].t == frame){
-                    // Enregistre en calculant la moyenne de tous les evenements sur cette frame
+                // Si l'evenement precedent est pour le meme currTime
+       	 		if(annotations.temp_pos[indexprec].t == currTime){
+                    // Enregistre en calculant la moyenne de tous les evenements sur ce currTime
                 	annotations.temp_evMulti.push(temp);
                 	var x = 0;
                 	var y = 0;
@@ -161,7 +161,7 @@ annotations = function(){
                 	var tmp = {};
                 	tmp.x = x/annotations.temp_evMulti.length;
                 	tmp.y = y/annotations.temp_evMulti.length;
-                	tmp.t = frame;
+                	tmp.t = currTime;
                 	tmp.type = type;
                 	annotations.temp_pos[indexprec] = tmp;
             	}else{ // Sinon on enregistre directement
@@ -169,7 +169,7 @@ annotations = function(){
                 	annotations.temp_evMulti = [];
                 	annotations.temp_evMulti.push(temp);
             	}
-        	}else{ // Enregsitre directement
+        	}else{ // Enregistre directement
             	annotations.temp_pos.push(temp);
             	annotations.temp_evMulti = [];
             	annotations.temp_evMulti.push(temp);
@@ -196,7 +196,7 @@ annotations = function(){
     annotations.envoyernext = function() {
         var tempTps = annotations.temp_pos[annotations.temp_pos.length - 1].t;
         annotations.envoyer();
-        comportement.vid.currentTime = tempTps/25;
+        comportement.vid.currentTime = tempTps;
         visualisation.afficheAnnot();        
     }
 
@@ -240,7 +240,7 @@ annotations = function(){
             var dat = {}; // data = {label : _, position : [{x : _ , y : _ , t : _ }, ... ]}
             dat.label = persoName;
             dat.position = pos;
-            camomile.create_annotation(function(data){annotations.annots.push(data); annotations.sortAnnots(); timeline.insertSegmAnnot(fragment.start/25, fragment.end/25);}, annotations.idCorp, annotations.idMed, annotations.idLay, fragment, dat);
+            camomile.create_annotation(function(data){annotations.annots.push(data); annotations.sortAnnots(); timeline.insertSegmAnnot(fragment.start, fragment.end);}, annotations.idCorp, annotations.idMed, annotations.idLay, fragment, dat);
         }
         // Reinitialisation du champ du nom et du tableau de positions
         annotations.reset();
@@ -313,8 +313,10 @@ annotations = function(){
                         tmp.color = annotations.colorName[annotations.temp_name.length % annotations.colorName.length];
                         annotations.temp_name.push(tmp);
                     }
-                    timeline.insertAnnot();
                 }
+                console.log(dat);
+                                    timeline.insertAnnot();
+
                 annotations.sortAnnots();
             }, 
             annotations.idCorp,

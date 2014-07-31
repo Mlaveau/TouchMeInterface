@@ -34,7 +34,7 @@ interface = function(){
 
 		// Initialise des variables concernant la segm en plan
 		comportement.decalage = 0; // Pour le moment, aucun decalage
-		comportement.segm = "";
+		comportement.segm = Array();
         
 		// Affichage du temps/position/temps courant
 		interface.time = document.getElementById("curtime");
@@ -294,7 +294,7 @@ interface = function(){
    */
   interface.reinitialiseSegm = function(){
     // Reinitialise la segmentation et enleve le bouton
-    comportement.segm = "";
+    comportement.segm = Array();
     document.getElementById('butonPrevious').style.display = "None";
   }
     

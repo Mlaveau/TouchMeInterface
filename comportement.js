@@ -13,7 +13,7 @@ comportement = function(){
 	var vidTimer; // pour l'affichage des annotations, du temps courant et la detection de changement de plan (Toutes les 100 ms)
 
 	// Segmentation
-	var segm; // Tableau contenant le numero des frames de changement de plan
+	var segm; // Tableau contenant les temps de changement de plan
 	var planActuel; // Index dans segm du prochain changement de plan
 	var idLayerSegm; // Id du layer contenant les segmentations
 
@@ -68,7 +68,7 @@ comportement = function(){
 	 comportement.elVid = function(){
 	 	/* Initialisation des variables */
 		// Pour les annotations : initialisation des tableaux de nom, position, evenements multiples
-        annotations.temp_evMulti = []; // Tableau des evenements qui sont sur la meme frame
+        annotations.temp_evMulti = []; // Tableau des evenements qui sont sur le meme temps
         annotations.temp_name = []; // Tableau des noms deja utilises
         annotations.temp_pos = []; // Tableau des positions		
         annotations.colorName = ['red', 
@@ -150,7 +150,7 @@ comportement = function(){
 	            }else if (e.type == "release"){
 	            	 document.getElementById("currentPosUser").style.display = "None";
 	            }
-	            annotations.enregistre_pos(Math.round(comportement.vid.currentTime * 25), e.type, posX, posY);
+	            annotations.enregistre_pos(comportement.vid.currentTime, e.type, posX, posY);
 			}
 		);
 	}
@@ -199,7 +199,6 @@ comportement = function(){
 	  * @return 
 	  */
 	 comportement.getSegmentation = function(){
-
 		var tmp = document.getElementById("formSegm");
 		//Cherche la segmentation choisie
 		for(var i = 0; i < tmp.childNodes.length; i++){
@@ -213,6 +212,7 @@ comportement = function(){
 			// On recupere l'annotation correspondante
 		 	camomile.getAnnotations(function (data){
 				comportement.update_segm(data[0].data);
+				comportement.segm.sort();
 		 	}, 
 		 	annotations.idCorp, 
 		 	annotations.idMed, 
@@ -264,12 +264,12 @@ comportement = function(){
 		var mid = Math.round(fin / 2);
 		var curr = comportement.vid.currentTime;
 		while(fin - debut > 1){
-			if(comportement.segm[debut] / 25 > curr){
+			if(comportement.segm[debut] > curr){
 				return debut;
-			}if(comportement.segm[mid] / 25 > curr){
+			}if(comportement.segm[mid] > curr){
 				fin = mid; 
 				mid = Math.round((fin-debut) / 2 + debut);
-			}else if(comportement.segm[mid] / 25 < curr){
+			}else if(comportement.segm[mid] < curr){
 				debut = mid; 
 				mid = Math.round((fin-debut) / 2 + debut) ;
 			}else{ // Si c'est exactement egal 
@@ -335,14 +335,14 @@ comportement = function(){
 	  */
 	 comportement.fwd = function(){ 
 	 	var plan = comportement.currentPlan();
-		var temp = comportement.segm[plan] / 25 - comportement.vid.currentTime; 
+		var temp = comportement.segm[plan] - comportement.vid.currentTime; 
 		var indexMaxTab = comportement.segm.length - 1;
 	 	if(temp < 2 && temp >= 0){// Verifie si on est deja a une fronctiere ou non (Plus ou moins)
 	 		if((plan + 1) < comportement.segm.length){ // Pour pas etre en dehors du tableau. Si oui, 0
-	 			comportement.vid.currentTime = Math.round((comportement.segm[plan + 1]) / 25 * 100) / 100;
+	 			comportement.vid.currentTime = Math.round((comportement.segm[plan + 1]) * 100) / 100;
 				comportement.planActuel = plan + 2 ;
 		 	} else { 
-		 		comportement.vid.currentTime = Math.round((comportement.segm[indexMaxTab]) / 25 * 100) / 100;
+		 		comportement.vid.currentTime = Math.round((comportement.segm[indexMaxTab]) * 100) / 100;
 				comportement.planActuel = indexMaxTab;
 		 	}
 	 	}else { // Sinon, c'est qu'on est au milieu d'un plan donc on va au debut de ce plan
@@ -350,7 +350,7 @@ comportement = function(){
 	 			comportement.vid.currentTime = comportement.vid.duration;
 				comportement.planActuel = indexMaxTab + 1;
 		 	} else {
-		 		comportement.vid.currentTime = Math.round((comportement.segm[plan]) / 25 * 100) / 100;
+		 		comportement.vid.currentTime = Math.round((comportement.segm[plan]) * 100) / 100;
 				comportement.planActuel = plan + 1;
 		 	}
 	 	}	 
@@ -367,10 +367,10 @@ comportement = function(){
 	  */
 	 comportement.bwd = function(){
 	 	var plan = comportement.currentPlan();
-		var temp = comportement.segm[plan - 1] / 25 - comportement.vid.currentTime; 
+		var temp = comportement.segm[plan - 1] - comportement.vid.currentTime; 
 	 	if(temp > -0.5 && temp < 2){// Verifie si on est deja a une fronctiere ou non (Plus ou moins)
 	 		if(plan - 2 >= 0){ // Pour pas etre en dehors du tableau. Si oui, 0
-	 			comportement.vid.currentTime = Math.round((comportement.segm[plan - 2]) / 25 * 100) / 100;
+	 			comportement.vid.currentTime = Math.round((comportement.segm[plan - 2]) * 100) / 100;
 				comportement.planActuel = plan - 1;
 		 	} else { // Si inférieur
 		 		comportement.vid.currentTime = 0;
@@ -378,7 +378,7 @@ comportement = function(){
 		 	}
 	 	}else { // Sinon, c'est qu'on est au milieu d'un plan donc on va au debut de ce plan
 	 		if(plan - 1 >= 0){ // Pour pas etre en dehors du tableau. Sin oui, 0
-		 		comportement.vid.currentTime = Math.round((comportement.segm[plan - 1]) / 25 * 100) / 100;
+		 		comportement.vid.currentTime = Math.round((comportement.segm[plan - 1]) * 100) / 100;
 				comportement.planActuel = plan;
 		 	} else {
 		 		comportement.vid.currentTime = 0;

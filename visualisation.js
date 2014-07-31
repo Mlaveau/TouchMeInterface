@@ -1,6 +1,6 @@
 /* 
  * Gere l'affichage des annotations et leur mouvement, 
- * avec extrapolation de la position pour les frames dont on a pas de valeur.
+ * avec extrapolation de la position pour les time dont on a pas de valeur.
  */
 
 visualisation = function(){
@@ -23,11 +23,11 @@ visualisation = function(){
     // S'il y a effectivement des annotations 
     if(annotations.annots != undefined){
       var i = 0;
-    	var frame = Math.round(comportement.vid.currentTime * 25);
+    	var currTime = comportement.vid.currentTime;
       // Parcourt les annotations 
     	for(var j = 0; j < annotations.annots.length; j++){
     		var annot = annotations.annots[j];
-    		if((annot.fragment.start < frame) && (annot.fragment.end > frame)){
+    		if((annot.fragment.start < currTime) && (annot.fragment.end > currTime)){
     			if(document.getElementById(annotations.annots[j]._id) == null){
     				visualisation.insertCircleText(annot._id, annot.data.label);
     			}
@@ -43,21 +43,21 @@ visualisation = function(){
           var dx = 0;
           var dy = 0;
           while(fin-debut > 1){ // tant que l'on a pas trouve l'interval [x, y] ou z est dedans -> Dichotomie
-            if(positions[mid].t > frame){ 
+            if(positions[mid].t > currTime){ 
               fin = mid; 
               mid = Math.round((fin-debut) / 2 + debut);
-            }else if(positions[mid].t < frame){
+            }else if(positions[mid].t < currTime){
               debut = mid; 
               mid = Math.round((fin-debut) / 2 + debut) ;
-            }else{ // Si par hasard on a un enregistrement pour cette frame la
+            }else{ // Si par hasard on a un enregistrement pour ce currTime la
               dx = positions[mid].x / 100 * comportement.vid.width;
               dy = positions[mid].y * comportement.vid.height / 100;
               break;
             }
           }
-          if(fin-debut == 1){ // Si pas d'enregistrement pour la frame mais un interval 
+          if(fin-debut == 1){ // Si pas d'enregistrement pour le currTime mais un interval 
             // extrapolation de la position :
-            var dt = (positions[fin].t - positions[debut].t) * (frame - positions[debut].t)/100;  					
+            var dt = (positions[fin].t - positions[debut].t) * (currTime - positions[debut].t)/100;  					
             dx = (positions[fin].x + (positions[debut].x - positions[fin].x) * dt) / 100 * comportement.vid.width;
             dy = (positions[fin].y + (positions[debut].y - positions[fin].y) * dt) / 100 * comportement.vid.height;
           } 
@@ -68,7 +68,7 @@ visualisation = function(){
           gText.setAttributeNS(null, "y", dy);
           // Affiche le groupe dans lequel le cercle et le text sont 
           document.getElementById(annotations.annots[j]._id).style.display = "";
-        }else if((frame > annot.fragment.end || frame < annot.fragment.start) && document.getElementById(annotations.annots[j]._id) != null) {
+        }else if((currTime > annot.fragment.end || currTime < annot.fragment.start) && document.getElementById(annotations.annots[j]._id) != null) {
           // Fais disparaitre le cercle si on est en dehors du temps couvert par le fragment
           document.getElementById(annotations.annots[j]._id).remove();
         }			
